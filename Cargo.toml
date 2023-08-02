@@ -1,0 +1,10 @@
+[package]
+name = "sqlite-rs"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = "1.0"
+
+[dev-dependencies]
+hexyl = "0.13"
