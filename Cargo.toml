@@ -1,7 +1,42 @@
 [package]
+edition = "2021"
+rust-version = "1.71"
 name = "sqlite-rs"
 version = "0.1.0"
-edition = "2021"
+description = "SQLite reader in pure rust"
+authors = [ "[Antonio Costa - afsec](https://github.com/afsec)" ]
+repository = "https://github.com/afsec/sqlite-rs"
+license-file = "LICENSE"
+readme = "README.md"
+keywords = [ "sqlite" ]
+
+
+[profile.dev]
+opt-level = 0
+lto = false
+debug = true
+debug-assertions = true
+
+[profile.test]
+opt-level = 0
+lto = false
+debug = true
+debug-assertions = true
+
+[profile.bench]
+opt-level = 3
+lto = true
+debug = false
+debug-assertions = false
+
+[profile.release]
+opt-level = 3
+lto = true
+debug = false
+debug-assertions = false
+strip = true
+
+# [patch.'crates-io']
 
 [dependencies]
 anyhow = "1.0"
