@@ -2,7 +2,7 @@ use std::ops::Deref;
 
 use anyhow::bail;
 
-use crate::helpers::SQLiteError;
+use crate::result::SQLiteError;
 
 /// # Page Size (2 Bytes)
 ///  The two-byte value beginning at offset 16 determines the page size of the

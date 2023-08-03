@@ -1,6 +1,6 @@
 use anyhow::bail;
 
-use crate::helpers::SQLiteError;
+use crate::result::SQLiteError;
 
 use super::page_size::PageSize;
 

@@ -1,6 +1,6 @@
 use std::{fs::File, io::Read};
 
-use sqlite_rs::{header::SqliteHeader, helpers::SQLiteResult};
+use sqlite_rs::{header::SqliteHeader, result::SQLiteResult};
 
 fn main() -> SQLiteResult<()> {
     println!("SQLite info\n");

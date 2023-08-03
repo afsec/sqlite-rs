@@ -1,6 +1,6 @@
 use anyhow::bail;
 use std::fmt::Debug;
-use crate::helpers::SQLiteError;
+use crate::result::SQLiteError;
 
 /// # Magic Header String (16 Bytes)
 ///  Every valid SQLite database file begins with the following

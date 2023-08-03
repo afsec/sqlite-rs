@@ -1,4 +1,4 @@
-use crate::helpers::SQLiteError;
+use crate::result::SQLiteError;
 use anyhow::bail;
 
 /// # File format version numbers (2 Bytes)

@@ -1,6 +1,6 @@
 use anyhow::bail;
 
-use crate::helpers::SQLiteError;
+use crate::result::SQLiteError;
 
 ///  The maximum and minimum embedded payload fractions and the leaf payload
 /// fraction values must be 64, 32, and 32. These values were originally

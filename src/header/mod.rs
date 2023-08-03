@@ -1,10 +1,10 @@
 //! Reference: https://www.sqlite.org/fileformat2.html
 
-mod file_format_version_numbers;
-mod magic_header_string;
-mod page_size;
-mod payload_fractions;
-mod reserved_bytes_per_page;
+pub mod file_format_version_numbers;
+pub mod magic_header_string;
+pub mod page_size;
+pub mod payload_fractions;
+pub mod reserved_bytes_per_page;
 
 use self::{
     file_format_version_numbers::FileFormatVersionNumbers, magic_header_string::MagicHeaderString,
@@ -12,7 +12,7 @@ use self::{
 };
 use crate::{
     header::{payload_fractions::PayloadFractions, reserved_bytes_per_page::ReservedBytesPerPage},
-    helpers::SQLiteError,
+    result::SQLiteError,
 };
 
 /// # Database File Format
