@@ -16,55 +16,55 @@ use anyhow::bail;
 /// encountered, then that database cannot be read or written.
 #[derive(Debug)]
 pub struct FileFormatVersionNumbers {
-    write_version: FileFormatWriteVersion,
-    read_version: FileFormatReadVersion,
+  write_version: FileFormatWriteVersion,
+  read_version: FileFormatReadVersion,
 }
 impl<'a> TryFrom<&'a [u8]> for FileFormatVersionNumbers {
-    type Error = SQLiteError;
+  type Error = SQLiteError;
 
-    fn try_from(payload: &'a [u8]) -> Result<Self, Self::Error> {
-        if payload.len() != 2 {
-            bail!("Invalid size for FileFormatVersionNumbers")
-        }
-        let write_version = FileFormatWriteVersion::try_from(payload[0])?;
-        let read_version = FileFormatReadVersion::try_from(payload[1])?;
-        Ok(Self {
-            write_version,
-            read_version,
-        })
+  fn try_from(payload: &'a [u8]) -> Result<Self, Self::Error> {
+    if payload.len() != 2 {
+      bail!("Invalid size for FileFormatVersionNumbers")
     }
+    let write_version = FileFormatWriteVersion::try_from(payload[0])?;
+    let read_version = FileFormatReadVersion::try_from(payload[1])?;
+    Ok(Self {
+      write_version,
+      read_version,
+    })
+  }
 }
 #[derive(Debug)]
 pub enum FileFormatWriteVersion {
-    Legacy,
-    WAL,
+  Legacy,
+  WAL,
 }
 
 impl TryFrom<u8> for FileFormatWriteVersion {
-    type Error = SQLiteError;
+  type Error = SQLiteError;
 
-    fn try_from(value: u8) -> Result<Self, Self::Error> {
-        match value {
-            1 => Ok(Self::Legacy),
-            2 => Ok(Self::WAL),
-            _ => bail!("Invalid payload for FileFormatWriteVersion"),
-        }
+  fn try_from(value: u8) -> Result<Self, Self::Error> {
+    match value {
+      1 => Ok(Self::Legacy),
+      2 => Ok(Self::WAL),
+      _ => bail!("Invalid payload for FileFormatWriteVersion"),
     }
+  }
 }
 
 #[derive(Debug)]
 pub enum FileFormatReadVersion {
-    Legacy,
-    WAL,
+  Legacy,
+  WAL,
 }
 impl TryFrom<u8> for FileFormatReadVersion {
-    type Error = SQLiteError;
+  type Error = SQLiteError;
 
-    fn try_from(value: u8) -> Result<Self, Self::Error> {
-        match value {
-            1 => Ok(Self::Legacy),
-            2 => Ok(Self::WAL),
-            _ => bail!("Invalid payload for FileFormatReadVersion"),
-        }
+  fn try_from(value: u8) -> Result<Self, Self::Error> {
+    match value {
+      1 => Ok(Self::Legacy),
+      2 => Ok(Self::WAL),
+      _ => bail!("Invalid payload for FileFormatReadVersion"),
     }
+  }
 }

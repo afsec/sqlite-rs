@@ -7,12 +7,15 @@ pub mod payload_fractions;
 pub mod reserved_bytes_per_page;
 
 use self::{
-    file_format_version_numbers::FileFormatVersionNumbers, magic_header_string::MagicHeaderString,
-    page_size::PageSize,
+  file_format_version_numbers::FileFormatVersionNumbers,
+  magic_header_string::MagicHeaderString, page_size::PageSize,
 };
 use crate::{
-    header::{payload_fractions::PayloadFractions, reserved_bytes_per_page::ReservedBytesPerPage},
-    result::SQLiteError,
+  header::{
+    payload_fractions::PayloadFractions,
+    reserved_bytes_per_page::ReservedBytesPerPage,
+  },
+  result::SQLiteError,
 };
 
 /// # Database File Format
@@ -44,44 +47,46 @@ use crate::{
 /// |96	    | 4	    | SQLITE_VERSION_NUMBER |
 #[derive(Debug)]
 pub struct SqliteHeader<'a> {
-    magic_header_string: MagicHeaderString<'a>,
-    page_size: PageSize,
-    file_format_version_numbers: FileFormatVersionNumbers,
-    reserved_bytes_per_page: ReservedBytesPerPage,
-    payload_fractions: PayloadFractions,
+  magic_header_string: MagicHeaderString<'a>,
+  page_size: PageSize,
+  file_format_version_numbers: FileFormatVersionNumbers,
+  reserved_bytes_per_page: ReservedBytesPerPage,
+  payload_fractions: PayloadFractions,
 }
 
 impl<'a> SqliteHeader<'a> {
-    pub fn magic_header_string(&self) -> &MagicHeaderString<'a> {
-        &self.magic_header_string
-    }
+  pub fn magic_header_string(&self) -> &MagicHeaderString<'a> {
+    &self.magic_header_string
+  }
 
-    pub fn page_size(&self) -> &PageSize {
-        &self.page_size
-    }
+  pub fn page_size(&self) -> &PageSize {
+    &self.page_size
+  }
 }
 
 impl<'a> TryFrom<&'a [u8; 100]> for SqliteHeader<'a> {
-    type Error = SQLiteError;
+  type Error = SQLiteError;
 
-    fn try_from(value: &'a [u8; 100]) -> Result<Self, Self::Error> {
-        println!("{:x?}", &value[0..=15]);
-        println!("{:x?}", &value[16..=17]);
-        println!("{:x?}", &value[18..=19]);
-        println!("{:x?}", &value[20]);
-        println!("{:x?}", &value[21..=23]);
+  fn try_from(value: &'a [u8; 100]) -> Result<Self, Self::Error> {
+    println!("{:x?}", &value[0..=15]);
+    println!("{:x?}", &value[16..=17]);
+    println!("{:x?}", &value[18..=19]);
+    println!("{:x?}", &value[20]);
+    println!("{:x?}", &value[21..=23]);
 
-        let magic_header_string = MagicHeaderString::try_from(&value[0..=15])?;
-        let page_size = PageSize::try_from(&value[16..=17])?;
-        let file_format_version_numbers = FileFormatVersionNumbers::try_from(&value[18..=19])?;
-        let reserved_bytes_per_page = ReservedBytesPerPage::try_from((&page_size, value[20]))?;
-        let payload_fractions = PayloadFractions::try_from(&value[21..=23])?;
-        Ok(Self {
-            magic_header_string,
-            page_size,
-            file_format_version_numbers,
-            reserved_bytes_per_page,
-            payload_fractions,
-        })
-    }
+    let magic_header_string = MagicHeaderString::try_from(&value[0..=15])?;
+    let page_size = PageSize::try_from(&value[16..=17])?;
+    let file_format_version_numbers =
+      FileFormatVersionNumbers::try_from(&value[18..=19])?;
+    let reserved_bytes_per_page =
+      ReservedBytesPerPage::try_from((&page_size, value[20]))?;
+    let payload_fractions = PayloadFractions::try_from(&value[21..=23])?;
+    Ok(Self {
+      magic_header_string,
+      page_size,
+      file_format_version_numbers,
+      reserved_bytes_per_page,
+      payload_fractions,
+    })
+  }
 }

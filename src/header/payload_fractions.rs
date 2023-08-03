@@ -10,29 +10,29 @@ use crate::result::SQLiteError;
 /// Hence, these three bytes are fixed at the values specified.
 #[derive(Debug)]
 pub struct PayloadFractions {
-    maximum: MaximumEmbeddedPayloadFraction,
-    minimum: MinimumEmbeddedPayloadFraction,
-    leaf: LeafPayloadFraction,
+  maximum: MaximumEmbeddedPayloadFraction,
+  minimum: MinimumEmbeddedPayloadFraction,
+  leaf: LeafPayloadFraction,
 }
 
 impl<'a> TryFrom<&'a [u8]> for PayloadFractions {
-    type Error = SQLiteError;
+  type Error = SQLiteError;
 
-    fn try_from(payload: &'a [u8]) -> Result<Self, Self::Error> {
-        const VALID_SIZE: usize = 3;
+  fn try_from(payload: &'a [u8]) -> Result<Self, Self::Error> {
+    const VALID_SIZE: usize = 3;
 
-        if payload.len() != VALID_SIZE {
-            bail!("Invalid size for PayloadFractions");
-        }
-        let maximum = MaximumEmbeddedPayloadFraction::try_from(payload[0])?;
-        let minimum = MinimumEmbeddedPayloadFraction::try_from(payload[1])?;
-        let leaf = LeafPayloadFraction::try_from(payload[2])?;
-        Ok(Self {
-            maximum,
-            minimum,
-            leaf,
-        })
+    if payload.len() != VALID_SIZE {
+      bail!("Invalid size for PayloadFractions");
     }
+    let maximum = MaximumEmbeddedPayloadFraction::try_from(payload[0])?;
+    let minimum = MinimumEmbeddedPayloadFraction::try_from(payload[1])?;
+    let leaf = LeafPayloadFraction::try_from(payload[2])?;
+    Ok(Self {
+      maximum,
+      minimum,
+      leaf,
+    })
+  }
 }
 
 /// Maximum embedded payload fraction. Must be 64.
@@ -40,43 +40,43 @@ impl<'a> TryFrom<&'a [u8]> for PayloadFractions {
 pub struct MaximumEmbeddedPayloadFraction(u8);
 
 impl TryFrom<u8> for MaximumEmbeddedPayloadFraction {
-    type Error = SQLiteError;
+  type Error = SQLiteError;
 
-    fn try_from(maximum: u8) -> Result<Self, Self::Error> {
-        if maximum == 64 {
-            Ok(Self(maximum))
-        } else {
-            bail!("Maximum embedded payload fraction. Must be 64.")
-        }
+  fn try_from(maximum: u8) -> Result<Self, Self::Error> {
+    if maximum == 64 {
+      Ok(Self(maximum))
+    } else {
+      bail!("Maximum embedded payload fraction. Must be 64.")
     }
+  }
 }
 
 /// Minimum embedded payload fraction. Must be 32.
 #[derive(Debug)]
 pub struct MinimumEmbeddedPayloadFraction(u8);
 impl TryFrom<u8> for MinimumEmbeddedPayloadFraction {
-    type Error = SQLiteError;
+  type Error = SQLiteError;
 
-    fn try_from(minimum: u8) -> Result<Self, Self::Error> {
-        if minimum == 32 {
-            Ok(Self(minimum))
-        } else {
-            bail!("Minimum embedded payload fraction. Must be 32.")
-        }
+  fn try_from(minimum: u8) -> Result<Self, Self::Error> {
+    if minimum == 32 {
+      Ok(Self(minimum))
+    } else {
+      bail!("Minimum embedded payload fraction. Must be 32.")
     }
+  }
 }
 
 /// Leaf payload fraction. Must be 32.
 #[derive(Debug)]
 pub struct LeafPayloadFraction(u8);
 impl TryFrom<u8> for LeafPayloadFraction {
-    type Error = SQLiteError;
+  type Error = SQLiteError;
 
-    fn try_from(leaf: u8) -> Result<Self, Self::Error> {
-        if leaf == 32 {
-            Ok(Self(leaf))
-        } else {
-            bail!("Leaf payload fraction. Must be 32.")
-        }
+  fn try_from(leaf: u8) -> Result<Self, Self::Error> {
+    if leaf == 32 {
+      Ok(Self(leaf))
+    } else {
+      bail!("Leaf payload fraction. Must be 32.")
     }
+  }
 }

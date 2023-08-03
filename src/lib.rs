@@ -37,15 +37,15 @@
 )]
 #![deny(unreachable_pub, private_in_public)]
 #![allow(
-    elided_lifetimes_in_paths,
-    clippy::new_ret_no_self,
-    clippy::unused_self
+  elided_lifetimes_in_paths,
+  clippy::new_ret_no_self,
+  clippy::unused_self
 )]
 #![cfg_attr(docsrs, feature(doc_cfg))]
 #![cfg_attr(test, allow(clippy::float_cmp))]
 
-pub mod result;
 pub mod header;
+pub mod result;
 
 // pub fn add(left: usize, right: usize) -> usize {
 //     left + right

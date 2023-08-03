@@ -19,47 +19,45 @@ use crate::result::SQLiteError;
 #[derive(Debug)]
 pub struct PageSize(u32);
 impl PageSize {
-    pub fn get(&self) -> u32 {
-        self.0
-    }
+  pub fn get(&self) -> u32 {
+    self.0
+  }
 }
 impl Deref for PageSize {
-    type Target=u32;
+  type Target = u32;
 
-    fn deref(&self) -> &Self::Target {
-        &self.0
-    }
+  fn deref(&self) -> &Self::Target {
+    &self.0
+  }
 }
 
 impl<'a> TryFrom<&'a [u8]> for PageSize {
-    type Error = SQLiteError;
+  type Error = SQLiteError;
 
-    fn try_from(payload: &'a [u8]) -> Result<Self, Self::Error> {
-        use std::ops::Not;
+  fn try_from(payload: &'a [u8]) -> Result<Self, Self::Error> {
+    use std::ops::Not;
 
-        const VALID_SIZE: usize = 2;
+    const VALID_SIZE: usize = 2;
 
-        if payload.len() != VALID_SIZE {
-            bail!("Invalid size for MagicHeaderString");
-        }
-
-        let buf: [u8; 2] = payload.try_into()?;
-
-        let page_size = u16::from_be_bytes(buf);
-
-        if page_size == 1 {
-            Ok(Self(65_536))
-        } else {
-            if page_size < 512 {
-                bail!("Page size [{page_size}] can't be less than 512");
-            }
-            if page_size.is_power_of_two().not() {
-                bail!("Page size must be power of two");
-            }
-
-            Ok(Self(page_size.into()))
-        }
+    if payload.len() != VALID_SIZE {
+      bail!("Invalid size for MagicHeaderString");
     }
+
+    let buf: [u8; 2] = payload.try_into()?;
+
+    let page_size = u16::from_be_bytes(buf);
+
+    if page_size == 1 {
+      Ok(Self(65_536))
+    } else {
+      if page_size < 512 {
+        bail!("Page size [{page_size}] can't be less than 512");
+      }
+      if page_size.is_power_of_two().not() {
+        bail!("Page size must be power of two");
+      }
+
+      Ok(Self(page_size.into()))
+    }
+  }
 }
-
-
