@@ -45,6 +45,7 @@
           vscodium
           nixd
           nixpkgs-fmt
+          sqlite
         ];
       in
       {
@@ -55,6 +56,7 @@
             ''
               rustup default stable
               rustup component add rust-analyzer
+              rustup component add rustfmt
               rustup component add clippy
               alias cx='cargo xtask'
             '';
