@@ -14,9 +14,9 @@ use std::ops::Deref;
 /// the change counter is not needed. Hence, the change counter might not be
 /// incremented on each transaction in WAL mode.
 #[derive(Debug)]
-pub struct FileChangeCounter(u32);
+pub(super) struct FileChangeCounter(u32);
 impl FileChangeCounter {
-  pub fn get(&self) -> u32 {
+  pub(super) fn get(&self) -> u32 {
     self.0
   }
 }

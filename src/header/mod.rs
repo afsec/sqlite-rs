@@ -1,11 +1,11 @@
 //! Reference: https://www.sqlite.org/fileformat2.html
 
-pub mod file_change_counter;
-pub mod file_format_version_numbers;
-pub mod magic_header_string;
-pub mod page_size;
-pub mod payload_fractions;
-pub mod reserved_bytes_per_page;
+pub(self) mod file_change_counter;
+pub(self) mod file_format_version_numbers;
+pub(self) mod magic_header_string;
+pub(self) mod page_size;
+pub(self) mod payload_fractions;
+pub(self) mod reserved_bytes_per_page;
 
 use self::{
   file_change_counter::FileChangeCounter,

@@ -8,7 +8,7 @@ use anyhow::bail;
 /// supported and there are no current plans to add support in the future.
 /// Hence, these three bytes are fixed at the values specified.
 #[derive(Debug)]
-pub struct PayloadFractions {
+pub(super) struct PayloadFractions {
   maximum: MaximumEmbeddedPayloadFraction,
   minimum: MinimumEmbeddedPayloadFraction,
   leaf: LeafPayloadFraction,
@@ -39,7 +39,7 @@ impl ParseBytes<&[u8]> for PayloadFractions {
 
 /// Maximum embedded payload fraction. Must be 64.
 #[derive(Debug)]
-pub struct MaximumEmbeddedPayloadFraction(u8);
+pub(super) struct MaximumEmbeddedPayloadFraction(u8);
 
 impl ParseBytes<u8> for MaximumEmbeddedPayloadFraction {
   fn struct_name() -> &'static str {
@@ -61,7 +61,7 @@ impl ParseBytes<u8> for MaximumEmbeddedPayloadFraction {
 
 /// Minimum embedded payload fraction. Must be 32.
 #[derive(Debug)]
-pub struct MinimumEmbeddedPayloadFraction(u8);
+pub(super) struct MinimumEmbeddedPayloadFraction(u8);
 impl ParseBytes<u8> for MinimumEmbeddedPayloadFraction {
   fn struct_name() -> &'static str {
     "MinimumEmbeddedPayloadFraction"
@@ -82,7 +82,7 @@ impl ParseBytes<u8> for MinimumEmbeddedPayloadFraction {
 
 /// Leaf payload fraction. Must be 32.
 #[derive(Debug)]
-pub struct LeafPayloadFraction(u8);
+pub(super) struct LeafPayloadFraction(u8);
 impl ParseBytes<u8> for LeafPayloadFraction {
   fn struct_name() -> &'static str {
     "LeafPayloadFraction"
