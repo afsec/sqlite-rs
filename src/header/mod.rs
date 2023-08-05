@@ -67,6 +67,13 @@ impl<'a> SqliteHeader<'a> {
     &self.page_size
   }
 }
+impl<'a> TryFrom<&'a [u8; 100]> for SqliteHeader<'a> {
+  type Error = SQLiteError;
+
+  fn try_from(input: &'a [u8; 100]) -> Result<Self, Self::Error> {
+    Self::parse_bytes(input)
+  }
+}
 
 impl<'a> ParseBytes<&'a [u8; 100]> for SqliteHeader<'a> {
   fn struct_name() -> &'static str {
