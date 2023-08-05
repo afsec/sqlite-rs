@@ -1,6 +1,5 @@
+use super::ParseBytes;
 use anyhow::bail;
-
-use crate::result::SQLiteError;
 
 ///  The maximum and minimum embedded payload fractions and the leaf payload
 /// fraction values must be 64, 32, and 32. These values were originally
@@ -15,18 +14,21 @@ pub struct PayloadFractions {
   leaf: LeafPayloadFraction,
 }
 
-impl<'a> TryFrom<&'a [u8]> for PayloadFractions {
-  type Error = SQLiteError;
+impl ParseBytes<&[u8]> for PayloadFractions {
+  fn struct_name() -> &'static str {
+    "PayloadFractions"
+  }
 
-  fn try_from(payload: &'a [u8]) -> Result<Self, Self::Error> {
-    const VALID_SIZE: usize = 3;
+  fn valid_size() -> usize {
+    3
+  }
 
-    if payload.len() != VALID_SIZE {
-      bail!("Invalid size for PayloadFractions");
-    }
-    let maximum = MaximumEmbeddedPayloadFraction::try_from(payload[0])?;
-    let minimum = MinimumEmbeddedPayloadFraction::try_from(payload[1])?;
-    let leaf = LeafPayloadFraction::try_from(payload[2])?;
+  fn parse_bytes(input: &[u8]) -> crate::result::SQLiteResult<Self> {
+    let bytes = input;
+    Self::check_payload_size(bytes)?;
+    let maximum = MaximumEmbeddedPayloadFraction::parse_bytes(bytes[0])?;
+    let minimum = MinimumEmbeddedPayloadFraction::parse_bytes(bytes[1])?;
+    let leaf = LeafPayloadFraction::parse_bytes(bytes[2])?;
     Ok(Self {
       maximum,
       minimum,
@@ -39,10 +41,16 @@ impl<'a> TryFrom<&'a [u8]> for PayloadFractions {
 #[derive(Debug)]
 pub struct MaximumEmbeddedPayloadFraction(u8);
 
-impl TryFrom<u8> for MaximumEmbeddedPayloadFraction {
-  type Error = SQLiteError;
+impl ParseBytes<u8> for MaximumEmbeddedPayloadFraction {
+  fn struct_name() -> &'static str {
+    "MaximumEmbeddedPayloadFraction"
+  }
 
-  fn try_from(maximum: u8) -> Result<Self, Self::Error> {
+  fn valid_size() -> usize {
+    1
+  }
+
+  fn parse_bytes(maximum: u8) -> crate::result::SQLiteResult<Self> {
     if maximum == 64 {
       Ok(Self(maximum))
     } else {
@@ -54,10 +62,16 @@ impl TryFrom<u8> for MaximumEmbeddedPayloadFraction {
 /// Minimum embedded payload fraction. Must be 32.
 #[derive(Debug)]
 pub struct MinimumEmbeddedPayloadFraction(u8);
-impl TryFrom<u8> for MinimumEmbeddedPayloadFraction {
-  type Error = SQLiteError;
+impl ParseBytes<u8> for MinimumEmbeddedPayloadFraction {
+  fn struct_name() -> &'static str {
+    "MinimumEmbeddedPayloadFraction"
+  }
 
-  fn try_from(minimum: u8) -> Result<Self, Self::Error> {
+  fn valid_size() -> usize {
+    1
+  }
+
+  fn parse_bytes(minimum: u8) -> crate::result::SQLiteResult<Self> {
     if minimum == 32 {
       Ok(Self(minimum))
     } else {
@@ -69,10 +83,16 @@ impl TryFrom<u8> for MinimumEmbeddedPayloadFraction {
 /// Leaf payload fraction. Must be 32.
 #[derive(Debug)]
 pub struct LeafPayloadFraction(u8);
-impl TryFrom<u8> for LeafPayloadFraction {
-  type Error = SQLiteError;
+impl ParseBytes<u8> for LeafPayloadFraction {
+  fn struct_name() -> &'static str {
+    "LeafPayloadFraction"
+  }
 
-  fn try_from(leaf: u8) -> Result<Self, Self::Error> {
+  fn valid_size() -> usize {
+    1
+  }
+
+  fn parse_bytes(leaf: u8) -> crate::result::SQLiteResult<Self> {
     if leaf == 32 {
       Ok(Self(leaf))
     } else {
