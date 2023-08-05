@@ -17,9 +17,9 @@ use anyhow::bail;
 /// However, *the usable size is not allowed to be less than `480`*. In other words, if the page size is 512, then the
 /// reserved space size cannot exceed 32.
 #[derive(Debug)]
-pub struct ReservedBytesPerPage(u8);
+pub(super) struct ReservedBytesPerPage(u8);
 impl ReservedBytesPerPage {
-  pub fn get(&self) -> u8 {
+  pub(super) fn get(&self) -> u8 {
     self.0
   }
 }

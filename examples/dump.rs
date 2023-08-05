@@ -6,17 +6,17 @@ fn main() -> SQLiteResult<()> {
   println!("SQLite info\n");
 
   let mut f = File::open("flights.db")?;
-  let mut buffer: [u8; 100] = [0; 100];
+  let mut sqlite_header_buffer: [u8; 100] = [0; 100];
 
-  let read_len = f.read(&mut buffer)?;
+  let read_len = f.read(&mut sqlite_header_buffer)?;
   println!("Read {read_len} bytes.");
 
-  print_hexdump(&buffer[..])?;
+  print_hexdump(&sqlite_header_buffer[..])?;
 
-  let sqlite_header = SqliteHeader::try_from(&buffer)?;
+  let sqlite_header = SqliteHeader::try_from(&sqlite_header_buffer)?;
   dbg!(&sqlite_header);
 
-  // dbg!(&sqlite_header, &sqlite_header.page_size().get());
+  dbg!(&sqlite_header, &sqlite_header.page_size().get());
 
   Ok(())
 }

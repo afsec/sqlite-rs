@@ -16,7 +16,7 @@ use anyhow::bail;
 /// read-only. If a database file with a read version greater than 2 is
 /// encountered, then that database cannot be read or written.
 #[derive(Debug)]
-pub struct FileFormatVersionNumbers {
+pub(super) struct FileFormatVersionNumbers {
   write_version: FileFormatWriteVersion,
   read_version: FileFormatReadVersion,
 }
@@ -42,7 +42,7 @@ impl ParseBytes<&[u8]> for FileFormatVersionNumbers {
 }
 
 #[derive(Debug)]
-pub enum FileFormatWriteVersion {
+pub(super) enum FileFormatWriteVersion {
   Legacy,
   /// Write-Ahead Log
   ///
@@ -69,7 +69,7 @@ impl ParseBytes<u8> for FileFormatWriteVersion {
 }
 
 #[derive(Debug)]
-pub enum FileFormatReadVersion {
+pub(super) enum FileFormatReadVersion {
   Legacy,
   /// Write-Ahead Log
   ///
