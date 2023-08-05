@@ -1,8 +1,6 @@
-use std::ops::Deref;
-
+use super::ParseBytes;
 use anyhow::bail;
-
-use crate::result::SQLiteError;
+use std::ops::Deref;
 
 /// # Page Size (2 Bytes)
 ///  The two-byte value beginning at offset 16 determines the page size of the
@@ -31,19 +29,22 @@ impl Deref for PageSize {
   }
 }
 
-impl<'a> TryFrom<&'a [u8]> for PageSize {
-  type Error = SQLiteError;
+impl ParseBytes<&[u8]> for PageSize {
+  fn struct_name() -> &'static str {
+    "PageSize"
+  }
 
-  fn try_from(payload: &'a [u8]) -> Result<Self, Self::Error> {
+  fn valid_size() -> usize {
+    2
+  }
+
+  fn parse_bytes(input: &[u8]) -> crate::result::SQLiteResult<Self> {
     use std::ops::Not;
 
-    const VALID_SIZE: usize = 2;
+    let bytes = input;
+    Self::check_payload_size(bytes)?;
 
-    if payload.len() != VALID_SIZE {
-      bail!("Invalid size for MagicHeaderString");
-    }
-
-    let buf: [u8; 2] = payload.try_into()?;
+    let buf: [u8; 2] = bytes.try_into()?;
 
     let page_size = u16::from_be_bytes(buf);
 

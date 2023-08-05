@@ -40,6 +40,7 @@ strip = true
 
 [dependencies]
 anyhow = "1.0"
+# num-traits = "0.2.16"
 
 [dev-dependencies]
 hexyl = "0.13"

@@ -1,4 +1,5 @@
-use crate::result::SQLiteError;
+use super::ParseBytes;
+use crate::result::SQLiteResult;
 use anyhow::bail;
 
 /// # File format version numbers (2 Bytes)
@@ -19,35 +20,50 @@ pub struct FileFormatVersionNumbers {
   write_version: FileFormatWriteVersion,
   read_version: FileFormatReadVersion,
 }
-impl<'a> TryFrom<&'a [u8]> for FileFormatVersionNumbers {
-  type Error = SQLiteError;
+impl ParseBytes<&[u8]> for FileFormatVersionNumbers {
+  fn struct_name() -> &'static str {
+    "FileFormatVersionNumbers"
+  }
 
-  fn try_from(payload: &'a [u8]) -> Result<Self, Self::Error> {
-    if payload.len() != 2 {
-      bail!("Invalid size for FileFormatVersionNumbers")
-    }
-    let write_version = FileFormatWriteVersion::try_from(payload[0])?;
-    let read_version = FileFormatReadVersion::try_from(payload[1])?;
+  fn valid_size() -> usize {
+    2
+  }
+
+  fn parse_bytes(input: &[u8]) -> SQLiteResult<Self> {
+    let bytes = input;
+    Self::check_payload_size(bytes)?;
+    let write_version = FileFormatWriteVersion::parse_bytes(bytes[0])?;
+    let read_version = FileFormatReadVersion::parse_bytes(bytes[1])?;
     Ok(Self {
       write_version,
       read_version,
     })
   }
 }
+
 #[derive(Debug)]
 pub enum FileFormatWriteVersion {
   Legacy,
+  /// Write-Ahead Log
+  ///
+  /// Reference: https://www.sqlite.org/wal.html
   WAL,
 }
 
-impl TryFrom<u8> for FileFormatWriteVersion {
-  type Error = SQLiteError;
+impl ParseBytes<u8> for FileFormatWriteVersion {
+  fn struct_name() -> &'static str {
+    "FileFormatReadVersion"
+  }
 
-  fn try_from(value: u8) -> Result<Self, Self::Error> {
-    match value {
+  fn valid_size() -> usize {
+    1
+  }
+
+  fn parse_bytes(one_byte: u8) -> crate::result::SQLiteResult<Self> {
+    match one_byte {
       1 => Ok(Self::Legacy),
       2 => Ok(Self::WAL),
-      _ => bail!("Invalid payload for FileFormatWriteVersion"),
+      _ => bail!("Invalid payload for FileFormatReadVersion"),
     }
   }
 }
@@ -55,13 +71,22 @@ impl TryFrom<u8> for FileFormatWriteVersion {
 #[derive(Debug)]
 pub enum FileFormatReadVersion {
   Legacy,
+  /// Write-Ahead Log
+  ///
+  /// Reference: https://www.sqlite.org/wal.html
   WAL,
 }
-impl TryFrom<u8> for FileFormatReadVersion {
-  type Error = SQLiteError;
+impl ParseBytes<u8> for FileFormatReadVersion {
+  fn struct_name() -> &'static str {
+    "FileFormatReadVersion"
+  }
 
-  fn try_from(value: u8) -> Result<Self, Self::Error> {
-    match value {
+  fn valid_size() -> usize {
+    1
+  }
+
+  fn parse_bytes(one_byte: u8) -> crate::result::SQLiteResult<Self> {
+    match one_byte {
       1 => Ok(Self::Legacy),
       2 => Ok(Self::WAL),
       _ => bail!("Invalid payload for FileFormatReadVersion"),
