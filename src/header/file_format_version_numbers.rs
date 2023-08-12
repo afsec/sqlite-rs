@@ -1,6 +1,6 @@
 use super::ParseBytes;
 use crate::result::SQLiteResult;
-use anyhow::bail;
+use anyhow::{bail,format_err};
 
 /// # File format version numbers (2 Bytes)
 ///  The file format write version and file format read version at offsets 18
@@ -29,11 +29,11 @@ impl ParseBytes<&[u8]> for FileFormatVersionNumbers {
     2
   }
 
-  fn parse_bytes(input: &[u8]) -> SQLiteResult<Self> {
+  fn parsing_handler(input: &[u8]) -> SQLiteResult<Self> {
     let bytes = input;
     Self::check_payload_size(bytes)?;
-    let write_version = FileFormatWriteVersion::parse_bytes(bytes[0])?;
-    let read_version = FileFormatReadVersion::parse_bytes(bytes[1])?;
+    let write_version = FileFormatWriteVersion::parsing_handler(&[bytes[0]])?;
+    let read_version = FileFormatReadVersion::parsing_handler(&[bytes[1]])?;
     Ok(Self {
       write_version,
       read_version,
@@ -52,14 +52,15 @@ pub(super) enum FileFormatWriteVersion {
 
 impl ParseBytes<u8> for FileFormatWriteVersion {
   fn struct_name() -> &'static str {
-    "FileFormatReadVersion"
+    "FileFormatWriteVersion"
   }
 
   fn valid_size() -> usize {
     1
   }
 
-  fn parse_bytes(one_byte: u8) -> crate::result::SQLiteResult<Self> {
+  fn parsing_handler(input: &[u8]) -> crate::result::SQLiteResult<Self> {
+    let one_byte = input.get(0).ok_or(format_err!("Impossible state on parsing {}",Self::struct_name()))?;
     match one_byte {
       1 => Ok(Self::Legacy),
       2 => Ok(Self::WAL),
@@ -85,7 +86,8 @@ impl ParseBytes<u8> for FileFormatReadVersion {
     1
   }
 
-  fn parse_bytes(one_byte: u8) -> crate::result::SQLiteResult<Self> {
+  fn parsing_handler(input: &[u8]) -> crate::result::SQLiteResult<Self> {
+    let one_byte = input.get(0).ok_or(format_err!("Impossible state on parsing {}",Self::struct_name()))?;
     match one_byte {
       1 => Ok(Self::Legacy),
       2 => Ok(Self::WAL),

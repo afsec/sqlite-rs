@@ -1,5 +1,5 @@
-use super::{page_size::PageSize, ParseBytes};
-use anyhow::bail;
+use super::ParseBytes;
+use anyhow::format_err;
 
 ///  SQLite has the ability to set aside a small number of extra bytes at the
 /// end of every page for use by extensions. These extra bytes are used, for
@@ -24,15 +24,25 @@ impl ReservedBytesPerPage {
   }
 }
 
-impl ParseBytes<(&PageSize, u8)> for ReservedBytesPerPage {
+impl ParseBytes<&[u8]> for ReservedBytesPerPage {
   fn struct_name() -> &'static str {
     "ReservedBytesPerPage"
   }
 
   fn valid_size() -> usize {
-    2
+    1
   }
 
+  fn parsing_handler(input: &[u8]) -> crate::result::SQLiteResult<Self> {
+    let reserved_bytes_per_page = *input.get(0).ok_or(format_err!(
+      "Impossible state on parsing {}",
+      Self::struct_name()
+    ))?;
+
+    Ok(Self(reserved_bytes_per_page))
+  }
+}
+/*
   fn parse_bytes(input: (&PageSize, u8)) -> crate::result::SQLiteResult<Self> {
     let (pagesize, reserved_bytes) = input;
     if **pagesize == 512 && reserved_bytes > 32 {
@@ -41,4 +51,6 @@ impl ParseBytes<(&PageSize, u8)> for ReservedBytesPerPage {
       Ok(Self(reserved_bytes))
     }
   }
-}
+
+
+*/

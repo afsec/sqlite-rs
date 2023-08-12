@@ -14,7 +14,6 @@ fn main() -> SQLiteResult<()> {
   print_hexdump(&sqlite_header_buffer[..])?;
 
   let sqlite_header = SqliteHeader::try_from(&sqlite_header_buffer)?;
-  dbg!(&sqlite_header);
 
   dbg!(&sqlite_header, &sqlite_header.page_size().get());
 

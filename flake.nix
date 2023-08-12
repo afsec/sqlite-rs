@@ -10,7 +10,7 @@
         pkgs = nixpkgs.legacyPackages.${system};
 
         packages = with pkgs; [
-          busybox
+          #busybox
           curl
           wget
           pkg-config
