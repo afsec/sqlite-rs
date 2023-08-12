@@ -31,9 +31,7 @@ impl ParseBytes<&[u8]> for FileFormatVersionNumbers {
     2
   }
 
-  fn parsing_handler(input: &[u8]) -> SQLiteResult<Self> {
-    let bytes = input;
-    Self::check_payload_size(bytes)?;
+  fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
     let write_version = FileFormatWriteVersion::parsing_handler(&[bytes[0]])?;
     let read_version = FileFormatReadVersion::parsing_handler(&[bytes[1]])?;
     Ok(Self {
@@ -61,8 +59,8 @@ impl ParseBytes<u8> for FileFormatWriteVersion {
     1
   }
 
-  fn parsing_handler(input: &[u8]) -> crate::result::SQLiteResult<Self> {
-    let one_byte = input.get(0).ok_or(format_err!(
+  fn parsing_handler(bytes: &[u8]) -> crate::result::SQLiteResult<Self> {
+    let one_byte = bytes.get(0).ok_or(format_err!(
       "Impossible state on parsing {}",
       Self::struct_name()
     ))?;
@@ -91,8 +89,8 @@ impl ParseBytes<u8> for FileFormatReadVersion {
     1
   }
 
-  fn parsing_handler(input: &[u8]) -> crate::result::SQLiteResult<Self> {
-    let one_byte = input.get(0).ok_or(format_err!(
+  fn parsing_handler(bytes: &[u8]) -> crate::result::SQLiteResult<Self> {
+    let one_byte = bytes.get(0).ok_or(format_err!(
       "Impossible state on parsing {}",
       Self::struct_name()
     ))?;

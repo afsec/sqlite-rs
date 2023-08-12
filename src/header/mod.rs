@@ -9,9 +9,10 @@ pub(self) mod payload_fractions;
 pub(self) mod reserved_bytes_per_page;
 
 use self::{
+  db_filesize_in_pages::DatabaseFileSizeInPages,
   file_change_counter::FileChangeCounter,
   file_format_version_numbers::FileFormatVersionNumbers,
-  magic_header_string::MagicHeaderString, page_size::PageSize, db_filesize_in_pages::DatabaseFileSizeInPages,
+  magic_header_string::MagicHeaderString, page_size::PageSize,
 };
 use crate::{
   header::{
@@ -81,8 +82,8 @@ impl SqliteHeader {
 impl TryFrom<&[u8; 100]> for SqliteHeader {
   type Error = SQLiteError;
 
-  fn try_from(input: &[u8; 100]) -> Result<Self, Self::Error> {
-    let bytes = input;
+  fn try_from(bytes: &[u8; 100]) -> Result<Self, Self::Error> {
+    let bytes = bytes;
 
     println!("{:x?}", &bytes[0..=15]);
     println!("{:x?}", &bytes[16..=17]);
@@ -101,7 +102,8 @@ impl TryFrom<&[u8; 100]> for SqliteHeader {
     let payload_fractions = PayloadFractions::parse_bytes(&bytes[21..=23])?;
 
     let file_change_counter = FileChangeCounter::parse_bytes(&bytes[24..=27])?;
-    let db_filesize_in_pages = DatabaseFileSizeInPages::parse_bytes(&bytes[28..=31])?;
+    let db_filesize_in_pages =
+      DatabaseFileSizeInPages::parse_bytes(&bytes[28..=31])?;
     Ok(Self {
       magic_header_string,
       page_size,
@@ -120,7 +122,7 @@ where
 {
   fn struct_name() -> &'static str;
   fn bytes_length() -> usize;
-  fn parsing_handler(input: &[u8]) -> SQLiteResult<Self>;
+  fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self>;
 
   fn check_payload_size(bytes: &[u8]) -> SQLiteResult<()> {
     if bytes.len() != Self::bytes_length() {
@@ -129,8 +131,16 @@ where
       Ok(())
     }
   }
-  fn parse_bytes(input: &[u8]) -> SQLiteResult<Self> {
-    Self::check_payload_size(input)?;
-    Self::parsing_handler(input)
+  fn parse_bytes(bytes: &[u8]) -> SQLiteResult<Self> {
+    Self::check_payload_size(bytes)?;
+    Self::parsing_handler(bytes)
   }
+}
+
+// TODO
+trait ValidateParsed<T>
+where
+  Self: Sized + ParseBytes<T>,
+{
+  fn validate_parsed(&self) -> SQLiteResult<()>;
 }

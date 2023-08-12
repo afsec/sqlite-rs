@@ -10,7 +10,7 @@
         pkgs = nixpkgs.legacyPackages.${system};
 
         packages = with pkgs; [
-          #busybox
+          busybox
           curl
           wget
           pkg-config
@@ -58,6 +58,7 @@
               rustup component add rust-analyzer
               rustup component add rustfmt
               rustup component add clippy
+              rustup target add $(arch -m)-unknown-linux-musl 
               alias cx='cargo xtask'
             '';
         };

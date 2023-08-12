@@ -34,8 +34,8 @@ impl ParseBytes<&[u8]> for ReservedBytesPerPage {
     1
   }
 
-  fn parsing_handler(input: &[u8]) -> crate::result::SQLiteResult<Self> {
-    let reserved_bytes_per_page = *input.get(0).ok_or(format_err!(
+  fn parsing_handler(bytes: &[u8]) -> crate::result::SQLiteResult<Self> {
+    let reserved_bytes_per_page = *bytes.get(0).ok_or(format_err!(
       "Impossible state on parsing {}",
       Self::struct_name()
     ))?;
@@ -44,8 +44,8 @@ impl ParseBytes<&[u8]> for ReservedBytesPerPage {
   }
 }
 /*
-  fn parse_bytes(input: (&PageSize, u8)) -> crate::result::SQLiteResult<Self> {
-    let (pagesize, reserved_bytes) = input;
+  fn parse_bytes(bytes: (&PageSize, u8)) -> crate::result::SQLiteResult<Self> {
+    let (pagesize, reserved_bytes) = bytes;
     if **pagesize == 512 && reserved_bytes > 32 {
       bail!("Usable size is not allowed be less than 480")
     } else {

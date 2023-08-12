@@ -49,7 +49,11 @@ impl ParseBytes<&[u8]> for DatabaseFileSizeInPages {
     4
   }
 
-  fn parsing_handler(input: &[u8]) -> crate::result::SQLiteResult<Self> {
-    todo!()
+  fn parsing_handler(bytes: &[u8]) -> crate::result::SQLiteResult<Self> {
+    let buf: [u8; 4] = bytes.try_into()?;
+
+    let database_size = u32::from_be_bytes(buf);
+
+    Ok(Self(database_size))
   }
 }

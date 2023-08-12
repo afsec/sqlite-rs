@@ -38,11 +38,8 @@ impl ParseBytes<&[u8]> for PageSize {
     2
   }
 
-  fn parsing_handler(input: &[u8]) -> crate::result::SQLiteResult<Self> {
+  fn parsing_handler(bytes: &[u8]) -> crate::result::SQLiteResult<Self> {
     use std::ops::Not;
-
-    let bytes = input;
-    Self::check_payload_size(bytes)?;
 
     let buf: [u8; 2] = bytes.try_into()?;
 

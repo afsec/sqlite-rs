@@ -30,10 +30,7 @@ impl<'a> ParseBytes<&[u8]> for MagicHeaderString {
     16
   }
 
-  fn parsing_handler(input: &[u8]) -> crate::result::SQLiteResult<Self> {
-    let bytes = input;
-    Self::check_payload_size(bytes)?;
-
+  fn parsing_handler(bytes: &[u8]) -> crate::result::SQLiteResult<Self> {
     for (idx, byte) in SQLITE3_FILE_FORMAT_MAGIC_STRING.iter().enumerate() {
       if bytes.get(idx) != Some(byte) {
         bail!("Invalid payload for {}", Self::struct_name());
