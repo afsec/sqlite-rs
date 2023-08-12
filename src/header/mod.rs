@@ -1,5 +1,6 @@
 //! Reference: https://www.sqlite.org/fileformat2.html
 
+pub(self) mod db_filesize_in_pages;
 pub(self) mod file_change_counter;
 pub(self) mod file_format_version_numbers;
 pub(self) mod magic_header_string;
@@ -10,7 +11,7 @@ pub(self) mod reserved_bytes_per_page;
 use self::{
   file_change_counter::FileChangeCounter,
   file_format_version_numbers::FileFormatVersionNumbers,
-  magic_header_string::MagicHeaderString, page_size::PageSize,
+  magic_header_string::MagicHeaderString, page_size::PageSize, db_filesize_in_pages::DatabaseFileSizeInPages,
 };
 use crate::{
   header::{
@@ -25,7 +26,7 @@ use anyhow::bail;
 ///
 /// |Offset	| Size	| Description|
 /// |-------|-------|------------|
-/// |0	    | 16	| The header string: "SQLite format 3\000" |
+/// |0	    | 16	  | The header string: "SQLite format 3\000" |
 /// |16	    | 2	    | The database page size in bytes. Must be a power of two between 512 and 32768 inclusive, or the bytes 1 representing a page size of 65536. |
 /// |18	    | 1	    | File format write version. 1 for legacy; 2 for WAL. |
 /// |19	    | 1	    | File format read version. 1 for legacy; 2 for WAL. |
@@ -50,12 +51,22 @@ use anyhow::bail;
 /// |96	    | 4	    | SQLITE_VERSION_NUMBER |
 #[derive(Debug)]
 pub struct SqliteHeader {
+  /// The header string: "`SQLite format 3\000`".
   magic_header_string: MagicHeaderString,
+  /// The database page size in bytes.
+  ///  Must be a power of two between 512 and 32768 inclusive,
+  /// or the bytes 1 representing a page size of 65536.
   page_size: PageSize,
+  /// File format version numbers.
   file_format_version_numbers: FileFormatVersionNumbers,
+  /// Bytes of unused "reserved" space at the end of each page. Usually 0.
   reserved_bytes_per_page: ReservedBytesPerPage,
+  /// Payload Fractions.
   payload_fractions: PayloadFractions,
+  /// File change counter.
   file_change_counter: FileChangeCounter,
+  // Size of the database file in pages. The "in-header database size".
+  db_filesize_in_pages: DatabaseFileSizeInPages,
 }
 
 impl SqliteHeader {
@@ -79,6 +90,7 @@ impl TryFrom<&[u8; 100]> for SqliteHeader {
     println!("{:x?}", &bytes[20]);
     println!("{:x?}", &bytes[21..=23]);
     println!("{:x?}", &bytes[24..=27]);
+    println!("{:x?}", &bytes[28..=31]);
 
     let magic_header_string = MagicHeaderString::parse_bytes(&bytes[0..=15])?;
     let page_size = PageSize::parse_bytes(&bytes[16..=17])?;
@@ -89,6 +101,7 @@ impl TryFrom<&[u8; 100]> for SqliteHeader {
     let payload_fractions = PayloadFractions::parse_bytes(&bytes[21..=23])?;
 
     let file_change_counter = FileChangeCounter::parse_bytes(&bytes[24..=27])?;
+    let db_filesize_in_pages = DatabaseFileSizeInPages::parse_bytes(&bytes[28..=31])?;
     Ok(Self {
       magic_header_string,
       page_size,
@@ -96,6 +109,7 @@ impl TryFrom<&[u8; 100]> for SqliteHeader {
       reserved_bytes_per_page,
       payload_fractions,
       file_change_counter,
+      db_filesize_in_pages,
     })
   }
 }
@@ -105,11 +119,11 @@ where
   Self: Sized,
 {
   fn struct_name() -> &'static str;
-  fn valid_size() -> usize;
+  fn bytes_length() -> usize;
   fn parsing_handler(input: &[u8]) -> SQLiteResult<Self>;
 
   fn check_payload_size(bytes: &[u8]) -> SQLiteResult<()> {
-    if bytes.len() != Self::valid_size() {
+    if bytes.len() != Self::bytes_length() {
       bail!("Invalid size for {}", Self::struct_name());
     } else {
       Ok(())

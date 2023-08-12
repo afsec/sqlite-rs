@@ -1,6 +1,8 @@
 use super::ParseBytes;
 use anyhow::{bail, format_err};
 
+
+/// # Payload Fractions (3 Bytes)
 ///  The maximum and minimum embedded payload fractions and the leaf payload
 /// fraction values must be 64, 32, and 32. These values were originally
 /// intended to be tunable parameters that could be used to modify the storage
@@ -9,8 +11,11 @@ use anyhow::{bail, format_err};
 /// Hence, these three bytes are fixed at the values specified.
 #[derive(Debug)]
 pub(super) struct PayloadFractions {
+  /// Maximum embedded payload fraction. Must be 64.
   maximum: MaximumEmbeddedPayloadFraction,
+  /// Minimum embedded payload fraction. Must be 32.
   minimum: MinimumEmbeddedPayloadFraction,
+  /// Leaf payload fraction. Must be 32.
   leaf: LeafPayloadFraction,
 }
 
@@ -19,7 +24,7 @@ impl ParseBytes<&[u8]> for PayloadFractions {
     "PayloadFractions"
   }
 
-  fn valid_size() -> usize {
+  fn bytes_length() -> usize {
     3
   }
 
@@ -46,7 +51,7 @@ impl ParseBytes<&[u8]> for MaximumEmbeddedPayloadFraction {
     "MaximumEmbeddedPayloadFraction"
   }
 
-  fn valid_size() -> usize {
+  fn bytes_length() -> usize {
     1
   }
 
@@ -71,7 +76,7 @@ impl ParseBytes<&[u8]> for MinimumEmbeddedPayloadFraction {
     "MinimumEmbeddedPayloadFraction"
   }
 
-  fn valid_size() -> usize {
+  fn bytes_length() -> usize {
     1
   }
 
@@ -96,7 +101,7 @@ impl ParseBytes<&[u8]> for LeafPayloadFraction {
     "LeafPayloadFraction"
   }
 
-  fn valid_size() -> usize {
+  fn bytes_length() -> usize {
     1
   }
 

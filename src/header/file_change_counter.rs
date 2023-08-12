@@ -2,6 +2,7 @@ use super::ParseBytes;
 use crate::result::SQLiteResult;
 use std::ops::Deref;
 
+/// # File change counter (4 Bytes)
 ///  The file change counter is a 4-byte big-endian integer at offset 24 that is
 /// incremented whenever the database file is unlocked after having been
 /// modified. When two or more processes are reading the same database file,
@@ -29,7 +30,7 @@ impl Deref for FileChangeCounter {
 }
 
 impl ParseBytes<&[u8]> for FileChangeCounter {
-  fn valid_size() -> usize {
+  fn bytes_length() -> usize {
     4
   }
 

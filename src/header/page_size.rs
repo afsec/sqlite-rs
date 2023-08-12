@@ -34,7 +34,7 @@ impl ParseBytes<&[u8]> for PageSize {
     "PageSize"
   }
 
-  fn valid_size() -> usize {
+  fn bytes_length() -> usize {
     2
   }
 

@@ -1,6 +1,6 @@
 use super::ParseBytes;
 use crate::result::SQLiteResult;
-use anyhow::{bail,format_err};
+use anyhow::{bail, format_err};
 
 /// # File format version numbers (2 Bytes)
 ///  The file format write version and file format read version at offsets 18
@@ -17,7 +17,9 @@ use anyhow::{bail,format_err};
 /// encountered, then that database cannot be read or written.
 #[derive(Debug)]
 pub(super) struct FileFormatVersionNumbers {
+  /// File format write version. 1 for legacy; 2 for WAL.
   write_version: FileFormatWriteVersion,
+  /// File format read version. 1 for legacy; 2 for WAL.
   read_version: FileFormatReadVersion,
 }
 impl ParseBytes<&[u8]> for FileFormatVersionNumbers {
@@ -25,7 +27,7 @@ impl ParseBytes<&[u8]> for FileFormatVersionNumbers {
     "FileFormatVersionNumbers"
   }
 
-  fn valid_size() -> usize {
+  fn bytes_length() -> usize {
     2
   }
 
@@ -55,12 +57,15 @@ impl ParseBytes<u8> for FileFormatWriteVersion {
     "FileFormatWriteVersion"
   }
 
-  fn valid_size() -> usize {
+  fn bytes_length() -> usize {
     1
   }
 
   fn parsing_handler(input: &[u8]) -> crate::result::SQLiteResult<Self> {
-    let one_byte = input.get(0).ok_or(format_err!("Impossible state on parsing {}",Self::struct_name()))?;
+    let one_byte = input.get(0).ok_or(format_err!(
+      "Impossible state on parsing {}",
+      Self::struct_name()
+    ))?;
     match one_byte {
       1 => Ok(Self::Legacy),
       2 => Ok(Self::WAL),
@@ -82,12 +87,15 @@ impl ParseBytes<u8> for FileFormatReadVersion {
     "FileFormatReadVersion"
   }
 
-  fn valid_size() -> usize {
+  fn bytes_length() -> usize {
     1
   }
 
   fn parsing_handler(input: &[u8]) -> crate::result::SQLiteResult<Self> {
-    let one_byte = input.get(0).ok_or(format_err!("Impossible state on parsing {}",Self::struct_name()))?;
+    let one_byte = input.get(0).ok_or(format_err!(
+      "Impossible state on parsing {}",
+      Self::struct_name()
+    ))?;
     match one_byte {
       1 => Ok(Self::Legacy),
       2 => Ok(Self::WAL),
