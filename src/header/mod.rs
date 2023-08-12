@@ -49,8 +49,8 @@ use anyhow::bail;
 /// |92	    | 4	    | The version-valid-for number. |
 /// |96	    | 4	    | SQLITE_VERSION_NUMBER |
 #[derive(Debug)]
-pub struct SqliteHeader<'a> {
-  magic_header_string: MagicHeaderString<'a>,
+pub struct SqliteHeader {
+  magic_header_string: MagicHeaderString,
   page_size: PageSize,
   file_format_version_numbers: FileFormatVersionNumbers,
   reserved_bytes_per_page: ReservedBytesPerPage,
@@ -58,8 +58,8 @@ pub struct SqliteHeader<'a> {
   file_change_counter: FileChangeCounter,
 }
 
-impl<'a> SqliteHeader<'a> {
-  pub fn magic_header_string(&self) -> &MagicHeaderString<'a> {
+impl SqliteHeader {
+  pub fn magic_header_string(&self) -> &MagicHeaderString {
     &self.magic_header_string
   }
 
@@ -67,26 +67,11 @@ impl<'a> SqliteHeader<'a> {
     &self.page_size
   }
 }
-impl<'a> TryFrom<&'a [u8; 100]> for SqliteHeader<'a> {
+impl TryFrom<&[u8; 100]> for SqliteHeader {
   type Error = SQLiteError;
 
-  fn try_from(input: &'a [u8; 100]) -> Result<Self, Self::Error> {
-    Self::parse_bytes(input)
-  }
-}
-
-impl<'a> ParseBytes<&'a [u8; 100]> for SqliteHeader<'a> {
-  fn struct_name() -> &'static str {
-    "SqliteHeader"
-  }
-
-  fn valid_size() -> usize {
-    100
-  }
-
-  fn parse_bytes(input: &'a [u8; 100]) -> SQLiteResult<Self> {
+  fn try_from(input: &[u8; 100]) -> Result<Self, Self::Error> {
     let bytes = input;
-    Self::check_payload_size(bytes)?;
 
     println!("{:x?}", &bytes[0..=15]);
     println!("{:x?}", &bytes[16..=17]);
@@ -100,7 +85,7 @@ impl<'a> ParseBytes<&'a [u8; 100]> for SqliteHeader<'a> {
     let file_format_version_numbers =
       FileFormatVersionNumbers::parse_bytes(&bytes[18..=19])?;
     let reserved_bytes_per_page =
-      ReservedBytesPerPage::parse_bytes((&page_size, bytes[20]))?;
+      ReservedBytesPerPage::parse_bytes(&[bytes[20]])?;
     let payload_fractions = PayloadFractions::parse_bytes(&bytes[21..=23])?;
 
     let file_change_counter = FileChangeCounter::parse_bytes(&bytes[24..=27])?;
@@ -121,6 +106,8 @@ where
 {
   fn struct_name() -> &'static str;
   fn valid_size() -> usize;
+  fn parsing_handler(input: &[u8]) -> SQLiteResult<Self>;
+
   fn check_payload_size(bytes: &[u8]) -> SQLiteResult<()> {
     if bytes.len() != Self::valid_size() {
       bail!("Invalid size for {}", Self::struct_name());
@@ -128,5 +115,8 @@ where
       Ok(())
     }
   }
-  fn parse_bytes(input: T) -> SQLiteResult<Self>;
+  fn parse_bytes(input: &[u8]) -> SQLiteResult<Self> {
+    Self::check_payload_size(input)?;
+    Self::parsing_handler(input)
+  }
 }

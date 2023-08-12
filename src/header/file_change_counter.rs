@@ -37,7 +37,7 @@ impl ParseBytes<&[u8]> for FileChangeCounter {
     "FileChangeCounter"
   }
 
-  fn parse_bytes(input: &[u8]) -> SQLiteResult<Self> {
+  fn parsing_handler(input: &[u8]) -> SQLiteResult<Self> {
     let bytes = input;
 
     Self::check_payload_size(bytes)?;

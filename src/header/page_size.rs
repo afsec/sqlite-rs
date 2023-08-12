@@ -38,7 +38,7 @@ impl ParseBytes<&[u8]> for PageSize {
     2
   }
 
-  fn parse_bytes(input: &[u8]) -> crate::result::SQLiteResult<Self> {
+  fn parsing_handler(input: &[u8]) -> crate::result::SQLiteResult<Self> {
     use std::ops::Not;
 
     let bytes = input;
