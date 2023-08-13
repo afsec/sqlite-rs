@@ -2,7 +2,7 @@
 edition = "2021"
 rust-version = "1.71"
 name = "sqlite-rs"
-version = "0.1.2"
+version = "0.1.3"
 description = "SQLite reader in pure Rust"
 authors = [ "[Antonio Costa - afsec](https://github.com/afsec)" ]
 repository = "https://github.com/afsec/sqlite-rs"
