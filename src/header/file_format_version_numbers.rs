@@ -16,11 +16,21 @@ use anyhow::{bail, format_err};
 /// read-only. If a database file with a read version greater than 2 is
 /// encountered, then that database cannot be read or written.
 #[derive(Debug)]
-pub(super) struct FileFormatVersionNumbers {
+pub struct FileFormatVersionNumbers {
   /// File format write version. 1 for legacy; 2 for WAL.
   write_version: FileFormatWriteVersion,
   /// File format read version. 1 for legacy; 2 for WAL.
   read_version: FileFormatReadVersion,
+}
+
+impl FileFormatVersionNumbers {
+  pub fn write_version(&self) -> &FileFormatWriteVersion {
+    &self.write_version
+  }
+
+  pub fn read_version(&self) -> &FileFormatReadVersion {
+    &self.read_version
+  }
 }
 impl ParseBytes<&[u8]> for FileFormatVersionNumbers {
   fn struct_name() -> &'static str {
@@ -42,7 +52,7 @@ impl ParseBytes<&[u8]> for FileFormatVersionNumbers {
 }
 
 #[derive(Debug)]
-pub(super) enum FileFormatWriteVersion {
+pub enum FileFormatWriteVersion {
   Legacy,
   /// Write-Ahead Log
   ///
@@ -73,7 +83,7 @@ impl ParseBytes<u8> for FileFormatWriteVersion {
 }
 
 #[derive(Debug)]
-pub(super) enum FileFormatReadVersion {
+pub enum FileFormatReadVersion {
   Legacy,
   /// Write-Ahead Log
   ///

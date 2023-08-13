@@ -13,7 +13,11 @@ const SQLITE3_FILE_FORMAT_MAGIC_STRING: [u8; 16] = [
 /// This byte sequence corresponds to the UTF-8 string `SQLite format 3`
 /// including the nul terminator character at the end.
 pub struct MagicHeaderString([u8; 16]);
-
+impl MagicHeaderString {
+  pub fn get(&self) -> [u8; 16] {
+    self.0
+  }
+}
 impl Debug for MagicHeaderString {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
     let output = format!("{:02x?}", self.0);

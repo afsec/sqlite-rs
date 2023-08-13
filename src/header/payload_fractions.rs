@@ -9,13 +9,27 @@ use anyhow::{bail, format_err};
 /// supported and there are no current plans to add support in the future.
 /// Hence, these three bytes are fixed at the values specified.
 #[derive(Debug)]
-pub(super) struct PayloadFractions {
+pub struct PayloadFractions {
   /// Maximum embedded payload fraction. Must be 64.
   maximum: MaximumEmbeddedPayloadFraction,
   /// Minimum embedded payload fraction. Must be 32.
   minimum: MinimumEmbeddedPayloadFraction,
   /// Leaf payload fraction. Must be 32.
   leaf: LeafPayloadFraction,
+}
+
+impl PayloadFractions {
+  pub fn maximum(&self) -> &MaximumEmbeddedPayloadFraction {
+    &self.maximum
+  }
+
+  pub fn minimum(&self) -> &MinimumEmbeddedPayloadFraction {
+    &self.minimum
+  }
+
+  pub fn leaf(&self) -> &LeafPayloadFraction {
+    &self.leaf
+  }
 }
 
 impl ParseBytes<&[u8]> for PayloadFractions {
@@ -41,7 +55,13 @@ impl ParseBytes<&[u8]> for PayloadFractions {
 
 /// Maximum embedded payload fraction. Must be 64.
 #[derive(Debug)]
-pub(super) struct MaximumEmbeddedPayloadFraction(u8);
+pub struct MaximumEmbeddedPayloadFraction(u8);
+
+impl MaximumEmbeddedPayloadFraction {
+  pub fn get(&self) -> u8 {
+    self.0
+  }
+}
 
 impl ParseBytes<&[u8]> for MaximumEmbeddedPayloadFraction {
   fn struct_name() -> &'static str {
@@ -67,7 +87,14 @@ impl ParseBytes<&[u8]> for MaximumEmbeddedPayloadFraction {
 
 /// Minimum embedded payload fraction. Must be 32.
 #[derive(Debug)]
-pub(super) struct MinimumEmbeddedPayloadFraction(u8);
+pub struct MinimumEmbeddedPayloadFraction(u8);
+
+impl MinimumEmbeddedPayloadFraction {
+  pub fn get(&self) -> u8 {
+    self.0
+  }
+}
+
 impl ParseBytes<&[u8]> for MinimumEmbeddedPayloadFraction {
   fn struct_name() -> &'static str {
     "MinimumEmbeddedPayloadFraction"
@@ -92,7 +119,14 @@ impl ParseBytes<&[u8]> for MinimumEmbeddedPayloadFraction {
 
 /// Leaf payload fraction. Must be 32.
 #[derive(Debug)]
-pub(super) struct LeafPayloadFraction(u8);
+pub struct LeafPayloadFraction(u8);
+
+impl LeafPayloadFraction {
+  pub fn get(&self) -> u8 {
+    self.0
+  }
+}
+
 impl ParseBytes<&[u8]> for LeafPayloadFraction {
   fn struct_name() -> &'static str {
     "LeafPayloadFraction"
