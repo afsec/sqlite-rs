@@ -8,7 +8,7 @@ authors = [ "[Antonio Costa - afsec](https://github.com/afsec)" ]
 repository = "https://github.com/afsec/sqlite-rs"
 license = "MIT"
 readme = "README.md"
-keywords = [ "sqlite" ]
+keywords = [ "sqlite", "database" ]
 
 
 [profile.dev]
