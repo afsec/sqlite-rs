@@ -2,8 +2,8 @@
 edition = "2021"
 rust-version = "1.71"
 name = "sqlite-rs"
-version = "0.1.1"
-description = "SQLite reader in pure rust"
+version = "0.1.2"
+description = "SQLite reader in pure Rust"
 authors = [ "[Antonio Costa - afsec](https://github.com/afsec)" ]
 repository = "https://github.com/afsec/sqlite-rs"
 license = "MIT"
@@ -39,8 +39,8 @@ strip = true
 # [patch.'crates-io']
 
 [dependencies]
-anyhow = "1.0"
+anyhow = "1.0.72"
 # num-traits = "0.2.16"
 
 [dev-dependencies]
-hexyl = "0.13"
+hexyl = "0.13.1"

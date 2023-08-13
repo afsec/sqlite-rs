@@ -1,6 +1,7 @@
 use super::ParseBytes;
 use anyhow::format_err;
 
+/// # Reserved bytes per page (1 Byte)
 ///  SQLite has the ability to set aside a small number of extra bytes at the
 /// end of every page for use by extensions. These extra bytes are used, for
 /// example, by the SQLite Encryption Extension to store a nonce and/or
@@ -29,12 +30,12 @@ impl ParseBytes<&[u8]> for ReservedBytesPerPage {
     "ReservedBytesPerPage"
   }
 
-  fn valid_size() -> usize {
+  fn bytes_length() -> usize {
     1
   }
 
-  fn parsing_handler(input: &[u8]) -> crate::result::SQLiteResult<Self> {
-    let reserved_bytes_per_page = *input.get(0).ok_or(format_err!(
+  fn parsing_handler(bytes: &[u8]) -> crate::result::SQLiteResult<Self> {
+    let reserved_bytes_per_page = *bytes.get(0).ok_or(format_err!(
       "Impossible state on parsing {}",
       Self::struct_name()
     ))?;
@@ -43,8 +44,8 @@ impl ParseBytes<&[u8]> for ReservedBytesPerPage {
   }
 }
 /*
-  fn parse_bytes(input: (&PageSize, u8)) -> crate::result::SQLiteResult<Self> {
-    let (pagesize, reserved_bytes) = input;
+  fn parse_bytes(bytes: (&PageSize, u8)) -> crate::result::SQLiteResult<Self> {
+    let (pagesize, reserved_bytes) = bytes;
     if **pagesize == 512 && reserved_bytes > 32 {
       bail!("Usable size is not allowed be less than 480")
     } else {
