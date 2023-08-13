@@ -24,10 +24,10 @@ use super::ParseBytes;
 /// database sizes can be detected (and ignored) by observing when the
 /// change-counter does not match the version-valid-for number.
 #[derive(Debug)]
-pub(super) struct DatabaseFileSizeInPages(u32);
+pub struct DatabaseFileSizeInPages(u32);
 
 impl DatabaseFileSizeInPages {
-  pub(super) fn get(&self) -> u32 {
+  pub fn get(&self) -> u32 {
     self.0
   }
 }

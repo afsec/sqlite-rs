@@ -18,9 +18,9 @@ use anyhow::format_err;
 /// However, *the usable size is not allowed to be less than `480`*. In other words, if the page size is 512, then the
 /// reserved space size cannot exceed 32.
 #[derive(Debug)]
-pub(super) struct ReservedBytesPerPage(u8);
+pub struct ReservedBytesPerPage(u8);
 impl ReservedBytesPerPage {
-  pub(super) fn get(&self) -> u8 {
+  pub fn get(&self) -> u8 {
     self.0
   }
 }

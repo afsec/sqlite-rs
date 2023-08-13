@@ -1,26 +1,28 @@
 //! Reference: https://www.sqlite.org/fileformat2.html
 
-pub(self) mod db_filesize_in_pages;
-pub(self) mod file_change_counter;
-pub(self) mod file_format_version_numbers;
-pub(self) mod magic_header_string;
-pub(self) mod page_size;
-pub(self) mod payload_fractions;
-pub(self) mod reserved_bytes_per_page;
+mod db_filesize_in_pages;
+mod file_change_counter;
+mod file_format_version_numbers;
+mod magic_header_string;
+mod page_size;
+mod payload_fractions;
+mod reserved_bytes_per_page;
 
-use self::{
+pub use self::{
   db_filesize_in_pages::DatabaseFileSizeInPages,
   file_change_counter::FileChangeCounter,
-  file_format_version_numbers::FileFormatVersionNumbers,
-  magic_header_string::MagicHeaderString, page_size::PageSize,
-};
-use crate::{
-  header::{
-    payload_fractions::PayloadFractions,
-    reserved_bytes_per_page::ReservedBytesPerPage,
+  file_format_version_numbers::{
+    FileFormatReadVersion, FileFormatVersionNumbers, FileFormatWriteVersion,
   },
-  result::{SQLiteError, SQLiteResult},
+  magic_header_string::MagicHeaderString,
+  page_size::PageSize,
+  payload_fractions::{
+    LeafPayloadFraction, MaximumEmbeddedPayloadFraction,
+    MinimumEmbeddedPayloadFraction, PayloadFractions,
+  },
+  reserved_bytes_per_page::ReservedBytesPerPage,
 };
+use crate::result::{SQLiteError, SQLiteResult};
 use anyhow::bail;
 
 /// # Database File Format
@@ -78,6 +80,26 @@ impl SqliteHeader {
   pub fn page_size(&self) -> &PageSize {
     &self.page_size
   }
+
+  pub fn file_format_version_numbers(&self) -> &FileFormatVersionNumbers {
+    &self.file_format_version_numbers
+  }
+
+  pub fn reserved_bytes_per_page(&self) -> &ReservedBytesPerPage {
+    &self.reserved_bytes_per_page
+  }
+
+  pub fn payload_fractions(&self) -> &PayloadFractions {
+    &self.payload_fractions
+  }
+
+  pub fn file_change_counter(&self) -> &FileChangeCounter {
+    &self.file_change_counter
+  }
+
+  pub fn db_filesize_in_pages(&self) -> &DatabaseFileSizeInPages {
+    &self.db_filesize_in_pages
+  }
 }
 impl TryFrom<&[u8; 100]> for SqliteHeader {
   type Error = SQLiteError;
@@ -85,13 +107,13 @@ impl TryFrom<&[u8; 100]> for SqliteHeader {
   fn try_from(bytes: &[u8; 100]) -> Result<Self, Self::Error> {
     let bytes = bytes;
 
-    println!("{:x?}", &bytes[0..=15]);
-    println!("{:x?}", &bytes[16..=17]);
-    println!("{:x?}", &bytes[18..=19]);
-    println!("{:x?}", &bytes[20]);
-    println!("{:x?}", &bytes[21..=23]);
-    println!("{:x?}", &bytes[24..=27]);
-    println!("{:x?}", &bytes[28..=31]);
+    // println!("{:x?}", &bytes[0..=15]);
+    // println!("{:x?}", &bytes[16..=17]);
+    // println!("{:x?}", &bytes[18..=19]);
+    // println!("{:x?}", &bytes[20]);
+    // println!("{:x?}", &bytes[21..=23]);
+    // println!("{:x?}", &bytes[24..=27]);
+    // println!("{:x?}", &bytes[28..=31]);
 
     let magic_header_string = MagicHeaderString::parse_bytes(&bytes[0..=15])?;
     let page_size = PageSize::parse_bytes(&bytes[16..=17])?;

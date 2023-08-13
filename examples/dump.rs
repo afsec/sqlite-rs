@@ -15,8 +15,18 @@ fn main() -> SQLiteResult<()> {
 
   let sqlite_header = SqliteHeader::try_from(&sqlite_header_buffer)?;
 
-  dbg!(&sqlite_header, &sqlite_header.page_size().get());
-
+  dbg!(
+    &sqlite_header.magic_header_string().get(),
+    &sqlite_header.page_size().get(),
+    &sqlite_header.file_format_version_numbers().read_version(),
+    &sqlite_header.file_format_version_numbers().write_version(),
+    &sqlite_header.reserved_bytes_per_page().get(),
+    &sqlite_header.payload_fractions().minimum().get(),
+    &sqlite_header.payload_fractions().maximum().get(),
+    &sqlite_header.payload_fractions().leaf().get(),
+    &sqlite_header.file_change_counter().get(),
+    &sqlite_header.db_filesize_in_pages().get()
+  );
   Ok(())
 }
 
