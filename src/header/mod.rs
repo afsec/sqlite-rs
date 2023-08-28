@@ -167,58 +167,58 @@ impl TryFrom<&[u8; 100]> for SqliteHeader {
 
 impl Display for SqliteHeader {
   fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-    let label_width: usize = 21;
+    const LABEL_WIDTH: usize = 21;
 
     let mut output = "".to_owned();
     output.push_str("SQLite Header\n");
     output.push_str(&format!(
       "{label: <w$}{value}\n",
-      w = label_width,
+      w = LABEL_WIDTH,
       label = "database page size:",
       value = **self.page_size()
     ));
     output.push_str(&format!(
       "{label: <w$}{value}\n",
-      w = label_width,
+      w = LABEL_WIDTH,
       label = "write format:",
       value = **self.file_format_version_numbers.write_version()
     ));
     output.push_str(&format!(
       "{label: <w$}{value}\n",
-      w = label_width,
+      w = LABEL_WIDTH,
       label = "read format:",
       value = **self.file_format_version_numbers.read_version()
     ));
     output.push_str(&format!(
       "{label: <w$}{value}\n",
-      w = label_width,
+      w = LABEL_WIDTH,
       label = "reserved bytes:",
       value = **self.reserved_bytes_per_page()
     ));
     output.push_str(&format!(
       "{label: <w$}{value}\n",
-      w = label_width,
+      w = LABEL_WIDTH,
       label = "file change counter:",
       value = **self.file_change_counter()
     ));
 
     output.push_str(&format!(
       "{label: <w$}{value}\n",
-      w = label_width,
+      w = LABEL_WIDTH,
       label = "database page count:",
       value = **self.db_filesize_in_pages()
     ));
 
     output.push_str(&format!(
       "{label: <w$}{value}\n",
-      w = label_width,
+      w = LABEL_WIDTH,
       label = "freelist page count:",
       value = **self.freelist_pages().total()
     ));
 
     output.push_str(&format!(
       "{label: <w$}{value}\n",
-      w = label_width,
+      w = LABEL_WIDTH,
       label = "schema cookie:",
       value = **self.schema_cookie()
     ));
