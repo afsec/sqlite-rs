@@ -1,6 +1,6 @@
 use super::ParseBytes;
 use crate::result::SQLiteResult;
-use std::ops::Deref;
+use core::ops::Deref;
 
 /// # File change counter (4 Bytes)
 ///  The file change counter is a 4-byte big-endian integer at offset 24 that is

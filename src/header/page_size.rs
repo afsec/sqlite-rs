@@ -1,6 +1,7 @@
+use crate::result::SQLiteError;
+use alloc::format;
 use super::ParseBytes;
-use anyhow::bail;
-use std::ops::Deref;
+use core::ops::Deref;
 
 /// # Page Size (2 Bytes)
 ///  The two-byte value beginning at offset 16 determines the page size of the
@@ -39,7 +40,7 @@ impl ParseBytes<&[u8]> for PageSize {
   }
 
   fn parsing_handler(bytes: &[u8]) -> crate::result::SQLiteResult<Self> {
-    use std::ops::Not;
+    use core::ops::Not;
 
     let buf: [u8; 2] = bytes.try_into()?;
 
@@ -49,10 +50,12 @@ impl ParseBytes<&[u8]> for PageSize {
       Ok(Self(65_536))
     } else {
       if page_size < 512 {
-        bail!("Page size [{page_size}] can't be less than 512");
+        return Err(SQLiteError::Custom(format!(
+          "Page size [{page_size}] can't be less than 512"
+        )));
       }
       if page_size.is_power_of_two().not() {
-        bail!("Page size must be power of two");
+        return Err(SQLiteError::msg("Page size must be power of two"));
       }
 
       Ok(Self(page_size.into()))

@@ -1,6 +1,6 @@
+use alloc::format;
 use super::ParseBytes;
-use crate::result::SQLiteResult;
-use anyhow::{bail, format_err};
+use crate::result::{SQLiteError, SQLiteResult};
 
 /// # File format version numbers (2 Bytes)
 ///  The file format write version and file format read version at offsets 18
@@ -70,14 +70,16 @@ impl ParseBytes<u8> for FileFormatWriteVersion {
   }
 
   fn parsing_handler(bytes: &[u8]) -> crate::result::SQLiteResult<Self> {
-    let one_byte = bytes.get(0).ok_or(format_err!(
+    let one_byte = bytes.get(0).ok_or(SQLiteError::Custom(format!(
       "Impossible state on parsing {}",
       Self::struct_name()
-    ))?;
+    )))?;
     match one_byte {
       1 => Ok(Self::Legacy),
       2 => Ok(Self::WAL),
-      _ => bail!("Invalid payload for FileFormatReadVersion"),
+      _ => Err(SQLiteError::msg(
+        "Invalid payload for FileFormatReadVersion",
+      )),
     }
   }
 }
@@ -100,14 +102,16 @@ impl ParseBytes<u8> for FileFormatReadVersion {
   }
 
   fn parsing_handler(bytes: &[u8]) -> crate::result::SQLiteResult<Self> {
-    let one_byte = bytes.get(0).ok_or(format_err!(
+    let one_byte = bytes.get(0).ok_or(SQLiteError::Custom(format!(
       "Impossible state on parsing {}",
       Self::struct_name()
-    ))?;
+    )))?;
     match one_byte {
       1 => Ok(Self::Legacy),
       2 => Ok(Self::WAL),
-      _ => bail!("Invalid payload for FileFormatReadVersion"),
+      _ => Err(SQLiteError::msg(
+        "Invalid payload for FileFormatReadVersion",
+      )),
     }
   }
 }

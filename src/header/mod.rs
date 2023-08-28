@@ -23,7 +23,7 @@ pub use self::{
   reserved_bytes_per_page::ReservedBytesPerPage,
 };
 use crate::result::{SQLiteError, SQLiteResult};
-use anyhow::bail;
+use alloc::format;
 
 /// # Database File Format
 ///
@@ -148,7 +148,10 @@ where
 
   fn check_payload_size(bytes: &[u8]) -> SQLiteResult<()> {
     if bytes.len() != Self::bytes_length() {
-      bail!("Invalid size for {}", Self::struct_name());
+      return Err(SQLiteError::Custom(format!(
+        "Invalid size for {}",
+        Self::struct_name()
+      )));
     } else {
       Ok(())
     }
