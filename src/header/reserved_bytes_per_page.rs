@@ -1,6 +1,8 @@
+use core::ops::Deref;
+
+use super::traits::ParseBytes;
 use crate::result::SQLiteError;
 use alloc::format;
-use super::ParseBytes;
 
 /// # Reserved bytes per page (1 Byte)
 ///  SQLite has the ability to set aside a small number of extra bytes at the
@@ -20,9 +22,12 @@ use super::ParseBytes;
 /// reserved space size cannot exceed 32.
 #[derive(Debug)]
 pub struct ReservedBytesPerPage(u8);
-impl ReservedBytesPerPage {
-  pub fn get(&self) -> u8 {
-    self.0
+
+impl Deref for ReservedBytesPerPage {
+  type Target = u8;
+
+  fn deref(&self) -> &Self::Target {
+    &self.0
   }
 }
 
@@ -36,10 +41,9 @@ impl ParseBytes<&[u8]> for ReservedBytesPerPage {
   }
 
   fn parsing_handler(bytes: &[u8]) -> crate::result::SQLiteResult<Self> {
-    let reserved_bytes_per_page = *bytes.get(0).ok_or(SQLiteError::from(format!(
-      "Impossible state on parsing {}",
-      Self::struct_name()
-    )))?;
+    let reserved_bytes_per_page = *bytes.get(0).ok_or(SQLiteError::from(
+      format!("Impossible state on parsing {}", Self::struct_name()),
+    ))?;
 
     Ok(Self(reserved_bytes_per_page))
   }

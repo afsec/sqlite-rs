@@ -3,17 +3,23 @@
 mod db_filesize_in_pages;
 mod file_change_counter;
 mod file_format_version_numbers;
+mod freelist_pages;
 mod magic_header_string;
 mod page_size;
 mod payload_fractions;
 mod reserved_bytes_per_page;
+mod traits;
 
+use core::fmt::Display;
+
+use self::traits::ParseBytes;
 pub use self::{
   db_filesize_in_pages::DatabaseFileSizeInPages,
   file_change_counter::FileChangeCounter,
   file_format_version_numbers::{
     FileFormatReadVersion, FileFormatVersionNumbers, FileFormatWriteVersion,
   },
+  freelist_pages::FreeListPages,
   magic_header_string::MagicHeaderString,
   page_size::PageSize,
   payload_fractions::{
@@ -23,7 +29,7 @@ pub use self::{
   reserved_bytes_per_page::ReservedBytesPerPage,
 };
 use crate::result::{SQLiteError, SQLiteResult};
-use alloc::format;
+use alloc::{format, string::ToString};
 
 /// # Database File Format
 ///
@@ -68,8 +74,10 @@ pub struct SqliteHeader {
   payload_fractions: PayloadFractions,
   /// File change counter.
   file_change_counter: FileChangeCounter,
-  // Size of the database file in pages. The "in-header database size".
+  /// Size of the database file in pages. The "in-header database size".
   db_filesize_in_pages: DatabaseFileSizeInPages,
+  /// Unused pages in the database file are stored on a freelist.
+  freelist_pages: FreeListPages,
 }
 
 impl SqliteHeader {
@@ -100,6 +108,10 @@ impl SqliteHeader {
   pub fn db_filesize_in_pages(&self) -> &DatabaseFileSizeInPages {
     &self.db_filesize_in_pages
   }
+
+  pub fn freelist_pages(&self) -> &FreeListPages {
+    &self.freelist_pages
+  }
 }
 impl TryFrom<&[u8; 100]> for SqliteHeader {
   type Error = SQLiteError;
@@ -126,6 +138,8 @@ impl TryFrom<&[u8; 100]> for SqliteHeader {
     let file_change_counter = FileChangeCounter::parse_bytes(&bytes[24..=27])?;
     let db_filesize_in_pages =
       DatabaseFileSizeInPages::parse_bytes(&bytes[28..=31])?;
+
+    let freelist_pages = FreeListPages::parse_bytes(&bytes[32..=39])?;
     Ok(Self {
       magic_header_string,
       page_size,
@@ -134,38 +148,109 @@ impl TryFrom<&[u8; 100]> for SqliteHeader {
       payload_fractions,
       file_change_counter,
       db_filesize_in_pages,
+      freelist_pages,
     })
   }
 }
 
-trait ParseBytes<T>
-where
-  Self: Sized,
-{
-  fn struct_name() -> &'static str;
-  fn bytes_length() -> usize;
-  fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self>;
+impl Display for SqliteHeader {
+  fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+    let label_width: usize = 21;
 
-  fn check_payload_size(bytes: &[u8]) -> SQLiteResult<()> {
-    if bytes.len() != Self::bytes_length() {
-      return Err(SQLiteError::Custom(format!(
-        "Invalid size for {}",
-        Self::struct_name()
-      )));
-    } else {
-      Ok(())
-    }
-  }
-  fn parse_bytes(bytes: &[u8]) -> SQLiteResult<Self> {
-    Self::check_payload_size(bytes)?;
-    Self::parsing_handler(bytes)
+    let mut output = "".to_string();
+    output.push_str(format!("SQLite Header\n").as_str());
+    output.push_str(
+      format!(
+        "{label: <w$}{value}\n",
+        w = label_width,
+        label = "database page size:",
+        value = self.page_size().to_string()
+      )
+      .as_str(),
+    );
+    output.push_str(
+      format!(
+        "{label: <w$}{value}\n",
+        w = label_width,
+        label = "write format:",
+        value = self.file_format_version_numbers.write_version().to_string()
+      )
+      .as_str(),
+    );
+    output.push_str(
+      format!(
+        "{label: <w$}{value}\n",
+        w = label_width,
+        label = "read format:",
+        value = self.file_format_version_numbers.read_version().to_string()
+      )
+      .as_str(),
+    );
+    output.push_str(
+      format!(
+        "{label: <w$}{value}\n",
+        w = label_width,
+        label = "reserved bytes:",
+        value = self.reserved_bytes_per_page().to_string()
+      )
+      .as_str(),
+    );
+    output.push_str(
+      format!(
+        "{label: <w$}{value}\n",
+        w = label_width,
+        label = "file change counter:",
+        value = self.file_change_counter().to_string()
+      )
+      .as_str(),
+    );
+
+    output.push_str(
+      format!(
+        "{label: <w$}{value}\n",
+        w = label_width,
+        label = "database page count:",
+        value = self.db_filesize_in_pages().to_string()
+      )
+      .as_str(),
+    );
+
+    output.push_str(
+      format!(
+        "{label: <w$}{value}\n",
+        w = label_width,
+        label = "freelist page count:",
+        value = self.freelist_pages().total().to_string()
+      )
+      .as_str(),
+    );
+
+    write!(f, "{output}")
   }
 }
+/*
+$ cat flights.info
+database page size:  4096
+write format:        1
+read format:         1
+reserved bytes:      0
+file change counter: 4
+database page count: 3
+freelist page count: 0
+schema cookie:       2
+schema format:       4
+default cache size:  0
+autovacuum top root: 0
+incremental vacuum:  0
+text encoding:       1 (utf8)
+user version:        0
+application id:      0
+software version:    3030000
+number of tables:    2
+number of indexes:   0
+number of triggers:  0
+number of views:     0
+schema size:         138
+data version         1
 
-// TODO
-trait ValidateParsed<T>
-where
-  Self: Sized + ParseBytes<T>,
-{
-  fn validate_parsed(&self) -> SQLiteResult<()>;
-}
+*/

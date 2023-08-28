@@ -1,6 +1,6 @@
+use super::traits::ParseBytes;
 use crate::result::SQLiteError;
 use alloc::format;
-use super::ParseBytes;
 use core::ops::Deref;
 
 /// # Page Size (2 Bytes)
@@ -17,11 +17,7 @@ use core::ops::Deref;
 /// page-size field are equivalent.
 #[derive(Debug)]
 pub struct PageSize(u32);
-impl PageSize {
-  pub fn get(&self) -> u32 {
-    self.0
-  }
-}
+
 impl Deref for PageSize {
   type Target = u32;
 

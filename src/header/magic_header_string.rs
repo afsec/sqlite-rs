@@ -1,4 +1,4 @@
-use super::ParseBytes;
+use super::traits::ParseBytes;
 use crate::result::SQLiteError;
 use alloc::format;
 use core::fmt::Debug;
@@ -14,11 +14,7 @@ const SQLITE3_FILE_FORMAT_MAGIC_STRING: [u8; 16] = [
 /// This byte sequence corresponds to the UTF-8 string `SQLite format 3`
 /// including the nul terminator character at the end.
 pub struct MagicHeaderString([u8; 16]);
-impl MagicHeaderString {
-  pub fn get(&self) -> [u8; 16] {
-    self.0
-  }
-}
+
 impl Debug for MagicHeaderString {
   fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
     let output = format!("{:02x?}", self.0);

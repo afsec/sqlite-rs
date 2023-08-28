@@ -1,6 +1,6 @@
 use core::ops::Deref;
 
-use super::ParseBytes;
+use super::traits::ParseBytes;
 
 /// # In-header database size
 ///  The in-header database size is a 4-byte big-endian integer at offset 28
@@ -25,12 +25,6 @@ use super::ParseBytes;
 /// change-counter does not match the version-valid-for number.
 #[derive(Debug)]
 pub struct DatabaseFileSizeInPages(u32);
-
-impl DatabaseFileSizeInPages {
-  pub fn get(&self) -> u32 {
-    self.0
-  }
-}
 
 impl Deref for DatabaseFileSizeInPages {
   type Target = u32;

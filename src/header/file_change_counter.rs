@@ -1,4 +1,4 @@
-use super::ParseBytes;
+use super::traits::ParseBytes;
 use crate::result::SQLiteResult;
 use core::ops::Deref;
 
@@ -16,11 +16,7 @@ use core::ops::Deref;
 /// incremented on each transaction in WAL mode.
 #[derive(Debug)]
 pub struct FileChangeCounter(u32);
-impl FileChangeCounter {
-  pub fn get(&self) -> u32 {
-    self.0
-  }
-}
+
 impl Deref for FileChangeCounter {
   type Target = u32;
 

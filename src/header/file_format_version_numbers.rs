@@ -1,6 +1,8 @@
-use alloc::format;
-use super::ParseBytes;
+use core::{fmt::Display, ops::Deref};
+
+use super::traits::ParseBytes;
 use crate::result::{SQLiteError, SQLiteResult};
+use alloc::format;
 
 /// # File format version numbers (2 Bytes)
 ///  The file format write version and file format read version at offsets 18
@@ -60,6 +62,17 @@ pub enum FileFormatWriteVersion {
   WAL,
 }
 
+impl Deref for FileFormatWriteVersion {
+  type Target = u8;
+
+  fn deref(&self) -> &Self::Target {
+    match &self {
+      Self::Legacy => &1,
+      Self::WAL => &2,
+    }
+  }
+}
+
 impl ParseBytes<u8> for FileFormatWriteVersion {
   fn struct_name() -> &'static str {
     "FileFormatWriteVersion"
@@ -84,6 +97,13 @@ impl ParseBytes<u8> for FileFormatWriteVersion {
   }
 }
 
+impl Display for FileFormatWriteVersion {
+  fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+    write!(f, "{}", **self)
+  }
+}
+
+
 #[derive(Debug)]
 pub enum FileFormatReadVersion {
   Legacy,
@@ -92,6 +112,18 @@ pub enum FileFormatReadVersion {
   /// Reference: https://www.sqlite.org/wal.html
   WAL,
 }
+
+impl Deref for FileFormatReadVersion {
+  type Target = u8;
+
+  fn deref(&self) -> &Self::Target {
+    match &self {
+      Self::Legacy => &1,
+      Self::WAL => &2,
+    }
+  }
+}
+
 impl ParseBytes<u8> for FileFormatReadVersion {
   fn struct_name() -> &'static str {
     "FileFormatReadVersion"
@@ -113,5 +145,11 @@ impl ParseBytes<u8> for FileFormatReadVersion {
         "Invalid payload for FileFormatReadVersion",
       )),
     }
+  }
+}
+
+impl Display for FileFormatReadVersion {
+  fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+    write!(f, "{}", **self)
   }
 }

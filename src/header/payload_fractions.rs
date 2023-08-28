@@ -1,6 +1,6 @@
+use super::traits::ParseBytes;
 use crate::result::SQLiteError;
 use alloc::format;
-use super::ParseBytes;
 
 /// # Payload Fractions (3 Bytes)
 ///  The maximum and minimum embedded payload fractions and the leaf payload
@@ -58,11 +58,11 @@ impl ParseBytes<&[u8]> for PayloadFractions {
 #[derive(Debug)]
 pub struct MaximumEmbeddedPayloadFraction(u8);
 
-impl MaximumEmbeddedPayloadFraction {
-  pub fn get(&self) -> u8 {
-    self.0
-  }
-}
+// impl MaximumEmbeddedPayloadFraction {
+//   pub fn get(&self) -> u8 {
+//     self.0
+//   }
+// }
 
 impl ParseBytes<&[u8]> for MaximumEmbeddedPayloadFraction {
   fn struct_name() -> &'static str {
@@ -92,11 +92,11 @@ impl ParseBytes<&[u8]> for MaximumEmbeddedPayloadFraction {
 #[derive(Debug)]
 pub struct MinimumEmbeddedPayloadFraction(u8);
 
-impl MinimumEmbeddedPayloadFraction {
-  pub fn get(&self) -> u8 {
-    self.0
-  }
-}
+// impl MinimumEmbeddedPayloadFraction {
+//   pub fn get(&self) -> u8 {
+//     self.0
+//   }
+// }
 
 impl ParseBytes<&[u8]> for MinimumEmbeddedPayloadFraction {
   fn struct_name() -> &'static str {
@@ -125,12 +125,6 @@ impl ParseBytes<&[u8]> for MinimumEmbeddedPayloadFraction {
 /// Leaf payload fraction. Must be 32.
 #[derive(Debug)]
 pub struct LeafPayloadFraction(u8);
-
-impl LeafPayloadFraction {
-  pub fn get(&self) -> u8 {
-    self.0
-  }
-}
 
 impl ParseBytes<&[u8]> for LeafPayloadFraction {
   fn struct_name() -> &'static str {
