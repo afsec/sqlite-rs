@@ -9,9 +9,9 @@ use super::traits::ParseBytes;
 /// integer at offset 36 stores the total number of pages on the freelist.
 #[derive(Debug)]
 pub struct FreeListPages {
-  /// Page number of the first freelist trunk page.
+  /// Page number of the first freelist trunk page. (4 Bytes)
   first: FreeListPagesFirstTrunkPage,
-  /// Total number of freelist pages.
+  /// Total number of freelist pages. (4 Bytes)
   total: FreeListPagesTotalPages,
 }
 

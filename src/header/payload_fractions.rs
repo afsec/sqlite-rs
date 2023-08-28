@@ -58,12 +58,6 @@ impl ParseBytes<&[u8]> for PayloadFractions {
 #[derive(Debug)]
 pub struct MaximumEmbeddedPayloadFraction(u8);
 
-// impl MaximumEmbeddedPayloadFraction {
-//   pub fn get(&self) -> u8 {
-//     self.0
-//   }
-// }
-
 impl ParseBytes<&[u8]> for MaximumEmbeddedPayloadFraction {
   fn struct_name() -> &'static str {
     "MaximumEmbeddedPayloadFraction"
@@ -91,12 +85,6 @@ impl ParseBytes<&[u8]> for MaximumEmbeddedPayloadFraction {
 /// Minimum embedded payload fraction. Must be 32.
 #[derive(Debug)]
 pub struct MinimumEmbeddedPayloadFraction(u8);
-
-// impl MinimumEmbeddedPayloadFraction {
-//   pub fn get(&self) -> u8 {
-//     self.0
-//   }
-// }
 
 impl ParseBytes<&[u8]> for MinimumEmbeddedPayloadFraction {
   fn struct_name() -> &'static str {

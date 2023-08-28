@@ -2,7 +2,7 @@ use core::ops::Deref;
 
 use super::traits::ParseBytes;
 
-/// # In-header database size
+/// # In-header database size (4 Bytes)
 ///  The in-header database size is a 4-byte big-endian integer at offset 28
 /// into the header stores the size of the database file in pages. If this
 /// in-header datasize size is not valid (see the next paragraph), then the
