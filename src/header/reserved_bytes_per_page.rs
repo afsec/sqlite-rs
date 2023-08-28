@@ -1,5 +1,6 @@
+use crate::result::SQLiteError;
+use alloc::format;
 use super::ParseBytes;
-use anyhow::format_err;
 
 /// # Reserved bytes per page (1 Byte)
 ///  SQLite has the ability to set aside a small number of extra bytes at the
@@ -35,10 +36,10 @@ impl ParseBytes<&[u8]> for ReservedBytesPerPage {
   }
 
   fn parsing_handler(bytes: &[u8]) -> crate::result::SQLiteResult<Self> {
-    let reserved_bytes_per_page = *bytes.get(0).ok_or(format_err!(
+    let reserved_bytes_per_page = *bytes.get(0).ok_or(SQLiteError::from(format!(
       "Impossible state on parsing {}",
       Self::struct_name()
-    ))?;
+    )))?;
 
     Ok(Self(reserved_bytes_per_page))
   }

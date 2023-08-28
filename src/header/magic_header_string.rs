@@ -1,6 +1,7 @@
 use super::ParseBytes;
-use anyhow::bail;
-use std::fmt::Debug;
+use crate::result::SQLiteError;
+use alloc::format;
+use core::fmt::Debug;
 
 const SQLITE3_FILE_FORMAT_MAGIC_STRING: [u8; 16] = [
   0x53, 0x51, 0x4c, 0x69, 0x74, 0x65, 0x20, 0x66, 0x6f, 0x72, 0x6d, 0x61, 0x74,
@@ -19,7 +20,7 @@ impl MagicHeaderString {
   }
 }
 impl Debug for MagicHeaderString {
-  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+  fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
     let output = format!("{:02x?}", self.0);
     f.debug_tuple("MagicHeaderString").field(&output).finish()
   }
@@ -37,7 +38,10 @@ impl<'a> ParseBytes<&[u8]> for MagicHeaderString {
   fn parsing_handler(bytes: &[u8]) -> crate::result::SQLiteResult<Self> {
     for (idx, byte) in SQLITE3_FILE_FORMAT_MAGIC_STRING.iter().enumerate() {
       if bytes.get(idx) != Some(byte) {
-        bail!("Invalid payload for {}", Self::struct_name());
+        return Err(SQLiteError::Custom(format!(
+          "Invalid payload for {}",
+          Self::struct_name()
+        )));
       }
     }
 
