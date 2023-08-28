@@ -1,8 +1,10 @@
 use std::{fs::File, io::Read};
 
-use sqlite_rs::{header::SqliteHeader, result::SQLiteResult};
+use sqlite_rs::header::SqliteHeader;
 
-fn main() -> SQLiteResult<()> {
+type AppResult<T> = anyhow::Result<T>;
+
+fn main() -> AppResult<()> {
   println!("SQLite info\n");
 
   let mut f = File::open("flights.db")?;
@@ -30,7 +32,7 @@ fn main() -> SQLiteResult<()> {
   Ok(())
 }
 
-fn print_hexdump(bytes: &[u8]) -> SQLiteResult<()> {
+fn print_hexdump(bytes: &[u8]) -> AppResult<()> {
   use hexyl::{BorderStyle, PrinterBuilder};
   use std::io;
 
