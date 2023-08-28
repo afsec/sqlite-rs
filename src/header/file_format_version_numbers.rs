@@ -83,7 +83,7 @@ impl ParseBytes<u8> for FileFormatWriteVersion {
   }
 
   fn parsing_handler(bytes: &[u8]) -> crate::result::SQLiteResult<Self> {
-    let one_byte = bytes.get(0).ok_or(SQLiteError::Custom(format!(
+    let one_byte = *bytes.first().ok_or(SQLiteError::Custom(format!(
       "Impossible state on parsing {}",
       Self::struct_name()
     )))?;
@@ -102,7 +102,6 @@ impl Display for FileFormatWriteVersion {
     write!(f, "{}", **self)
   }
 }
-
 
 #[derive(Debug)]
 pub enum FileFormatReadVersion {
@@ -134,7 +133,7 @@ impl ParseBytes<u8> for FileFormatReadVersion {
   }
 
   fn parsing_handler(bytes: &[u8]) -> crate::result::SQLiteResult<Self> {
-    let one_byte = bytes.get(0).ok_or(SQLiteError::Custom(format!(
+    let one_byte = *bytes.first().ok_or(SQLiteError::Custom(format!(
       "Impossible state on parsing {}",
       Self::struct_name()
     )))?;

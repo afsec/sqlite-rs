@@ -74,16 +74,16 @@ impl ParseBytes<&[u8]> for MaximumEmbeddedPayloadFraction {
   }
 
   fn parsing_handler(bytes: &[u8]) -> crate::result::SQLiteResult<Self> {
-    let maximum = *bytes.get(0).ok_or(SQLiteError::Custom(format!(
+    let maximum = *bytes.first().ok_or(SQLiteError::Custom(format!(
       "Impossible state on parsing {}",
       Self::struct_name()
     )))?;
     if maximum == 64 {
       Ok(Self(maximum))
     } else {
-      return Err(SQLiteError::msg(
+      Err(SQLiteError::msg(
         "Maximum embedded payload fraction. Must be 64.",
-      ));
+      ))
     }
   }
 }
@@ -108,16 +108,16 @@ impl ParseBytes<&[u8]> for MinimumEmbeddedPayloadFraction {
   }
 
   fn parsing_handler(bytes: &[u8]) -> crate::result::SQLiteResult<Self> {
-    let minimum = *bytes.get(0).ok_or(SQLiteError::Custom(format!(
+    let minimum = *bytes.first().ok_or(SQLiteError::Custom(format!(
       "Impossible state on parsing {}",
       Self::struct_name()
     )))?;
     if minimum == 32 {
       Ok(Self(minimum))
     } else {
-      return Err(SQLiteError::msg(
+      Err(SQLiteError::msg(
         "Minimum embedded payload fraction. Must be 32.",
-      ));
+      ))
     }
   }
 }
@@ -136,7 +136,7 @@ impl ParseBytes<&[u8]> for LeafPayloadFraction {
   }
 
   fn parsing_handler(bytes: &[u8]) -> crate::result::SQLiteResult<Self> {
-    let leaf = *bytes.get(0).ok_or(SQLiteError::Custom(format!(
+    let leaf = *bytes.first().ok_or(SQLiteError::Custom(format!(
       "Impossible state on parsing {}",
       Self::struct_name()
     )))?;

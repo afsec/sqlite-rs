@@ -28,36 +28,36 @@ pub use self::{
   },
   reserved_bytes_per_page::ReservedBytesPerPage,
 };
-use crate::result::{SQLiteError, SQLiteResult};
-use alloc::{format, string::ToString};
+use crate::result::SQLiteError;
+use alloc::{borrow::ToOwned, format};
 
 /// # Database File Format
 ///
-/// |Offset	| Size	| Description|
+/// |Offset | Size  | Description|
 /// |-------|-------|------------|
-/// |0	    | 16	  | The header string: "SQLite format 3\000" |
-/// |16	    | 2	    | The database page size in bytes. Must be a power of two between 512 and 32768 inclusive, or the bytes 1 representing a page size of 65536. |
-/// |18	    | 1	    | File format write version. 1 for legacy; 2 for WAL. |
-/// |19	    | 1	    | File format read version. 1 for legacy; 2 for WAL. |
-/// |20	    | 1	    | Bytes of unused "reserved" space at the end of each page. Usually 0. |
-/// |21	    | 1	    | Maximum embedded payload fraction. Must be 64. |
-/// |22	    | 1	    | Minimum embedded payload fraction. Must be 32. |
-/// |23	    | 1	    | Leaf payload fraction. Must be 32. |
-/// |24	    | 4	    | File change counter. |
-/// |28	    | 4	    | Size of the database file in pages. The "in-header database size". |
-/// |32	    | 4	    | Page number of the first freelist trunk page. |
-/// |36	    | 4	    | Total number of freelist pages. |
-/// |40	    | 4	    | The schema cookie. |
-/// |44	    | 4	    | The schema format number. Supported schema formats are 1, 2, 3, and 4. |
-/// |48	    | 4	    | Default page cache size. |
-/// |52	    | 4	    | The page number of the largest root b-tree page when in auto-vacuum or incremental-vacuum modes, or zero otherwise. |
-/// |56	    | 4	    | The database text encoding. A bytes of 1 means UTF-8. A bytes of 2 means UTF-16le. A bytes of 3 means UTF-16be. |
-/// |60	    | 4	    | The "user version" as read and set by the user_version pragma. |
-/// |64	    | 4	    | True (non-zero) for incremental-vacuum mode. False (zero) otherwise. |
-/// |68	    | 4	    | The "Application ID" set by PRAGMA application_id. |
-/// |72	    | 20	| Reserved for expansion. Must be zero. |
-/// |92	    | 4	    | The version-valid-for number. |
-/// |96	    | 4	    | SQLITE_VERSION_NUMBER |
+/// |0      | 16    | The header string: "SQLite format 3\000" |
+/// |16     | 2     | The database page size in bytes. Must be a power of two between 512 and 32768 inclusive, or the bytes 1 representing a page size of 65536. |
+/// |18     | 1     | File format write version. 1 for legacy; 2 for WAL. |
+/// |19     | 1     | File format read version. 1 for legacy; 2 for WAL. |
+/// |20     | 1     | Bytes of unused "reserved" space at the end of each page. Usually 0. |
+/// |21     | 1     | Maximum embedded payload fraction. Must be 64. |
+/// |22     | 1     | Minimum embedded payload fraction. Must be 32. |
+/// |23     | 1     | Leaf payload fraction. Must be 32. |
+/// |24     | 4     | File change counter. |
+/// |28     | 4     | Size of the database file in pages. The "in-header database size". |
+/// |32     | 4     | Page number of the first freelist trunk page. |
+/// |36     | 4     | Total number of freelist pages. |
+/// |40     | 4     | The schema cookie. |
+/// |44     | 4     | The schema format number. Supported schema formats are 1, 2, 3, and 4. |
+/// |48     | 4     | Default page cache size. |
+/// |52     | 4     | The page number of the largest root b-tree page when in auto-vacuum or incremental-vacuum modes, or zero otherwise. |
+/// |56     | 4     | The database text encoding. A bytes of 1 means UTF-8. A bytes of 2 means UTF-16le. A bytes of 3 means UTF-16be. |
+/// |60     | 4     | The "user version" as read and set by the user_version pragma. |
+/// |64     | 4     | True (non-zero) for incremental-vacuum mode. False (zero) otherwise. |
+/// |68     | 4     | The "Application ID" set by PRAGMA application_id. |
+/// |72     | 20    | Reserved for expansion. Must be zero. |
+/// |92     | 4     | The version-valid-for number. |
+/// |96     | 4     | SQLITE_VERSION_NUMBER |
 #[derive(Debug)]
 pub struct SqliteHeader {
   /// The header string: "`SQLite format 3\000`".
@@ -157,14 +157,14 @@ impl Display for SqliteHeader {
   fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
     let label_width: usize = 21;
 
-    let mut output = "".to_string();
-    output.push_str(format!("SQLite Header\n").as_str());
+    let mut output = "".to_owned();
+    output.push_str("SQLite Header\n");
     output.push_str(
       format!(
         "{label: <w$}{value}\n",
         w = label_width,
         label = "database page size:",
-        value = self.page_size().to_string()
+        value = **self.page_size()
       )
       .as_str(),
     );
@@ -173,7 +173,7 @@ impl Display for SqliteHeader {
         "{label: <w$}{value}\n",
         w = label_width,
         label = "write format:",
-        value = self.file_format_version_numbers.write_version().to_string()
+        value = **self.file_format_version_numbers.write_version()
       )
       .as_str(),
     );
@@ -182,7 +182,7 @@ impl Display for SqliteHeader {
         "{label: <w$}{value}\n",
         w = label_width,
         label = "read format:",
-        value = self.file_format_version_numbers.read_version().to_string()
+        value = **self.file_format_version_numbers.read_version()
       )
       .as_str(),
     );
@@ -191,7 +191,7 @@ impl Display for SqliteHeader {
         "{label: <w$}{value}\n",
         w = label_width,
         label = "reserved bytes:",
-        value = self.reserved_bytes_per_page().to_string()
+        value = **self.reserved_bytes_per_page()
       )
       .as_str(),
     );
@@ -200,7 +200,7 @@ impl Display for SqliteHeader {
         "{label: <w$}{value}\n",
         w = label_width,
         label = "file change counter:",
-        value = self.file_change_counter().to_string()
+        value = **self.file_change_counter()
       )
       .as_str(),
     );
@@ -210,7 +210,7 @@ impl Display for SqliteHeader {
         "{label: <w$}{value}\n",
         w = label_width,
         label = "database page count:",
-        value = self.db_filesize_in_pages().to_string()
+        value = **self.db_filesize_in_pages()
       )
       .as_str(),
     );
@@ -220,7 +220,7 @@ impl Display for SqliteHeader {
         "{label: <w$}{value}\n",
         w = label_width,
         label = "freelist page count:",
-        value = self.freelist_pages().total().to_string()
+        value = **self.freelist_pages().total()
       )
       .as_str(),
     );

@@ -1,4 +1,4 @@
-use crate::result::{SQLiteResult, SQLiteError};
+use crate::result::{SQLiteError, SQLiteResult};
 use alloc::format;
 
 pub(super) trait ParseBytes<T>
@@ -11,10 +11,10 @@ where
 
   fn check_payload_size(bytes: &[u8]) -> SQLiteResult<()> {
     if bytes.len() != Self::bytes_length() {
-      return Err(SQLiteError::Custom(format!(
+      Err(SQLiteError::Custom(format!(
         "Invalid size for {}",
         Self::struct_name()
-      )));
+      )))
     } else {
       Ok(())
     }

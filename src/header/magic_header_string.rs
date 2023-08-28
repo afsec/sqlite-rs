@@ -22,7 +22,7 @@ impl Debug for MagicHeaderString {
   }
 }
 
-impl<'a> ParseBytes<&[u8]> for MagicHeaderString {
+impl ParseBytes<&[u8]> for MagicHeaderString {
   fn struct_name() -> &'static str {
     "MagicHeaderString"
   }

@@ -41,7 +41,7 @@ impl ParseBytes<&[u8]> for ReservedBytesPerPage {
   }
 
   fn parsing_handler(bytes: &[u8]) -> crate::result::SQLiteResult<Self> {
-    let reserved_bytes_per_page = *bytes.get(0).ok_or(SQLiteError::from(
+    let reserved_bytes_per_page = *bytes.first().ok_or(SQLiteError::from(
       format!("Impossible state on parsing {}", Self::struct_name()),
     ))?;
 
