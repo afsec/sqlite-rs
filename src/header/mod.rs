@@ -117,9 +117,9 @@ impl SqliteHeader {
     &self.freelist_pages
   }
 
-    pub fn schema_cookie(&self) -> &SchemaCookie {
-        &self.schema_cookie
-    }
+  pub fn schema_cookie(&self) -> &SchemaCookie {
+    &self.schema_cookie
+  }
 }
 impl TryFrom<&[u8; 100]> for SqliteHeader {
   type Error = SQLiteError;
@@ -171,61 +171,57 @@ impl Display for SqliteHeader {
 
     let mut output = "".to_owned();
     output.push_str("SQLite Header\n");
-    output.push_str(&*format!(
+    output.push_str(&format!(
       "{label: <w$}{value}\n",
       w = label_width,
       label = "database page size:",
       value = **self.page_size()
     ));
-    output.push_str(&*format!(
+    output.push_str(&format!(
       "{label: <w$}{value}\n",
       w = label_width,
       label = "write format:",
       value = **self.file_format_version_numbers.write_version()
     ));
-    output.push_str(&*format!(
+    output.push_str(&format!(
       "{label: <w$}{value}\n",
       w = label_width,
       label = "read format:",
       value = **self.file_format_version_numbers.read_version()
     ));
-    output.push_str(&*format!(
+    output.push_str(&format!(
       "{label: <w$}{value}\n",
       w = label_width,
       label = "reserved bytes:",
       value = **self.reserved_bytes_per_page()
     ));
-    output.push_str(&*format!(
+    output.push_str(&format!(
       "{label: <w$}{value}\n",
       w = label_width,
       label = "file change counter:",
       value = **self.file_change_counter()
     ));
 
-    output.push_str(&*format!(
+    output.push_str(&format!(
       "{label: <w$}{value}\n",
       w = label_width,
       label = "database page count:",
       value = **self.db_filesize_in_pages()
     ));
 
-    output.push_str(
-      &*(format!(
-        "{label: <w$}{value}\n",
-        w = label_width,
-        label = "freelist page count:",
-        value = **self.freelist_pages().total()
-      )),
-    );
+    output.push_str(&format!(
+      "{label: <w$}{value}\n",
+      w = label_width,
+      label = "freelist page count:",
+      value = **self.freelist_pages().total()
+    ));
 
-    output.push_str(
-      &*(format!(
-        "{label: <w$}{value}\n",
-        w = label_width,
-        label = "schema cookie:",
-        value = **self.schema_cookie()
-      )),
-    );
+    output.push_str(&format!(
+      "{label: <w$}{value}\n",
+      w = label_width,
+      label = "schema cookie:",
+      value = **self.schema_cookie()
+    ));
 
     write!(f, "{output}")
   }
