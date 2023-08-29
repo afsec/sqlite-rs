@@ -1,5 +1,6 @@
 //! Reference: https://www.sqlite.org/fileformat2.html
 
+mod database_text_encoding;
 mod db_filesize_in_pages;
 mod file_change_counter;
 mod file_format_version_numbers;
@@ -16,6 +17,7 @@ mod traits;
 
 use self::traits::ParseBytes;
 pub use self::{
+  database_text_encoding::DatabaseTextEncoding,
   db_filesize_in_pages::DatabaseFileSizeInPages,
   file_change_counter::FileChangeCounter,
   file_format_version_numbers::{
@@ -91,6 +93,8 @@ pub struct SqliteHeader {
   suggested_cache_size: SuggestedCacheSize,
   /// Incremental vacuum settings.
   incremental_vacuum_settings: IncrementalVacuumSettings,
+  /// The database text encoding. A value of 1 means UTF-8. A value of 2 means UTF-16le. A value of 3 means UTF-16be.
+  database_text_encoding: DatabaseTextEncoding,
 }
 
 impl SqliteHeader {
@@ -138,8 +142,12 @@ impl SqliteHeader {
     &self.suggested_cache_size
   }
 
-    pub fn incremental_vacuum_settings(&self) -> &IncrementalVacuumSettings {
-        &self.incremental_vacuum_settings
+  pub fn incremental_vacuum_settings(&self) -> &IncrementalVacuumSettings {
+    &self.incremental_vacuum_settings
+  }
+
+    pub fn database_text_encoding(&self) -> &DatabaseTextEncoding {
+        &self.database_text_encoding
     }
 }
 impl TryFrom<&[u8; 100]> for SqliteHeader {
@@ -182,6 +190,9 @@ impl TryFrom<&[u8; 100]> for SqliteHeader {
         &bytes[52..=55],
       )?;
 
+    let database_text_encoding =
+      DatabaseTextEncoding::parse_bytes(&bytes[56..=59])?;
+    
     let incremental_vacuum_mode =
       incremental_vacuum_settings::IncrementalVacuumMode::parse_bytes(
         &bytes[64..=67],
@@ -203,6 +214,7 @@ impl TryFrom<&[u8; 100]> for SqliteHeader {
         largest_root_btree_page,
         incremental_vacuum_mode,
       },
+      database_text_encoding,
     })
   }
 }

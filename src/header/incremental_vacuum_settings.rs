@@ -1,8 +1,5 @@
-use core::ops::Deref;
-
 use super::traits::ParseBytes;
-use crate::result::SQLiteError;
-use alloc::format;
+use core::ops::Deref;
 
 /// Incremental vacuum settings (8 Bytes)
 ///
@@ -23,13 +20,13 @@ pub struct IncrementalVacuumSettings {
 }
 
 impl IncrementalVacuumSettings {
-    pub fn largest_root_btree_page(&self) -> &LargestRootBtreePage {
-        &self.largest_root_btree_page
-    }
+  pub fn largest_root_btree_page(&self) -> &LargestRootBtreePage {
+    &self.largest_root_btree_page
+  }
 
-    pub fn incremental_vacuum_mode(&self) -> &IncrementalVacuumMode {
-        &self.incremental_vacuum_mode
-    }
+  pub fn incremental_vacuum_mode(&self) -> &IncrementalVacuumMode {
+    &self.incremental_vacuum_mode
+  }
 }
 
 ///  #  Largest root b-tree page (4 Bytes)
