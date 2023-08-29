@@ -70,8 +70,8 @@ impl ParseBytes<&[u8]> for SchemaFormat {
   fn parsing_handler(bytes: &[u8]) -> crate::result::SQLiteResult<Self> {
     let buf: [u8; 4] = bytes.try_into()?;
 
-    let schema_format = u32::from_be_bytes(buf);
+    let value = u32::from_be_bytes(buf);
 
-    Ok(schema_format.try_into()?)
+    value.try_into()
   }
 }

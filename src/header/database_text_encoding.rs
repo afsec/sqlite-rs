@@ -62,6 +62,6 @@ impl ParseBytes<&[u8]> for DatabaseTextEncoding {
 
     let value = u32::from_be_bytes(buf);
 
-    Ok(value.try_into()?)
+    value.try_into()
   }
 }

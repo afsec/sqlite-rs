@@ -3,7 +3,7 @@ use core::ops::Deref;
 use super::traits::ParseBytes;
 
 /// # Suggested cache size (4 Bytes)
-/// 
+///
 ///  The 4-byte big-endian signed integer at offset 48 is the suggested cache
 /// size in pages for the database file. The value is a suggestion only and
 /// SQLite is under no obligation to honor it. The absolute value of the integer

@@ -7,7 +7,7 @@ where
 {
   const NAME: &'static str;
   const LENGTH_BYTES: usize;
-  
+
   fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self>;
 
   fn check_payload_size(bytes: &[u8]) -> SQLiteResult<()> {

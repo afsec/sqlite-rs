@@ -146,23 +146,15 @@ impl SqliteHeader {
     &self.incremental_vacuum_settings
   }
 
-    pub fn database_text_encoding(&self) -> &DatabaseTextEncoding {
-        &self.database_text_encoding
-    }
+  pub fn database_text_encoding(&self) -> &DatabaseTextEncoding {
+    &self.database_text_encoding
+  }
 }
 impl TryFrom<&[u8; 100]> for SqliteHeader {
   type Error = SQLiteError;
 
   fn try_from(bytes: &[u8; 100]) -> Result<Self, Self::Error> {
     let bytes = bytes;
-
-    // println!("{:x?}", &bytes[0..=15]);
-    // println!("{:x?}", &bytes[16..=17]);
-    // println!("{:x?}", &bytes[18..=19]);
-    // println!("{:x?}", &bytes[20]);
-    // println!("{:x?}", &bytes[21..=23]);
-    // println!("{:x?}", &bytes[24..=27]);
-    // println!("{:x?}", &bytes[28..=31]);
 
     let magic_header_string = MagicHeaderString::parse_bytes(&bytes[0..=15])?;
     let page_size = PageSize::parse_bytes(&bytes[16..=17])?;
@@ -192,7 +184,7 @@ impl TryFrom<&[u8; 100]> for SqliteHeader {
 
     let database_text_encoding =
       DatabaseTextEncoding::parse_bytes(&bytes[56..=59])?;
-    
+
     let incremental_vacuum_mode =
       incremental_vacuum_settings::IncrementalVacuumMode::parse_bytes(
         &bytes[64..=67],
