@@ -133,6 +133,13 @@ impl App {
       value = **sqlite_header.user_version()
     ));
 
+    output.push_str(&format!(
+      "{label: <w$}{value}\n",
+      w = LABEL_WIDTH,
+      label = "application id:",
+      value = **sqlite_header.application_id()
+    ));
+
     println!("{output}");
     Ok(())
   }

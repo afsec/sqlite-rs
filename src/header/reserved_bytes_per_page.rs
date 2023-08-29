@@ -1,8 +1,7 @@
-use core::ops::Deref;
-
 use super::traits::ParseBytes;
-use crate::result::SQLiteError;
+use crate::result::{SQLiteError, SQLiteResult};
 use alloc::format;
+use core::ops::Deref;
 
 /// # Reserved bytes per page (1 Byte)
 ///  SQLite has the ability to set aside a small number of extra bytes at the
@@ -35,7 +34,7 @@ impl ParseBytes<&[u8]> for ReservedBytesPerPage {
   const NAME: &'static str = "ReservedBytesPerPage";
   const LENGTH_BYTES: usize = 1;
 
-  fn parsing_handler(bytes: &[u8]) -> crate::result::SQLiteResult<Self> {
+  fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
     let reserved_bytes_per_page = *bytes.first().ok_or(SQLiteError::from(
       format!("Impossible state on parsing {}", Self::NAME),
     ))?;
@@ -44,7 +43,7 @@ impl ParseBytes<&[u8]> for ReservedBytesPerPage {
   }
 }
 /*
-  fn parse_bytes(bytes: (&PageSize, u8)) -> crate::result::SQLiteResult<Self> {
+  fn parse_bytes(bytes: (&PageSize, u8)) -> SQLiteResult<Self> {
     let (pagesize, reserved_bytes) = bytes;
     if **pagesize == 512 && reserved_bytes > 32 {
       bail!("Usable size is not allowed be less than 480")

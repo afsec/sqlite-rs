@@ -1,4 +1,5 @@
 use super::traits::ParseBytes;
+use crate::result::SQLiteResult;
 use core::ops::Deref;
 
 /// Incremental vacuum settings (8 Bytes)
@@ -48,7 +49,7 @@ impl ParseBytes<&[u8]> for LargestRootBtreePage {
 
   const LENGTH_BYTES: usize = 4;
 
-  fn parsing_handler(bytes: &[u8]) -> crate::result::SQLiteResult<Self> {
+  fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
     let buf: [u8; 4] = bytes.try_into()?;
 
     let value = u32::from_be_bytes(buf);
@@ -79,7 +80,7 @@ impl ParseBytes<&[u8]> for IncrementalVacuumMode {
 
   const LENGTH_BYTES: usize = 4;
 
-  fn parsing_handler(bytes: &[u8]) -> crate::result::SQLiteResult<Self> {
+  fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
     let buf: [u8; 4] = bytes.try_into()?;
 
     let number = u32::from_be_bytes(buf);

@@ -1,6 +1,6 @@
-use core::ops::Deref;
-
 use super::traits::ParseBytes;
+use crate::result::SQLiteResult;
+use core::ops::Deref;
 
 /// # In-header database size (4 Bytes)
 ///  The in-header database size is a 4-byte big-endian integer at offset 28
@@ -38,7 +38,7 @@ impl ParseBytes<&[u8]> for DatabaseFileSizeInPages {
   const NAME: &'static str = "DatabaseFileSizeInPages";
   const LENGTH_BYTES: usize = 4;
 
-  fn parsing_handler(bytes: &[u8]) -> crate::result::SQLiteResult<Self> {
+  fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
     let buf: [u8; 4] = bytes.try_into()?;
 
     let database_size = u32::from_be_bytes(buf);

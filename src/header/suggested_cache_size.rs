@@ -1,6 +1,6 @@
-use core::ops::Deref;
-
 use super::traits::ParseBytes;
+use crate::result::SQLiteResult;
+use core::ops::Deref;
 
 /// # Suggested cache size (4 Bytes)
 ///
@@ -24,7 +24,7 @@ impl ParseBytes<&[u8]> for SuggestedCacheSize {
   const NAME: &'static str = "SuggestedCacheSize";
   const LENGTH_BYTES: usize = 4;
 
-  fn parsing_handler(bytes: &[u8]) -> crate::result::SQLiteResult<Self> {
+  fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
     let buf: [u8; 4] = bytes.try_into()?;
 
     let database_size = u32::from_be_bytes(buf);

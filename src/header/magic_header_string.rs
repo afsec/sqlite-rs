@@ -1,5 +1,5 @@
 use super::traits::ParseBytes;
-use crate::result::SQLiteError;
+use crate::result::{SQLiteError, SQLiteResult};
 use alloc::format;
 use core::fmt::Debug;
 
@@ -26,7 +26,7 @@ impl ParseBytes<&[u8]> for MagicHeaderString {
   const NAME: &'static str = "MagicHeaderString";
   const LENGTH_BYTES: usize = 16;
 
-  fn parsing_handler(bytes: &[u8]) -> crate::result::SQLiteResult<Self> {
+  fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
     for (idx, byte) in SQLITE3_FILE_FORMAT_MAGIC_STRING.iter().enumerate() {
       if bytes.get(idx) != Some(byte) {
         return Err(SQLiteError::Custom(format!(

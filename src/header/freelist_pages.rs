@@ -1,5 +1,5 @@
 use core::ops::Deref;
-
+use crate::result::SQLiteResult;
 use super::traits::ParseBytes;
 
 /// # Free page list (8 Bytes) => First(4 Bytes) + TotalPages (4 Bytes)
@@ -26,7 +26,7 @@ impl ParseBytes<&[u8]> for FreeListPages {
   const NAME: &'static str = "FreeListPages";
   const LENGTH_BYTES: usize = 8;
 
-  fn parsing_handler(bytes: &[u8]) -> crate::result::SQLiteResult<Self> {
+  fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
     let first = FreeListPagesFirstTrunkPage::parse_bytes(&bytes[0..=3])?;
     let total = FreeListPagesTotalPages::parse_bytes(&bytes[4..=7])?;
 
@@ -52,7 +52,7 @@ impl ParseBytes<&[u8]> for FreeListPagesFirstTrunkPage {
   const NAME: &'static str = "FreeListPagesFirstTrunkPage";
   const LENGTH_BYTES: usize = 4;
 
-  fn parsing_handler(bytes: &[u8]) -> crate::result::SQLiteResult<Self> {
+  fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
     let buf: [u8; 4] = bytes.try_into()?;
     let first_page_trunk = u32::from_be_bytes(buf);
     Ok(Self(first_page_trunk))
@@ -76,7 +76,7 @@ impl ParseBytes<&[u8]> for FreeListPagesTotalPages {
   const NAME: &'static str = "FreeListPagesTotalPages";
   const LENGTH_BYTES: usize = 4;
 
-  fn parsing_handler(bytes: &[u8]) -> crate::result::SQLiteResult<Self> {
+  fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
     let buf: [u8; 4] = bytes.try_into()?;
     let total_pages = u32::from_be_bytes(buf);
     Ok(Self(total_pages))

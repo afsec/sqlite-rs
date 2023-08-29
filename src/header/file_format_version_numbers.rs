@@ -1,8 +1,7 @@
-use core::{fmt::Display, ops::Deref};
-
 use super::traits::ParseBytes;
 use crate::result::{SQLiteError, SQLiteResult};
 use alloc::format;
+use core::{fmt::Display, ops::Deref};
 
 /// # File format version numbers (2 Bytes)
 ///  The file format write version and file format read version at offsets 18
@@ -72,7 +71,7 @@ impl ParseBytes<u8> for FileFormatWriteVersion {
   const NAME: &'static str = "FileFormatWriteVersion";
   const LENGTH_BYTES: usize = 1;
 
-  fn parsing_handler(bytes: &[u8]) -> crate::result::SQLiteResult<Self> {
+  fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
     let one_byte = *bytes.first().ok_or(SQLiteError::Custom(format!(
       "Impossible state on parsing {}",
       Self::NAME
@@ -117,7 +116,7 @@ impl ParseBytes<u8> for FileFormatReadVersion {
   const NAME: &'static str = "FileFormatReadVersion";
   const LENGTH_BYTES: usize = 1;
 
-  fn parsing_handler(bytes: &[u8]) -> crate::result::SQLiteResult<Self> {
+  fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
     let one_byte = *bytes.first().ok_or(SQLiteError::Custom(format!(
       "Impossible state on parsing {}",
       Self::NAME

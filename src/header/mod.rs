@@ -1,5 +1,6 @@
 //! Reference: https://www.sqlite.org/fileformat2.html
 
+mod application_id;
 mod database_text_encoding;
 mod db_filesize_in_pages;
 mod file_change_counter;
@@ -15,9 +16,9 @@ mod schema_format;
 mod suggested_cache_size;
 mod traits;
 mod user_version;
-
 use self::traits::ParseBytes;
 pub use self::{
+  application_id::ApplicationId,
   database_text_encoding::DatabaseTextEncoding,
   db_filesize_in_pages::DatabaseFileSizeInPages,
   file_change_counter::FileChangeCounter,
@@ -99,6 +100,8 @@ pub struct SqliteHeader {
   database_text_encoding: DatabaseTextEncoding,
   /// The "user version" as read and set by the user_version pragma.
   user_version: UserVersion,
+  /// The "Application ID" set by PRAGMA application_id.
+  application_id: ApplicationId,
 }
 
 impl SqliteHeader {
@@ -157,6 +160,10 @@ impl SqliteHeader {
   pub fn user_version(&self) -> &UserVersion {
     &self.user_version
   }
+
+  pub fn application_id(&self) -> &ApplicationId {
+    &self.application_id
+  }
 }
 impl TryFrom<&[u8; 100]> for SqliteHeader {
   type Error = SQLiteError;
@@ -199,7 +206,7 @@ impl TryFrom<&[u8; 100]> for SqliteHeader {
       incremental_vacuum_settings::IncrementalVacuumMode::parse_bytes(
         &bytes[64..=67],
       )?;
-
+    let application_id = ApplicationId::parse_bytes(&bytes[68..=71])?;
     Ok(Self {
       magic_header_string,
       page_size,
@@ -218,6 +225,7 @@ impl TryFrom<&[u8; 100]> for SqliteHeader {
       },
       database_text_encoding,
       user_version,
+      application_id,
     })
   }
 }

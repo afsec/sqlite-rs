@@ -1,5 +1,5 @@
 use super::traits::ParseBytes;
-use crate::result::SQLiteError;
+use crate::result::{SQLiteError, SQLiteResult};
 
 /// # Schema format number (4 Bytes)
 ///  The schema format number is a 4-byte big-endian integer at offset 44. The
@@ -67,7 +67,7 @@ impl ParseBytes<&[u8]> for SchemaFormat {
   const NAME: &'static str = "SchemaFormat";
   const LENGTH_BYTES: usize = 4;
 
-  fn parsing_handler(bytes: &[u8]) -> crate::result::SQLiteResult<Self> {
+  fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
     let buf: [u8; 4] = bytes.try_into()?;
 
     let value = u32::from_be_bytes(buf);

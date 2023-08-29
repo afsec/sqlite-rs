@@ -1,5 +1,5 @@
 use super::traits::ParseBytes;
-use crate::result::SQLiteError;
+use crate::result::{SQLiteError, SQLiteResult};
 use alloc::format;
 
 /// # Payload Fractions (3 Bytes)
@@ -37,7 +37,7 @@ impl ParseBytes<&[u8]> for PayloadFractions {
   const NAME: &'static str = "PayloadFractions";
   const LENGTH_BYTES: usize = 3;
 
-  fn parsing_handler(bytes: &[u8]) -> crate::result::SQLiteResult<Self> {
+  fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
     let maximum = MaximumEmbeddedPayloadFraction::parse_bytes(&[bytes[0]])?;
     let minimum = MinimumEmbeddedPayloadFraction::parse_bytes(&[bytes[1]])?;
     let leaf = LeafPayloadFraction::parse_bytes(&[bytes[2]])?;
@@ -57,7 +57,7 @@ impl ParseBytes<&[u8]> for MaximumEmbeddedPayloadFraction {
   const NAME: &'static str = "MaximumEmbeddedPayloadFraction";
   const LENGTH_BYTES: usize = 1;
 
-  fn parsing_handler(bytes: &[u8]) -> crate::result::SQLiteResult<Self> {
+  fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
     let maximum = *bytes.first().ok_or(SQLiteError::Custom(format!(
       "Impossible state on parsing {}",
       Self::NAME
@@ -80,7 +80,7 @@ impl ParseBytes<&[u8]> for MinimumEmbeddedPayloadFraction {
   const NAME: &'static str = "MinimumEmbeddedPayloadFraction";
   const LENGTH_BYTES: usize = 1;
 
-  fn parsing_handler(bytes: &[u8]) -> crate::result::SQLiteResult<Self> {
+  fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
     let minimum = *bytes.first().ok_or(SQLiteError::Custom(format!(
       "Impossible state on parsing {}",
       Self::NAME
@@ -103,7 +103,7 @@ impl ParseBytes<&[u8]> for LeafPayloadFraction {
   const NAME: &'static str = "LeafPayloadFraction";
   const LENGTH_BYTES: usize = 1;
 
-  fn parsing_handler(bytes: &[u8]) -> crate::result::SQLiteResult<Self> {
+  fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
     let leaf = *bytes.first().ok_or(SQLiteError::Custom(format!(
       "Impossible state on parsing {}",
       Self::NAME

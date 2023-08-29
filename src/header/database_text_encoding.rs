@@ -1,8 +1,6 @@
-use core::fmt::Display;
-
-use crate::result::SQLiteError;
-
 use super::traits::ParseBytes;
+use crate::result::{SQLiteError, SQLiteResult};
+use core::fmt::Display;
 
 /// # Text encoding(4 Bytes)
 ///
@@ -57,7 +55,7 @@ impl ParseBytes<&[u8]> for DatabaseTextEncoding {
 
   const LENGTH_BYTES: usize = 4;
 
-  fn parsing_handler(bytes: &[u8]) -> crate::result::SQLiteResult<Self> {
+  fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
     let buf: [u8; 4] = bytes.try_into()?;
 
     let value = u32::from_be_bytes(buf);

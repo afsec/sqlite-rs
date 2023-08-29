@@ -1,5 +1,5 @@
 use super::traits::ParseBytes;
-use crate::result::SQLiteError;
+use crate::result::{SQLiteError, SQLiteResult};
 use alloc::format;
 use core::ops::Deref;
 
@@ -30,7 +30,7 @@ impl ParseBytes<&[u8]> for PageSize {
   const NAME: &'static str = "PageSize";
   const LENGTH_BYTES: usize = 2;
 
-  fn parsing_handler(bytes: &[u8]) -> crate::result::SQLiteResult<Self> {
+  fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
     use core::ops::Not;
 
     let buf: [u8; 2] = bytes.try_into()?;
