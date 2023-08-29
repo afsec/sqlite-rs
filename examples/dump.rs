@@ -1,8 +1,8 @@
+use sqlite_rs::header::SqliteHeader;
 use std::{fs::File, io::Read};
 
-use sqlite_rs::header::SqliteHeader;
-
-type AppResult<T> = anyhow::Result<T>;
+type AppResult<T> = Result<T, AppError>;
+type AppError = Box<dyn std::error::Error>;
 
 fn main() -> AppResult<()> {
   App::run()?;
@@ -20,8 +20,6 @@ impl App {
 
     let read_len = f.read(&mut sqlite_header_buffer)?;
     println!("Read {read_len} bytes.");
-
-    // Self::print_hexdump(&sqlite_header_buffer[..])?;
 
     let sqlite_header = SqliteHeader::try_from(&sqlite_header_buffer)?;
 
@@ -128,25 +126,6 @@ impl App {
       value = sqlite_header.database_text_encoding()
     ));
     println!("{output}");
-    Ok(())
-  }
-
-  fn print_hexdump(bytes: &[u8]) -> AppResult<()> {
-    use hexyl::{BorderStyle, PrinterBuilder};
-    use std::io;
-
-    let stdout = io::stdout();
-    let mut handle = stdout.lock();
-    let mut printer = PrinterBuilder::new(&mut handle)
-      .show_color(true)
-      .show_char_panel(true)
-      .show_position_panel(true)
-      .with_border_style(BorderStyle::Unicode)
-      .enable_squeezing(false)
-      .num_panels(2)
-      .group_size(1)
-      .build();
-    printer.print_all(&bytes[..])?;
     Ok(())
   }
 }

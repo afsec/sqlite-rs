@@ -15,14 +15,9 @@ default = ["std"]
 std = ["alloc"]
 alloc = []
 
-# [patch.'crates-io']
 
 [dependencies]
-# num-traits = "0.2.16"
 
-[dev-dependencies]
-hexyl = "0.13.1"
-anyhow = "1.0.75"
 
 [profile.dev]
 opt-level = 0
