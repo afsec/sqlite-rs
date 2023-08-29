@@ -11,8 +11,6 @@ mod reserved_bytes_per_page;
 mod schema_cookie;
 mod traits;
 
-use core::fmt::Display;
-
 use self::traits::ParseBytes;
 pub use self::{
   db_filesize_in_pages::DatabaseFileSizeInPages,
@@ -31,7 +29,6 @@ pub use self::{
   schema_cookie::SchemaCookie,
 };
 use crate::result::SQLiteError;
-use alloc::{borrow::ToOwned, format};
 
 /// # Database File Format
 ///
@@ -164,91 +161,3 @@ impl TryFrom<&[u8; 100]> for SqliteHeader {
     })
   }
 }
-
-impl Display for SqliteHeader {
-  fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-    const LABEL_WIDTH: usize = 21;
-
-    let mut output = "".to_owned();
-    output.push_str("SQLite Header\n");
-    output.push_str(&format!(
-      "{label: <w$}{value}\n",
-      w = LABEL_WIDTH,
-      label = "database page size:",
-      value = **self.page_size()
-    ));
-    output.push_str(&format!(
-      "{label: <w$}{value}\n",
-      w = LABEL_WIDTH,
-      label = "write format:",
-      value = **self.file_format_version_numbers.write_version()
-    ));
-    output.push_str(&format!(
-      "{label: <w$}{value}\n",
-      w = LABEL_WIDTH,
-      label = "read format:",
-      value = **self.file_format_version_numbers.read_version()
-    ));
-    output.push_str(&format!(
-      "{label: <w$}{value}\n",
-      w = LABEL_WIDTH,
-      label = "reserved bytes:",
-      value = **self.reserved_bytes_per_page()
-    ));
-    output.push_str(&format!(
-      "{label: <w$}{value}\n",
-      w = LABEL_WIDTH,
-      label = "file change counter:",
-      value = **self.file_change_counter()
-    ));
-
-    output.push_str(&format!(
-      "{label: <w$}{value}\n",
-      w = LABEL_WIDTH,
-      label = "database page count:",
-      value = **self.db_filesize_in_pages()
-    ));
-
-    output.push_str(&format!(
-      "{label: <w$}{value}\n",
-      w = LABEL_WIDTH,
-      label = "freelist page count:",
-      value = **self.freelist_pages().total()
-    ));
-
-    output.push_str(&format!(
-      "{label: <w$}{value}\n",
-      w = LABEL_WIDTH,
-      label = "schema cookie:",
-      value = **self.schema_cookie()
-    ));
-
-    write!(f, "{output}")
-  }
-}
-/*
-$ cat flights.info
-database page size:  4096
-write format:        1
-read format:         1
-reserved bytes:      0
-file change counter: 4
-database page count: 3
-freelist page count: 0
-schema cookie:       2
-schema format:       4
-default cache size:  0
-autovacuum top root: 0
-incremental vacuum:  0
-text encoding:       1 (utf8)
-user version:        0
-application id:      0
-software version:    3030000
-number of tables:    2
-number of indexes:   0
-number of triggers:  0
-number of views:     0
-schema size:         138
-data version         1
-
-*/
