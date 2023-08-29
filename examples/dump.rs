@@ -87,6 +87,13 @@ impl App {
       value = **sqlite_header.schema_cookie()
     ));
 
+    output.push_str(&format!(
+      "{label: <w$}{value}\n",
+      w = LABEL_WIDTH,
+      label = "schema format:",
+      value = u32::from(sqlite_header.schema_format())
+    ));
+
     println!("{output}");
     Ok(())
   }
