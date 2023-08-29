@@ -21,7 +21,7 @@ impl App {
     let read_len = f.read(&mut sqlite_header_buffer)?;
     println!("Read {read_len} bytes.");
 
-    Self::print_hexdump(&sqlite_header_buffer[..])?;
+    // Self::print_hexdump(&sqlite_header_buffer[..])?;
 
     let sqlite_header = SqliteHeader::try_from(&sqlite_header_buffer)?;
 
