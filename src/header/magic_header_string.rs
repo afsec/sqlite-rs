@@ -23,20 +23,15 @@ impl Debug for MagicHeaderString {
 }
 
 impl ParseBytes<&[u8]> for MagicHeaderString {
-  fn struct_name() -> &'static str {
-    "MagicHeaderString"
-  }
-
-  fn bytes_length() -> usize {
-    16
-  }
+  const NAME: &'static str = "MagicHeaderString";
+  const LENGTH_BYTES: usize = 16;
 
   fn parsing_handler(bytes: &[u8]) -> crate::result::SQLiteResult<Self> {
     for (idx, byte) in SQLITE3_FILE_FORMAT_MAGIC_STRING.iter().enumerate() {
       if bytes.get(idx) != Some(byte) {
         return Err(SQLiteError::Custom(format!(
           "Invalid payload for {}",
-          Self::struct_name()
+          Self::NAME
         )));
       }
     }

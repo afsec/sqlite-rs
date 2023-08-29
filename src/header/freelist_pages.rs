@@ -23,13 +23,8 @@ impl FreeListPages {
 }
 
 impl ParseBytes<&[u8]> for FreeListPages {
-  fn struct_name() -> &'static str {
-    "FreeListPages"
-  }
-
-  fn bytes_length() -> usize {
-    8
-  }
+  const NAME: &'static str = "FreeListPages";
+  const LENGTH_BYTES: usize = 8;
 
   fn parsing_handler(bytes: &[u8]) -> crate::result::SQLiteResult<Self> {
     let first = FreeListPagesFirstTrunkPage::parse_bytes(&bytes[0..=3])?;
@@ -54,13 +49,8 @@ impl Deref for FreeListPagesFirstTrunkPage {
 }
 
 impl ParseBytes<&[u8]> for FreeListPagesFirstTrunkPage {
-  fn struct_name() -> &'static str {
-    "FreeListPagesFirstTrunkPage"
-  }
-
-  fn bytes_length() -> usize {
-    4
-  }
+  const NAME: &'static str = "FreeListPagesFirstTrunkPage";
+  const LENGTH_BYTES: usize = 4;
 
   fn parsing_handler(bytes: &[u8]) -> crate::result::SQLiteResult<Self> {
     let buf: [u8; 4] = bytes.try_into()?;
@@ -83,13 +73,8 @@ impl Deref for FreeListPagesTotalPages {
 }
 
 impl ParseBytes<&[u8]> for FreeListPagesTotalPages {
-  fn struct_name() -> &'static str {
-    "FreeListPagesTotalPages"
-  }
-
-  fn bytes_length() -> usize {
-    4
-  }
+  const NAME: &'static str = "FreeListPagesTotalPages";
+  const LENGTH_BYTES: usize = 4;
 
   fn parsing_handler(bytes: &[u8]) -> crate::result::SQLiteResult<Self> {
     let buf: [u8; 4] = bytes.try_into()?;

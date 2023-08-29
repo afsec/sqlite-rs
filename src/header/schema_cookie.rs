@@ -24,13 +24,8 @@ impl Deref for SchemaCookie {
 }
 
 impl ParseBytes<&[u8]> for SchemaCookie {
-  fn struct_name() -> &'static str {
-    "SchemaCookie"
-  }
-
-  fn bytes_length() -> usize {
-    4
-  }
+  const NAME: &'static str = "SchemaCookie";
+  const LENGTH_BYTES: usize = 4;
 
   fn parsing_handler(bytes: &[u8]) -> crate::result::SQLiteResult<Self> {
     let buf: [u8; 4] = bytes.try_into()?;

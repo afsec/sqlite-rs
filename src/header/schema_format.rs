@@ -64,13 +64,8 @@ impl From<&SchemaFormat> for u32 {
 }
 
 impl ParseBytes<&[u8]> for SchemaFormat {
-  fn struct_name() -> &'static str {
-    "SchemaFormat"
-  }
-
-  fn bytes_length() -> usize {
-    4
-  }
+  const NAME: &'static str = "SchemaFormat";
+  const LENGTH_BYTES: usize = 4;
 
   fn parsing_handler(bytes: &[u8]) -> crate::result::SQLiteResult<Self> {
     let buf: [u8; 4] = bytes.try_into()?;

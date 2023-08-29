@@ -35,13 +35,8 @@ impl FileFormatVersionNumbers {
   }
 }
 impl ParseBytes<&[u8]> for FileFormatVersionNumbers {
-  fn struct_name() -> &'static str {
-    "FileFormatVersionNumbers"
-  }
-
-  fn bytes_length() -> usize {
-    2
-  }
+  const NAME: &'static str = "FileFormatVersionNumbers";
+  const LENGTH_BYTES: usize = 2;
 
   fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
     let write_version = FileFormatWriteVersion::parsing_handler(&[bytes[0]])?;
@@ -74,18 +69,13 @@ impl Deref for FileFormatWriteVersion {
 }
 
 impl ParseBytes<u8> for FileFormatWriteVersion {
-  fn struct_name() -> &'static str {
-    "FileFormatWriteVersion"
-  }
-
-  fn bytes_length() -> usize {
-    1
-  }
+  const NAME: &'static str = "FileFormatWriteVersion";
+  const LENGTH_BYTES: usize = 1;
 
   fn parsing_handler(bytes: &[u8]) -> crate::result::SQLiteResult<Self> {
     let one_byte = *bytes.first().ok_or(SQLiteError::Custom(format!(
       "Impossible state on parsing {}",
-      Self::struct_name()
+      Self::NAME
     )))?;
     match one_byte {
       1 => Ok(Self::Legacy),
@@ -124,18 +114,13 @@ impl Deref for FileFormatReadVersion {
 }
 
 impl ParseBytes<u8> for FileFormatReadVersion {
-  fn struct_name() -> &'static str {
-    "FileFormatReadVersion"
-  }
-
-  fn bytes_length() -> usize {
-    1
-  }
+  const NAME: &'static str = "FileFormatReadVersion";
+  const LENGTH_BYTES: usize = 1;
 
   fn parsing_handler(bytes: &[u8]) -> crate::result::SQLiteResult<Self> {
     let one_byte = *bytes.first().ok_or(SQLiteError::Custom(format!(
       "Impossible state on parsing {}",
-      Self::struct_name()
+      Self::NAME
     )))?;
     match one_byte {
       1 => Ok(Self::Legacy),

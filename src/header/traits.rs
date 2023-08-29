@@ -5,15 +5,16 @@ pub(super) trait ParseBytes<T>
 where
   Self: Sized,
 {
-  fn struct_name() -> &'static str;
-  fn bytes_length() -> usize;
+  const NAME: &'static str;
+  const LENGTH_BYTES: usize;
+  
   fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self>;
 
   fn check_payload_size(bytes: &[u8]) -> SQLiteResult<()> {
-    if bytes.len() != Self::bytes_length() {
+    if bytes.len() != Self::LENGTH_BYTES {
       Err(SQLiteError::Custom(format!(
         "Invalid size for {}",
-        Self::struct_name()
+        Self::NAME
       )))
     } else {
       Ok(())

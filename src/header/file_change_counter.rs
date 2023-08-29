@@ -26,13 +26,8 @@ impl Deref for FileChangeCounter {
 }
 
 impl ParseBytes<&[u8]> for FileChangeCounter {
-  fn bytes_length() -> usize {
-    4
-  }
-
-  fn struct_name() -> &'static str {
-    "FileChangeCounter"
-  }
+  const NAME: &'static str = "FileChangeCounter";
+  const LENGTH_BYTES: usize = 4;
 
   fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
     let buf: [u8; 4] = bytes.try_into()?;

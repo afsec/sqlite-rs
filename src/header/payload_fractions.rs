@@ -34,13 +34,8 @@ impl PayloadFractions {
 }
 
 impl ParseBytes<&[u8]> for PayloadFractions {
-  fn struct_name() -> &'static str {
-    "PayloadFractions"
-  }
-
-  fn bytes_length() -> usize {
-    3
-  }
+  const NAME: &'static str = "PayloadFractions";
+  const LENGTH_BYTES: usize = 3;
 
   fn parsing_handler(bytes: &[u8]) -> crate::result::SQLiteResult<Self> {
     let maximum = MaximumEmbeddedPayloadFraction::parse_bytes(&[bytes[0]])?;
@@ -59,18 +54,13 @@ impl ParseBytes<&[u8]> for PayloadFractions {
 pub struct MaximumEmbeddedPayloadFraction(u8);
 
 impl ParseBytes<&[u8]> for MaximumEmbeddedPayloadFraction {
-  fn struct_name() -> &'static str {
-    "MaximumEmbeddedPayloadFraction"
-  }
-
-  fn bytes_length() -> usize {
-    1
-  }
+  const NAME: &'static str = "MaximumEmbeddedPayloadFraction";
+  const LENGTH_BYTES: usize = 1;
 
   fn parsing_handler(bytes: &[u8]) -> crate::result::SQLiteResult<Self> {
     let maximum = *bytes.first().ok_or(SQLiteError::Custom(format!(
       "Impossible state on parsing {}",
-      Self::struct_name()
+      Self::NAME
     )))?;
     if maximum == 64 {
       Ok(Self(maximum))
@@ -87,18 +77,13 @@ impl ParseBytes<&[u8]> for MaximumEmbeddedPayloadFraction {
 pub struct MinimumEmbeddedPayloadFraction(u8);
 
 impl ParseBytes<&[u8]> for MinimumEmbeddedPayloadFraction {
-  fn struct_name() -> &'static str {
-    "MinimumEmbeddedPayloadFraction"
-  }
-
-  fn bytes_length() -> usize {
-    1
-  }
+  const NAME: &'static str = "MinimumEmbeddedPayloadFraction";
+  const LENGTH_BYTES: usize = 1;
 
   fn parsing_handler(bytes: &[u8]) -> crate::result::SQLiteResult<Self> {
     let minimum = *bytes.first().ok_or(SQLiteError::Custom(format!(
       "Impossible state on parsing {}",
-      Self::struct_name()
+      Self::NAME
     )))?;
     if minimum == 32 {
       Ok(Self(minimum))
@@ -115,18 +100,13 @@ impl ParseBytes<&[u8]> for MinimumEmbeddedPayloadFraction {
 pub struct LeafPayloadFraction(u8);
 
 impl ParseBytes<&[u8]> for LeafPayloadFraction {
-  fn struct_name() -> &'static str {
-    "LeafPayloadFraction"
-  }
-
-  fn bytes_length() -> usize {
-    1
-  }
+  const NAME: &'static str = "LeafPayloadFraction";
+  const LENGTH_BYTES: usize = 1;
 
   fn parsing_handler(bytes: &[u8]) -> crate::result::SQLiteResult<Self> {
     let leaf = *bytes.first().ok_or(SQLiteError::Custom(format!(
       "Impossible state on parsing {}",
-      Self::struct_name()
+      Self::NAME
     )))?;
     if leaf == 32 {
       Ok(Self(leaf))

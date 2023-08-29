@@ -10,6 +10,7 @@ mod payload_fractions;
 mod reserved_bytes_per_page;
 mod schema_cookie;
 mod schema_format;
+mod suggested_cache_size;
 mod traits;
 
 use self::traits::ParseBytes;
@@ -29,6 +30,7 @@ pub use self::{
   reserved_bytes_per_page::ReservedBytesPerPage,
   schema_cookie::SchemaCookie,
   schema_format::SchemaFormat,
+  suggested_cache_size::SuggestedCacheSize,
 };
 use crate::result::SQLiteError;
 
@@ -83,6 +85,8 @@ pub struct SqliteHeader {
   schema_cookie: SchemaCookie,
   /// The schema format number.
   schema_format: SchemaFormat,
+  /// Default page cache size.
+  suggested_cache_size: SuggestedCacheSize,
 }
 
 impl SqliteHeader {
@@ -122,8 +126,12 @@ impl SqliteHeader {
     &self.schema_cookie
   }
 
-    pub fn schema_format(&self) -> &SchemaFormat {
-        &self.schema_format
+  pub fn schema_format(&self) -> &SchemaFormat {
+    &self.schema_format
+  }
+
+    pub fn suggested_cache_size(&self) -> &SuggestedCacheSize {
+        &self.suggested_cache_size
     }
 }
 impl TryFrom<&[u8; 100]> for SqliteHeader {
@@ -157,6 +165,10 @@ impl TryFrom<&[u8; 100]> for SqliteHeader {
     let schema_cookie = SchemaCookie::parse_bytes(&bytes[40..=43])?;
 
     let schema_format = SchemaFormat::parse_bytes(&bytes[44..=47])?;
+
+    let suggested_cache_size =
+      SuggestedCacheSize::parse_bytes(&bytes[48..=51])?;
+
     Ok(Self {
       magic_header_string,
       page_size,
@@ -168,6 +180,7 @@ impl TryFrom<&[u8; 100]> for SqliteHeader {
       freelist_pages,
       schema_cookie,
       schema_format,
+      suggested_cache_size,
     })
   }
 }

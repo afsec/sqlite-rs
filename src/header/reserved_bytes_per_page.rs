@@ -32,17 +32,12 @@ impl Deref for ReservedBytesPerPage {
 }
 
 impl ParseBytes<&[u8]> for ReservedBytesPerPage {
-  fn struct_name() -> &'static str {
-    "ReservedBytesPerPage"
-  }
-
-  fn bytes_length() -> usize {
-    1
-  }
+  const NAME: &'static str = "ReservedBytesPerPage";
+  const LENGTH_BYTES: usize = 1;
 
   fn parsing_handler(bytes: &[u8]) -> crate::result::SQLiteResult<Self> {
     let reserved_bytes_per_page = *bytes.first().ok_or(SQLiteError::from(
-      format!("Impossible state on parsing {}", Self::struct_name()),
+      format!("Impossible state on parsing {}", Self::NAME),
     ))?;
 
     Ok(Self(reserved_bytes_per_page))

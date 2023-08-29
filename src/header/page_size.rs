@@ -27,13 +27,8 @@ impl Deref for PageSize {
 }
 
 impl ParseBytes<&[u8]> for PageSize {
-  fn struct_name() -> &'static str {
-    "PageSize"
-  }
-
-  fn bytes_length() -> usize {
-    2
-  }
+  const NAME: &'static str = "PageSize";
+  const LENGTH_BYTES: usize = 2;
 
   fn parsing_handler(bytes: &[u8]) -> crate::result::SQLiteResult<Self> {
     use core::ops::Not;

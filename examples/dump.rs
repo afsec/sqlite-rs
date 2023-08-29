@@ -94,6 +94,13 @@ impl App {
       value = u32::from(sqlite_header.schema_format())
     ));
 
+    output.push_str(&format!(
+      "{label: <w$}{value}\n",
+      w = LABEL_WIDTH,
+      label = "default cache size:",
+      value = **sqlite_header.suggested_cache_size()
+    ));
+
     println!("{output}");
     Ok(())
   }

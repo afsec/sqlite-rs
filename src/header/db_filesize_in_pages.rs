@@ -35,13 +35,8 @@ impl Deref for DatabaseFileSizeInPages {
 }
 
 impl ParseBytes<&[u8]> for DatabaseFileSizeInPages {
-  fn struct_name() -> &'static str {
-    "DatabaseFileSizeInPages"
-  }
-
-  fn bytes_length() -> usize {
-    4
-  }
+  const NAME: &'static str = "DatabaseFileSizeInPages";
+  const LENGTH_BYTES: usize = 4;
 
   fn parsing_handler(bytes: &[u8]) -> crate::result::SQLiteResult<Self> {
     let buf: [u8; 4] = bytes.try_into()?;
