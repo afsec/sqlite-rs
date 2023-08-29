@@ -101,6 +101,26 @@ impl App {
       value = **sqlite_header.suggested_cache_size()
     ));
 
+    output.push_str(&format!(
+      "{label: <w$}{value}\n",
+      w = LABEL_WIDTH,
+      label = "autovacuum top root:",
+      value = **sqlite_header
+        .incremental_vacuum_settings()
+        .largest_root_btree_page()
+    ));
+
+    output.push_str(&format!(
+      "{label: <w$}{value}\n",
+      w = LABEL_WIDTH,
+      label = "incremental vacuum:",
+      value = u32::from(
+        sqlite_header
+          .incremental_vacuum_settings()
+          .incremental_vacuum_mode()
+      )
+    ));
+
     println!("{output}");
     Ok(())
   }

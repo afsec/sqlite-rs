@@ -4,6 +4,7 @@ mod db_filesize_in_pages;
 mod file_change_counter;
 mod file_format_version_numbers;
 mod freelist_pages;
+mod incremental_vacuum_settings;
 mod magic_header_string;
 mod page_size;
 mod payload_fractions;
@@ -21,6 +22,7 @@ pub use self::{
     FileFormatReadVersion, FileFormatVersionNumbers, FileFormatWriteVersion,
   },
   freelist_pages::FreeListPages,
+  incremental_vacuum_settings::IncrementalVacuumSettings,
   magic_header_string::MagicHeaderString,
   page_size::PageSize,
   payload_fractions::{
@@ -87,6 +89,8 @@ pub struct SqliteHeader {
   schema_format: SchemaFormat,
   /// Default page cache size.
   suggested_cache_size: SuggestedCacheSize,
+  /// Incremental vacuum settings.
+  incremental_vacuum_settings: IncrementalVacuumSettings,
 }
 
 impl SqliteHeader {
@@ -130,8 +134,12 @@ impl SqliteHeader {
     &self.schema_format
   }
 
-    pub fn suggested_cache_size(&self) -> &SuggestedCacheSize {
-        &self.suggested_cache_size
+  pub fn suggested_cache_size(&self) -> &SuggestedCacheSize {
+    &self.suggested_cache_size
+  }
+
+    pub fn incremental_vacuum_settings(&self) -> &IncrementalVacuumSettings {
+        &self.incremental_vacuum_settings
     }
 }
 impl TryFrom<&[u8; 100]> for SqliteHeader {
@@ -169,6 +177,16 @@ impl TryFrom<&[u8; 100]> for SqliteHeader {
     let suggested_cache_size =
       SuggestedCacheSize::parse_bytes(&bytes[48..=51])?;
 
+    let largest_root_btree_page =
+      incremental_vacuum_settings::LargestRootBtreePage::parse_bytes(
+        &bytes[52..=55],
+      )?;
+
+    let incremental_vacuum_mode =
+      incremental_vacuum_settings::IncrementalVacuumMode::parse_bytes(
+        &bytes[64..=67],
+      )?;
+
     Ok(Self {
       magic_header_string,
       page_size,
@@ -181,6 +199,10 @@ impl TryFrom<&[u8; 100]> for SqliteHeader {
       schema_cookie,
       schema_format,
       suggested_cache_size,
+      incremental_vacuum_settings: IncrementalVacuumSettings {
+        largest_root_btree_page,
+        incremental_vacuum_mode,
+      },
     })
   }
 }
