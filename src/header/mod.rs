@@ -14,6 +14,7 @@ mod schema_cookie;
 mod schema_format;
 mod suggested_cache_size;
 mod traits;
+mod user_version;
 
 use self::traits::ParseBytes;
 pub use self::{
@@ -35,6 +36,7 @@ pub use self::{
   schema_cookie::SchemaCookie,
   schema_format::SchemaFormat,
   suggested_cache_size::SuggestedCacheSize,
+  user_version::UserVersion,
 };
 use crate::result::SQLiteError;
 
@@ -95,6 +97,8 @@ pub struct SqliteHeader {
   incremental_vacuum_settings: IncrementalVacuumSettings,
   /// The database text encoding. A value of 1 means UTF-8. A value of 2 means UTF-16le. A value of 3 means UTF-16be.
   database_text_encoding: DatabaseTextEncoding,
+  /// The "user version" as read and set by the user_version pragma.
+  user_version: UserVersion,
 }
 
 impl SqliteHeader {
@@ -149,6 +153,10 @@ impl SqliteHeader {
   pub fn database_text_encoding(&self) -> &DatabaseTextEncoding {
     &self.database_text_encoding
   }
+
+  pub fn user_version(&self) -> &UserVersion {
+    &self.user_version
+  }
 }
 impl TryFrom<&[u8; 100]> for SqliteHeader {
   type Error = SQLiteError;
@@ -185,6 +193,8 @@ impl TryFrom<&[u8; 100]> for SqliteHeader {
     let database_text_encoding =
       DatabaseTextEncoding::parse_bytes(&bytes[56..=59])?;
 
+    let user_version = UserVersion::parse_bytes(&bytes[60..=63])?;
+
     let incremental_vacuum_mode =
       incremental_vacuum_settings::IncrementalVacuumMode::parse_bytes(
         &bytes[64..=67],
@@ -207,6 +217,7 @@ impl TryFrom<&[u8; 100]> for SqliteHeader {
         incremental_vacuum_mode,
       },
       database_text_encoding,
+      user_version,
     })
   }
 }

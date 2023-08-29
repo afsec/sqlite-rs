@@ -125,6 +125,14 @@ impl App {
       label = "text encoding:",
       value = sqlite_header.database_text_encoding()
     ));
+
+    output.push_str(&format!(
+      "{label: <w$}{value}\n",
+      w = LABEL_WIDTH,
+      label = "user version:",
+      value = **sqlite_header.user_version()
+    ));
+
     println!("{output}");
     Ok(())
   }
