@@ -169,6 +169,10 @@ impl SqliteHeader {
   pub fn application_id(&self) -> &ApplicationId {
     &self.application_id
   }
+
+    pub fn reserved_for_expansion(&self) -> &ReservedForExpansion {
+        &self.reserved_for_expansion
+    }
 }
 impl TryFrom<&[u8; 100]> for SqliteHeader {
   type Error = SQLiteError;
