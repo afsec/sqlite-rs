@@ -34,7 +34,7 @@ impl ParseBytes<&[u8]> for PageSize {
   fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
     use core::ops::Not;
 
-    let buf: [u8; 2] = bytes.try_into()?;
+    let buf: [u8; Self::LENGTH_BYTES] = bytes.try_into()?;
 
     let page_size = u16::from_be_bytes(buf);
 
