@@ -1,6 +1,6 @@
-use core::ops::Deref;
-use crate::result::SQLiteResult;
 use super::traits::ParseBytes;
+use crate::result::SQLiteResult;
+use core::ops::Deref;
 
 /// # Free page list (8 Bytes) => First(4 Bytes) + TotalPages (4 Bytes)
 ///  Unused pages in the database file are stored on a freelist.

@@ -11,11 +11,13 @@ mod magic_header_string;
 mod page_size;
 mod payload_fractions;
 mod reserved_bytes_per_page;
+mod reserved_for_expansion;
 mod schema_cookie;
 mod schema_format;
 mod suggested_cache_size;
 mod traits;
 mod user_version;
+
 use self::traits::ParseBytes;
 pub use self::{
   application_id::ApplicationId,
@@ -34,6 +36,7 @@ pub use self::{
     MinimumEmbeddedPayloadFraction, PayloadFractions,
   },
   reserved_bytes_per_page::ReservedBytesPerPage,
+  reserved_for_expansion::ReservedForExpansion,
   schema_cookie::SchemaCookie,
   schema_format::SchemaFormat,
   suggested_cache_size::SuggestedCacheSize,
@@ -102,6 +105,8 @@ pub struct SqliteHeader {
   user_version: UserVersion,
   /// The "Application ID" set by PRAGMA application_id.
   application_id: ApplicationId,
+  // Reserved for expansion. Must be zero.
+  reserved_for_expansion: ReservedForExpansion,
 }
 
 impl SqliteHeader {
@@ -206,7 +211,12 @@ impl TryFrom<&[u8; 100]> for SqliteHeader {
       incremental_vacuum_settings::IncrementalVacuumMode::parse_bytes(
         &bytes[64..=67],
       )?;
+
     let application_id = ApplicationId::parse_bytes(&bytes[68..=71])?;
+
+    let reserved_for_expansion =
+      ReservedForExpansion::parse_bytes(&bytes[72..=91])?;
+
     Ok(Self {
       magic_header_string,
       page_size,
@@ -226,6 +236,7 @@ impl TryFrom<&[u8; 100]> for SqliteHeader {
       database_text_encoding,
       user_version,
       application_id,
+      reserved_for_expansion,
     })
   }
 }
