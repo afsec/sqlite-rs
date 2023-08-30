@@ -4,7 +4,7 @@ use alloc::format;
 use core::ops::Deref;
 
 /// # Reserved bytes per page (1 Byte)
-/// 
+///
 ///  SQLite has the ability to set aside a small number of extra bytes at the
 /// end of every page for use by extensions. These extra bytes are used, for
 /// example, by the SQLite Encryption Extension to store a nonce and/or

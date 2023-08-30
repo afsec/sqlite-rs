@@ -50,7 +50,7 @@ impl ParseBytes<&[u8]> for LargestRootBtreePage {
   const LENGTH_BYTES: usize = 4;
 
   fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
-    let buf: [u8; 4] = bytes.try_into()?;
+    let buf: [u8; Self::LENGTH_BYTES] = bytes.try_into()?;
 
     let value = u32::from_be_bytes(buf);
 
@@ -81,7 +81,7 @@ impl ParseBytes<&[u8]> for IncrementalVacuumMode {
   const LENGTH_BYTES: usize = 4;
 
   fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
-    let buf: [u8; 4] = bytes.try_into()?;
+    let buf: [u8; Self::LENGTH_BYTES] = bytes.try_into()?;
 
     let number = u32::from_be_bytes(buf);
     let value = if number > 0 { Self::True } else { Self::False };

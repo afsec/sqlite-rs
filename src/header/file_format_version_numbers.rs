@@ -4,7 +4,7 @@ use alloc::format;
 use core::{fmt::Display, ops::Deref};
 
 /// # File format version numbers (2 Bytes)
-/// 
+///
 ///  The file format write version and file format read version at offsets 18
 /// and 19 are intended to allow for enhancements of the file format in future
 /// versions of SQLite. In current versions of SQLite, both of these values

@@ -182,13 +182,13 @@ impl SqliteHeader {
     &self.reserved_for_expansion
   }
 
-    pub fn version_valid_for(&self) -> &VersionValidFor {
-        &self.version_valid_for
-    }
+  pub fn version_valid_for(&self) -> &VersionValidFor {
+    &self.version_valid_for
+  }
 
-    pub fn write_library_version(&self) -> &WriteLibraryVersion {
-        &self.write_library_version
-    }
+  pub fn write_library_version(&self) -> &WriteLibraryVersion {
+    &self.write_library_version
+  }
 }
 impl TryFrom<&[u8; 100]> for SqliteHeader {
   type Error = SQLiteError;
@@ -236,9 +236,12 @@ impl TryFrom<&[u8; 100]> for SqliteHeader {
 
     let reserved_for_expansion =
       ReservedForExpansion::parse_bytes(&bytes[72..=91])?;
+
     let version_valid_for = VersionValidFor::parse_bytes(&bytes[92..=95])?;
+
     let write_library_version =
       WriteLibraryVersion::parse_bytes(&bytes[96..=99])?;
+
     Ok(Self {
       magic_header_string,
       page_size,

@@ -53,7 +53,7 @@ impl ParseBytes<&[u8]> for FreeListPagesFirstTrunkPage {
   const LENGTH_BYTES: usize = 4;
 
   fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
-    let buf: [u8; 4] = bytes.try_into()?;
+    let buf: [u8; Self::LENGTH_BYTES] = bytes.try_into()?;
     let first_page_trunk = u32::from_be_bytes(buf);
     Ok(Self(first_page_trunk))
   }
@@ -77,7 +77,7 @@ impl ParseBytes<&[u8]> for FreeListPagesTotalPages {
   const LENGTH_BYTES: usize = 4;
 
   fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
-    let buf: [u8; 4] = bytes.try_into()?;
+    let buf: [u8; Self::LENGTH_BYTES] = bytes.try_into()?;
     let total_pages = u32::from_be_bytes(buf);
     Ok(Self(total_pages))
   }

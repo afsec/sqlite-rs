@@ -4,7 +4,7 @@ use alloc::format;
 use core::ops::Deref;
 
 /// # Page Size (2 Bytes)
-/// 
+///
 ///  The two-byte value beginning at offset 16 determines the page size of the
 /// database. For SQLite versions 3.7.0.1 (2010-08-04) and earlier, this value
 /// is interpreted as a big-endian integer and must be a power of two between

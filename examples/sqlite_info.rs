@@ -13,26 +13,22 @@ struct App;
 
 impl App {
   fn run() -> AppResult<()> {
-    println!("SQLite info\n");
-
     let mut f = File::open("flights.db")?;
     let mut sqlite_header_buffer: [u8; 100] = [0; 100];
 
-    let read_len = f.read(&mut sqlite_header_buffer)?;
-    println!("Read {read_len} bytes.");
+    let _ = f.read(&mut sqlite_header_buffer)?;
 
     let sqlite_header = SqliteHeader::try_from(&sqlite_header_buffer)?;
 
     Self::print_sqlite_info(&sqlite_header)?;
 
-    println!("{sqlite_header:?}");
     Ok(())
   }
   fn print_sqlite_info(sqlite_header: &SqliteHeader) -> AppResult<()> {
     const LABEL_WIDTH: usize = 21;
 
     let mut output = "".to_owned();
-    output.push_str("SQLite Header\n");
+
     output.push_str(&format!(
       "{label: <w$}{value}\n",
       w = LABEL_WIDTH,
@@ -138,6 +134,13 @@ impl App {
       w = LABEL_WIDTH,
       label = "application id:",
       value = **sqlite_header.application_id()
+    ));
+
+    output.push_str(&format!(
+      "{label: <w$}{value}\n",
+      w = LABEL_WIDTH,
+      label = "software version:",
+      value = **sqlite_header.write_library_version()
     ));
 
     println!("{output}");

@@ -2,7 +2,7 @@ use super::traits::ParseBytes;
 use crate::result::SQLiteResult;
 use core::ops::Deref;
 
-/// # Application ID (4 Bytes)
+/// # Application ID (4)
 ///
 ///  The 4-byte big-endian integer at offset 68 is an "Application ID" that can
 /// be set by the PRAGMA application_id command in order to identify the
@@ -29,7 +29,7 @@ impl ParseBytes<&[u8]> for ApplicationId {
   const LENGTH_BYTES: usize = 4;
 
   fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
-    let buf: [u8; 4] = bytes.try_into()?;
+    let buf: [u8; Self::LENGTH_BYTES] = bytes.try_into()?;
 
     let value = u32::from_be_bytes(buf);
 
