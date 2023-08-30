@@ -17,6 +17,8 @@ mod schema_format;
 mod suggested_cache_size;
 mod traits;
 mod user_version;
+mod version_valid_for;
+mod write_library_version;
 
 use self::traits::ParseBytes;
 pub use self::{
@@ -41,6 +43,8 @@ pub use self::{
   schema_format::SchemaFormat,
   suggested_cache_size::SuggestedCacheSize,
   user_version::UserVersion,
+  version_valid_for::VersionValidFor,
+  write_library_version::WriteLibraryVersion,
 };
 use crate::result::SQLiteError;
 
@@ -105,8 +109,12 @@ pub struct SqliteHeader {
   user_version: UserVersion,
   /// The "Application ID" set by PRAGMA application_id.
   application_id: ApplicationId,
-  // Reserved for expansion. Must be zero.
+  /// Reserved for expansion. Must be zero.
   reserved_for_expansion: ReservedForExpansion,
+  /// Version-valid-for number
+  version_valid_for: VersionValidFor,
+  /// Write library version number
+  write_library_version: WriteLibraryVersion,
 }
 
 impl SqliteHeader {
@@ -170,8 +178,16 @@ impl SqliteHeader {
     &self.application_id
   }
 
-    pub fn reserved_for_expansion(&self) -> &ReservedForExpansion {
-        &self.reserved_for_expansion
+  pub fn reserved_for_expansion(&self) -> &ReservedForExpansion {
+    &self.reserved_for_expansion
+  }
+
+    pub fn version_valid_for(&self) -> &VersionValidFor {
+        &self.version_valid_for
+    }
+
+    pub fn write_library_version(&self) -> &WriteLibraryVersion {
+        &self.write_library_version
     }
 }
 impl TryFrom<&[u8; 100]> for SqliteHeader {
@@ -220,7 +236,9 @@ impl TryFrom<&[u8; 100]> for SqliteHeader {
 
     let reserved_for_expansion =
       ReservedForExpansion::parse_bytes(&bytes[72..=91])?;
-
+    let version_valid_for = VersionValidFor::parse_bytes(&bytes[92..=95])?;
+    let write_library_version =
+      WriteLibraryVersion::parse_bytes(&bytes[96..=99])?;
     Ok(Self {
       magic_header_string,
       page_size,
@@ -241,6 +259,8 @@ impl TryFrom<&[u8; 100]> for SqliteHeader {
       user_version,
       application_id,
       reserved_for_expansion,
+      version_valid_for,
+      write_library_version,
     })
   }
 }

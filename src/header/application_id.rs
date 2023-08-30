@@ -2,7 +2,7 @@ use super::traits::ParseBytes;
 use crate::result::SQLiteResult;
 use core::ops::Deref;
 
-/// # Application ID
+/// # Application ID (4 Bytes)
 ///
 ///  The 4-byte big-endian integer at offset 68 is an "Application ID" that can
 /// be set by the PRAGMA application_id command in order to identify the

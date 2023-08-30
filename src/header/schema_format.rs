@@ -2,6 +2,7 @@ use super::traits::ParseBytes;
 use crate::result::{SQLiteError, SQLiteResult};
 
 /// # Schema format number (4 Bytes)
+/// 
 ///  The schema format number is a 4-byte big-endian integer at offset 44. The
 /// schema format number is similar to the file format read and write version
 /// numbers at offsets 18 and 19 except that the schema format number refers to

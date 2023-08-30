@@ -3,6 +3,7 @@ use crate::result::{SQLiteError, SQLiteResult};
 use alloc::format;
 
 /// # Payload Fractions (3 Bytes)
+/// 
 ///  The maximum and minimum embedded payload fractions and the leaf payload
 /// fraction values must be 64, 32, and 32. These values were originally
 /// intended to be tunable parameters that could be used to modify the storage

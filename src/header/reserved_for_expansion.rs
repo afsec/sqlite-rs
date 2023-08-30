@@ -3,6 +3,7 @@ use crate::result::{SQLiteError, SQLiteResult};
 use alloc::format;
 use core::fmt::Debug;
 
+/// Reserved for expansion. Must be zero. (20 Bytes)
 #[derive(Default)]
 pub struct ReservedForExpansion([u8; 20]);
 

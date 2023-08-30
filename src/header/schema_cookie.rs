@@ -3,6 +3,7 @@ use crate::result::SQLiteResult;
 use core::ops::Deref;
 
 /// # Schema cookie (4 Bytes)
+/// 
 ///  The schema cookie is a 4-byte big-endian integer at offset 40 that is
 /// incremented whenever the database schema changes. A prepared statement is
 /// compiled against a specific version of the database schema. When the
