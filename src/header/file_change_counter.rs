@@ -1,8 +1,9 @@
-use super::ParseBytes;
+use super::traits::ParseBytes;
 use crate::result::SQLiteResult;
 use core::ops::Deref;
 
 /// # File change counter (4 Bytes)
+///
 ///  The file change counter is a 4-byte big-endian integer at offset 24 that is
 /// incremented whenever the database file is unlocked after having been
 /// modified. When two or more processes are reading the same database file,
@@ -16,11 +17,7 @@ use core::ops::Deref;
 /// incremented on each transaction in WAL mode.
 #[derive(Debug)]
 pub struct FileChangeCounter(u32);
-impl FileChangeCounter {
-  pub fn get(&self) -> u32 {
-    self.0
-  }
-}
+
 impl Deref for FileChangeCounter {
   type Target = u32;
 
@@ -30,16 +27,11 @@ impl Deref for FileChangeCounter {
 }
 
 impl ParseBytes<&[u8]> for FileChangeCounter {
-  fn bytes_length() -> usize {
-    4
-  }
-
-  fn struct_name() -> &'static str {
-    "FileChangeCounter"
-  }
+  const NAME: &'static str = "FileChangeCounter";
+  const LENGTH_BYTES: usize = 4;
 
   fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
-    let buf: [u8; 4] = bytes.try_into()?;
+    let buf: [u8; Self::LENGTH_BYTES] = bytes.try_into()?;
 
     Ok(Self(u32::from_be_bytes(buf)))
   }

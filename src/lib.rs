@@ -1,5 +1,4 @@
 #![no_std]
-
 #![forbid(unsafe_code)]
 #![warn(
     clippy::all,
@@ -46,10 +45,8 @@
 #![cfg_attr(docsrs, feature(doc_cfg))]
 #![cfg_attr(test, allow(clippy::float_cmp))]
 
-
 #[cfg(feature = "std")]
 extern crate std;
-
 
 #[cfg(feature = "alloc")]
 extern crate alloc;

@@ -1,9 +1,10 @@
-use crate::result::SQLiteError;
+use super::traits::ParseBytes;
+use crate::result::{SQLiteError, SQLiteResult};
 use alloc::format;
-use super::ParseBytes;
 use core::ops::Deref;
 
 /// # Page Size (2 Bytes)
+///
 ///  The two-byte value beginning at offset 16 determines the page size of the
 /// database. For SQLite versions 3.7.0.1 (2010-08-04) and earlier, this value
 /// is interpreted as a big-endian integer and must be a power of two between
@@ -17,11 +18,7 @@ use core::ops::Deref;
 /// page-size field are equivalent.
 #[derive(Debug)]
 pub struct PageSize(u32);
-impl PageSize {
-  pub fn get(&self) -> u32 {
-    self.0
-  }
-}
+
 impl Deref for PageSize {
   type Target = u32;
 
@@ -31,18 +28,13 @@ impl Deref for PageSize {
 }
 
 impl ParseBytes<&[u8]> for PageSize {
-  fn struct_name() -> &'static str {
-    "PageSize"
-  }
+  const NAME: &'static str = "PageSize";
+  const LENGTH_BYTES: usize = 2;
 
-  fn bytes_length() -> usize {
-    2
-  }
-
-  fn parsing_handler(bytes: &[u8]) -> crate::result::SQLiteResult<Self> {
+  fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
     use core::ops::Not;
 
-    let buf: [u8; 2] = bytes.try_into()?;
+    let buf: [u8; Self::LENGTH_BYTES] = bytes.try_into()?;
 
     let page_size = u16::from_be_bytes(buf);
 

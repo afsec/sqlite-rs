@@ -1,8 +1,10 @@
-use alloc::format;
-use super::ParseBytes;
+use super::traits::ParseBytes;
 use crate::result::{SQLiteError, SQLiteResult};
+use alloc::format;
+use core::{fmt::Display, ops::Deref};
 
 /// # File format version numbers (2 Bytes)
+///
 ///  The file format write version and file format read version at offsets 18
 /// and 19 are intended to allow for enhancements of the file format in future
 /// versions of SQLite. In current versions of SQLite, both of these values
@@ -33,13 +35,8 @@ impl FileFormatVersionNumbers {
   }
 }
 impl ParseBytes<&[u8]> for FileFormatVersionNumbers {
-  fn struct_name() -> &'static str {
-    "FileFormatVersionNumbers"
-  }
-
-  fn bytes_length() -> usize {
-    2
-  }
+  const NAME: &'static str = "FileFormatVersionNumbers";
+  const LENGTH_BYTES: usize = 2;
 
   fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
     let write_version = FileFormatWriteVersion::parsing_handler(&[bytes[0]])?;
@@ -60,19 +57,25 @@ pub enum FileFormatWriteVersion {
   WAL,
 }
 
+impl Deref for FileFormatWriteVersion {
+  type Target = u8;
+
+  fn deref(&self) -> &Self::Target {
+    match &self {
+      Self::Legacy => &1,
+      Self::WAL => &2,
+    }
+  }
+}
+
 impl ParseBytes<u8> for FileFormatWriteVersion {
-  fn struct_name() -> &'static str {
-    "FileFormatWriteVersion"
-  }
+  const NAME: &'static str = "FileFormatWriteVersion";
+  const LENGTH_BYTES: usize = 1;
 
-  fn bytes_length() -> usize {
-    1
-  }
-
-  fn parsing_handler(bytes: &[u8]) -> crate::result::SQLiteResult<Self> {
-    let one_byte = bytes.get(0).ok_or(SQLiteError::Custom(format!(
+  fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
+    let one_byte = *bytes.first().ok_or(SQLiteError::Custom(format!(
       "Impossible state on parsing {}",
-      Self::struct_name()
+      Self::NAME
     )))?;
     match one_byte {
       1 => Ok(Self::Legacy),
@@ -81,6 +84,12 @@ impl ParseBytes<u8> for FileFormatWriteVersion {
         "Invalid payload for FileFormatReadVersion",
       )),
     }
+  }
+}
+
+impl Display for FileFormatWriteVersion {
+  fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+    write!(f, "{}", **self)
   }
 }
 
@@ -92,19 +101,26 @@ pub enum FileFormatReadVersion {
   /// Reference: https://www.sqlite.org/wal.html
   WAL,
 }
+
+impl Deref for FileFormatReadVersion {
+  type Target = u8;
+
+  fn deref(&self) -> &Self::Target {
+    match &self {
+      Self::Legacy => &1,
+      Self::WAL => &2,
+    }
+  }
+}
+
 impl ParseBytes<u8> for FileFormatReadVersion {
-  fn struct_name() -> &'static str {
-    "FileFormatReadVersion"
-  }
+  const NAME: &'static str = "FileFormatReadVersion";
+  const LENGTH_BYTES: usize = 1;
 
-  fn bytes_length() -> usize {
-    1
-  }
-
-  fn parsing_handler(bytes: &[u8]) -> crate::result::SQLiteResult<Self> {
-    let one_byte = bytes.get(0).ok_or(SQLiteError::Custom(format!(
+  fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
+    let one_byte = *bytes.first().ok_or(SQLiteError::Custom(format!(
       "Impossible state on parsing {}",
-      Self::struct_name()
+      Self::NAME
     )))?;
     match one_byte {
       1 => Ok(Self::Legacy),
@@ -113,5 +129,11 @@ impl ParseBytes<u8> for FileFormatReadVersion {
         "Invalid payload for FileFormatReadVersion",
       )),
     }
+  }
+}
+
+impl Display for FileFormatReadVersion {
+  fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+    write!(f, "{}", **self)
   }
 }

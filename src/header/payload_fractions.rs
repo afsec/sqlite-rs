@@ -1,8 +1,9 @@
-use crate::result::SQLiteError;
+use super::traits::ParseBytes;
+use crate::result::{SQLiteError, SQLiteResult};
 use alloc::format;
-use super::ParseBytes;
 
 /// # Payload Fractions (3 Bytes)
+///
 ///  The maximum and minimum embedded payload fractions and the leaf payload
 /// fraction values must be 64, 32, and 32. These values were originally
 /// intended to be tunable parameters that could be used to modify the storage
@@ -34,15 +35,10 @@ impl PayloadFractions {
 }
 
 impl ParseBytes<&[u8]> for PayloadFractions {
-  fn struct_name() -> &'static str {
-    "PayloadFractions"
-  }
+  const NAME: &'static str = "PayloadFractions";
+  const LENGTH_BYTES: usize = 3;
 
-  fn bytes_length() -> usize {
-    3
-  }
-
-  fn parsing_handler(bytes: &[u8]) -> crate::result::SQLiteResult<Self> {
+  fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
     let maximum = MaximumEmbeddedPayloadFraction::parse_bytes(&[bytes[0]])?;
     let minimum = MinimumEmbeddedPayloadFraction::parse_bytes(&[bytes[1]])?;
     let leaf = LeafPayloadFraction::parse_bytes(&[bytes[2]])?;
@@ -58,32 +54,21 @@ impl ParseBytes<&[u8]> for PayloadFractions {
 #[derive(Debug)]
 pub struct MaximumEmbeddedPayloadFraction(u8);
 
-impl MaximumEmbeddedPayloadFraction {
-  pub fn get(&self) -> u8 {
-    self.0
-  }
-}
-
 impl ParseBytes<&[u8]> for MaximumEmbeddedPayloadFraction {
-  fn struct_name() -> &'static str {
-    "MaximumEmbeddedPayloadFraction"
-  }
+  const NAME: &'static str = "MaximumEmbeddedPayloadFraction";
+  const LENGTH_BYTES: usize = 1;
 
-  fn bytes_length() -> usize {
-    1
-  }
-
-  fn parsing_handler(bytes: &[u8]) -> crate::result::SQLiteResult<Self> {
-    let maximum = *bytes.get(0).ok_or(SQLiteError::Custom(format!(
+  fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
+    let maximum = *bytes.first().ok_or(SQLiteError::Custom(format!(
       "Impossible state on parsing {}",
-      Self::struct_name()
+      Self::NAME
     )))?;
     if maximum == 64 {
       Ok(Self(maximum))
     } else {
-      return Err(SQLiteError::msg(
+      Err(SQLiteError::msg(
         "Maximum embedded payload fraction. Must be 64.",
-      ));
+      ))
     }
   }
 }
@@ -92,32 +77,21 @@ impl ParseBytes<&[u8]> for MaximumEmbeddedPayloadFraction {
 #[derive(Debug)]
 pub struct MinimumEmbeddedPayloadFraction(u8);
 
-impl MinimumEmbeddedPayloadFraction {
-  pub fn get(&self) -> u8 {
-    self.0
-  }
-}
-
 impl ParseBytes<&[u8]> for MinimumEmbeddedPayloadFraction {
-  fn struct_name() -> &'static str {
-    "MinimumEmbeddedPayloadFraction"
-  }
+  const NAME: &'static str = "MinimumEmbeddedPayloadFraction";
+  const LENGTH_BYTES: usize = 1;
 
-  fn bytes_length() -> usize {
-    1
-  }
-
-  fn parsing_handler(bytes: &[u8]) -> crate::result::SQLiteResult<Self> {
-    let minimum = *bytes.get(0).ok_or(SQLiteError::Custom(format!(
+  fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
+    let minimum = *bytes.first().ok_or(SQLiteError::Custom(format!(
       "Impossible state on parsing {}",
-      Self::struct_name()
+      Self::NAME
     )))?;
     if minimum == 32 {
       Ok(Self(minimum))
     } else {
-      return Err(SQLiteError::msg(
+      Err(SQLiteError::msg(
         "Minimum embedded payload fraction. Must be 32.",
-      ));
+      ))
     }
   }
 }
@@ -126,25 +100,14 @@ impl ParseBytes<&[u8]> for MinimumEmbeddedPayloadFraction {
 #[derive(Debug)]
 pub struct LeafPayloadFraction(u8);
 
-impl LeafPayloadFraction {
-  pub fn get(&self) -> u8 {
-    self.0
-  }
-}
-
 impl ParseBytes<&[u8]> for LeafPayloadFraction {
-  fn struct_name() -> &'static str {
-    "LeafPayloadFraction"
-  }
+  const NAME: &'static str = "LeafPayloadFraction";
+  const LENGTH_BYTES: usize = 1;
 
-  fn bytes_length() -> usize {
-    1
-  }
-
-  fn parsing_handler(bytes: &[u8]) -> crate::result::SQLiteResult<Self> {
-    let leaf = *bytes.get(0).ok_or(SQLiteError::Custom(format!(
+  fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
+    let leaf = *bytes.first().ok_or(SQLiteError::Custom(format!(
       "Impossible state on parsing {}",
-      Self::struct_name()
+      Self::NAME
     )))?;
     if leaf == 32 {
       Ok(Self(leaf))

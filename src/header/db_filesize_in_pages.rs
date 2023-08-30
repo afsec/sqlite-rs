@@ -1,8 +1,9 @@
+use super::traits::ParseBytes;
+use crate::result::SQLiteResult;
 use core::ops::Deref;
 
-use super::ParseBytes;
-
-/// # In-header database size
+/// # In-header database size (4 Bytes)
+///
 ///  The in-header database size is a 4-byte big-endian integer at offset 28
 /// into the header stores the size of the database file in pages. If this
 /// in-header datasize size is not valid (see the next paragraph), then the
@@ -26,12 +27,6 @@ use super::ParseBytes;
 #[derive(Debug)]
 pub struct DatabaseFileSizeInPages(u32);
 
-impl DatabaseFileSizeInPages {
-  pub fn get(&self) -> u32 {
-    self.0
-  }
-}
-
 impl Deref for DatabaseFileSizeInPages {
   type Target = u32;
 
@@ -41,16 +36,11 @@ impl Deref for DatabaseFileSizeInPages {
 }
 
 impl ParseBytes<&[u8]> for DatabaseFileSizeInPages {
-  fn struct_name() -> &'static str {
-    "DatabaseFileSizeInPages"
-  }
+  const NAME: &'static str = "DatabaseFileSizeInPages";
+  const LENGTH_BYTES: usize = 4;
 
-  fn bytes_length() -> usize {
-    4
-  }
-
-  fn parsing_handler(bytes: &[u8]) -> crate::result::SQLiteResult<Self> {
-    let buf: [u8; 4] = bytes.try_into()?;
+  fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
+    let buf: [u8; Self::LENGTH_BYTES] = bytes.try_into()?;
 
     let database_size = u32::from_be_bytes(buf);
 
