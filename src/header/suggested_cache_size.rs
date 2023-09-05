@@ -20,7 +20,7 @@ impl Deref for SuggestedCacheSize {
   }
 }
 
-impl ParseBytes<&[u8]> for SuggestedCacheSize {
+impl ParseBytes for SuggestedCacheSize {
   const NAME: &'static str = "SuggestedCacheSize";
   const LENGTH_BYTES: usize = 4;
 

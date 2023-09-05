@@ -190,6 +190,7 @@ impl SqliteHeader {
     &self.write_library_version
   }
 }
+
 impl TryFrom<&[u8; 100]> for SqliteHeader {
   type Error = SQLiteError;
 

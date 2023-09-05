@@ -31,7 +31,7 @@ impl Deref for ReservedBytesPerPage {
   }
 }
 
-impl ParseBytes<&[u8]> for ReservedBytesPerPage {
+impl ParseBytes for ReservedBytesPerPage {
   const NAME: &'static str = "ReservedBytesPerPage";
   const LENGTH_BYTES: usize = 1;
 

@@ -23,7 +23,7 @@ impl Debug for MagicHeaderString {
   }
 }
 
-impl ParseBytes<&[u8]> for MagicHeaderString {
+impl ParseBytes for MagicHeaderString {
   const NAME: &'static str = "MagicHeaderString";
   const LENGTH_BYTES: usize = 16;
 

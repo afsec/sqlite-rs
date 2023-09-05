@@ -19,7 +19,7 @@ impl Deref for VersionValidFor {
   }
 }
 
-impl ParseBytes<&[u8]> for VersionValidFor {
+impl ParseBytes for VersionValidFor {
   const NAME: &'static str = "VersionValidFor";
   const LENGTH_BYTES: usize = 4;
 

@@ -34,7 +34,7 @@ impl FileFormatVersionNumbers {
     &self.read_version
   }
 }
-impl ParseBytes<&[u8]> for FileFormatVersionNumbers {
+impl ParseBytes for FileFormatVersionNumbers {
   const NAME: &'static str = "FileFormatVersionNumbers";
   const LENGTH_BYTES: usize = 2;
 
@@ -68,7 +68,7 @@ impl Deref for FileFormatWriteVersion {
   }
 }
 
-impl ParseBytes<u8> for FileFormatWriteVersion {
+impl ParseBytes for FileFormatWriteVersion {
   const NAME: &'static str = "FileFormatWriteVersion";
   const LENGTH_BYTES: usize = 1;
 
@@ -113,7 +113,7 @@ impl Deref for FileFormatReadVersion {
   }
 }
 
-impl ParseBytes<u8> for FileFormatReadVersion {
+impl ParseBytes for FileFormatReadVersion {
   const NAME: &'static str = "FileFormatReadVersion";
   const LENGTH_BYTES: usize = 1;
 

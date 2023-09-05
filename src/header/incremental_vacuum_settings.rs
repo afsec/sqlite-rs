@@ -44,7 +44,7 @@ impl Deref for LargestRootBtreePage {
   }
 }
 
-impl ParseBytes<&[u8]> for LargestRootBtreePage {
+impl ParseBytes for LargestRootBtreePage {
   const NAME: &'static str = "LargestRootBtreePage";
 
   const LENGTH_BYTES: usize = 4;
@@ -75,7 +75,7 @@ impl From<&IncrementalVacuumMode> for u32 {
   }
 }
 
-impl ParseBytes<&[u8]> for IncrementalVacuumMode {
+impl ParseBytes for IncrementalVacuumMode {
   const NAME: &'static str = "IncrementalVacuumMode";
 
   const LENGTH_BYTES: usize = 4;

@@ -1,7 +1,7 @@
 use crate::result::{SQLiteError, SQLiteResult};
 use alloc::format;
 
-pub(super) trait ParseBytes<T>
+pub(super) trait ParseBytes
 where
   Self: Sized,
 {
@@ -27,9 +27,9 @@ where
 }
 
 // TODO
-pub(super) trait ValidateParsed<T>
+pub(super) trait ValidateParsed
 where
-  Self: Sized + ParseBytes<T>,
+  Self: Sized + ParseBytes,
 {
   fn validate_parsed(&self) -> SQLiteResult<()>;
 }

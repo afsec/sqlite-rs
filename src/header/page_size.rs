@@ -27,7 +27,7 @@ impl Deref for PageSize {
   }
 }
 
-impl ParseBytes<&[u8]> for PageSize {
+impl ParseBytes for PageSize {
   const NAME: &'static str = "PageSize";
   const LENGTH_BYTES: usize = 2;
 

@@ -50,7 +50,7 @@ impl Display for DatabaseTextEncoding {
     write!(f, "{number} ({name})")
   }
 }
-impl ParseBytes<&[u8]> for DatabaseTextEncoding {
+impl ParseBytes for DatabaseTextEncoding {
   const NAME: &'static str = "DatabaseTextEncoding";
 
   const LENGTH_BYTES: usize = 4;

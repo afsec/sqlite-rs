@@ -16,7 +16,7 @@ impl Debug for ReservedForExpansion {
   }
 }
 
-impl ParseBytes<&[u8]> for ReservedForExpansion {
+impl ParseBytes for ReservedForExpansion {
   const NAME: &'static str = "ReservedForExpansion";
 
   const LENGTH_BYTES: usize = 20;

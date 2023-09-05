@@ -18,7 +18,7 @@ impl Deref for UserVersion {
   }
 }
 
-impl ParseBytes<&[u8]> for UserVersion {
+impl ParseBytes for UserVersion {
   const NAME: &'static str = "UserVersion";
 
   const LENGTH_BYTES: usize = 4;

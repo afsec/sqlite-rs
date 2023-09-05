@@ -22,7 +22,7 @@ impl FreeListPages {
   }
 }
 
-impl ParseBytes<&[u8]> for FreeListPages {
+impl ParseBytes for FreeListPages {
   const NAME: &'static str = "FreeListPages";
   const LENGTH_BYTES: usize = 8;
 
@@ -48,7 +48,7 @@ impl Deref for FreeListPagesFirstTrunkPage {
   }
 }
 
-impl ParseBytes<&[u8]> for FreeListPagesFirstTrunkPage {
+impl ParseBytes for FreeListPagesFirstTrunkPage {
   const NAME: &'static str = "FreeListPagesFirstTrunkPage";
   const LENGTH_BYTES: usize = 4;
 
@@ -72,7 +72,7 @@ impl Deref for FreeListPagesTotalPages {
   }
 }
 
-impl ParseBytes<&[u8]> for FreeListPagesTotalPages {
+impl ParseBytes for FreeListPagesTotalPages {
   const NAME: &'static str = "FreeListPagesTotalPages";
   const LENGTH_BYTES: usize = 4;
 

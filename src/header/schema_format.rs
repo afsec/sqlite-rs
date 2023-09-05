@@ -64,7 +64,7 @@ impl From<&SchemaFormat> for u32 {
   }
 }
 
-impl ParseBytes<&[u8]> for SchemaFormat {
+impl ParseBytes for SchemaFormat {
   const NAME: &'static str = "SchemaFormat";
   const LENGTH_BYTES: usize = 4;
 

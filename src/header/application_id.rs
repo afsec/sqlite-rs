@@ -23,7 +23,7 @@ impl Deref for ApplicationId {
   }
 }
 
-impl ParseBytes<&[u8]> for ApplicationId {
+impl ParseBytes for ApplicationId {
   const NAME: &'static str = "ApplicationId";
 
   const LENGTH_BYTES: usize = 4;

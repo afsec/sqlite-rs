@@ -26,7 +26,7 @@ impl Deref for FileChangeCounter {
   }
 }
 
-impl ParseBytes<&[u8]> for FileChangeCounter {
+impl ParseBytes for FileChangeCounter {
   const NAME: &'static str = "FileChangeCounter";
   const LENGTH_BYTES: usize = 4;
 

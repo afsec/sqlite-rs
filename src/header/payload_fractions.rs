@@ -34,7 +34,7 @@ impl PayloadFractions {
   }
 }
 
-impl ParseBytes<&[u8]> for PayloadFractions {
+impl ParseBytes for PayloadFractions {
   const NAME: &'static str = "PayloadFractions";
   const LENGTH_BYTES: usize = 3;
 
@@ -54,7 +54,7 @@ impl ParseBytes<&[u8]> for PayloadFractions {
 #[derive(Debug)]
 pub struct MaximumEmbeddedPayloadFraction(u8);
 
-impl ParseBytes<&[u8]> for MaximumEmbeddedPayloadFraction {
+impl ParseBytes for MaximumEmbeddedPayloadFraction {
   const NAME: &'static str = "MaximumEmbeddedPayloadFraction";
   const LENGTH_BYTES: usize = 1;
 
@@ -77,7 +77,7 @@ impl ParseBytes<&[u8]> for MaximumEmbeddedPayloadFraction {
 #[derive(Debug)]
 pub struct MinimumEmbeddedPayloadFraction(u8);
 
-impl ParseBytes<&[u8]> for MinimumEmbeddedPayloadFraction {
+impl ParseBytes for MinimumEmbeddedPayloadFraction {
   const NAME: &'static str = "MinimumEmbeddedPayloadFraction";
   const LENGTH_BYTES: usize = 1;
 
@@ -100,7 +100,7 @@ impl ParseBytes<&[u8]> for MinimumEmbeddedPayloadFraction {
 #[derive(Debug)]
 pub struct LeafPayloadFraction(u8);
 
-impl ParseBytes<&[u8]> for LeafPayloadFraction {
+impl ParseBytes for LeafPayloadFraction {
   const NAME: &'static str = "LeafPayloadFraction";
   const LENGTH_BYTES: usize = 1;
 
