@@ -20,6 +20,11 @@ pub struct IncrementalVacuumSettings {
   pub incremental_vacuum_mode: IncrementalVacuumMode,
 }
 
+// TODO:  If the integer at offset 52 is non-zero then it is the page number of
+// TODO: the largest root page in the database file, the database file will
+// TODO: contain ptrmap pages, and the mode must be either auto_vacuum or
+// TODO: incremental_vacuum.
+
 impl IncrementalVacuumSettings {
   pub fn largest_root_btree_page(&self) -> &LargestRootBtreePage {
     &self.largest_root_btree_page

@@ -1,6 +1,5 @@
 use super::traits::ParseBytes;
 use crate::result::{SQLiteError, SQLiteResult};
-use alloc::format;
 
 /// # Payload Fractions (3 Bytes)
 ///
@@ -59,16 +58,17 @@ impl ParseBytes for MaximumEmbeddedPayloadFraction {
   const LENGTH_BYTES: usize = 1;
 
   fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
-    let maximum = *bytes.first().ok_or(SQLiteError::Custom(format!(
+    let maximum = *bytes.first().ok_or(SQLiteError::Custom(stringify!(
       "Impossible state on parsing {}",
       Self::NAME
     )))?;
     if maximum == 64 {
       Ok(Self(maximum))
     } else {
-      Err(SQLiteError::msg(
-        "Maximum embedded payload fraction. Must be 64.",
-      ))
+      Err(SQLiteError::Custom(stringify!(
+        "{} must be 64.",
+        Self::NAME
+      )))
     }
   }
 }
@@ -82,16 +82,17 @@ impl ParseBytes for MinimumEmbeddedPayloadFraction {
   const LENGTH_BYTES: usize = 1;
 
   fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
-    let minimum = *bytes.first().ok_or(SQLiteError::Custom(format!(
+    let minimum = *bytes.first().ok_or(SQLiteError::Custom(stringify!(
       "Impossible state on parsing {}",
       Self::NAME
     )))?;
     if minimum == 32 {
       Ok(Self(minimum))
     } else {
-      Err(SQLiteError::msg(
-        "Minimum embedded payload fraction. Must be 32.",
-      ))
+      Err(SQLiteError::Custom(stringify!(
+        "{} must be 32.",
+        Self::NAME
+      )))
     }
   }
 }
@@ -105,14 +106,17 @@ impl ParseBytes for LeafPayloadFraction {
   const LENGTH_BYTES: usize = 1;
 
   fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
-    let leaf = *bytes.first().ok_or(SQLiteError::Custom(format!(
+    let leaf = *bytes.first().ok_or(SQLiteError::Custom(stringify!(
       "Impossible state on parsing {}",
       Self::NAME
     )))?;
     if leaf == 32 {
       Ok(Self(leaf))
     } else {
-      Err(SQLiteError::msg("Leaf payload fraction. Must be 32."))
+      Err(SQLiteError::Custom(stringify!(
+        "{} must be 32.",
+        Self::NAME
+      )))
     }
   }
 }

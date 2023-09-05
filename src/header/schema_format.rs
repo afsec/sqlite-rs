@@ -30,7 +30,7 @@ use crate::result::{SQLiteError, SQLiteResult};
 /// legacy_file_format pragma can be used to cause SQLite to create new database
 /// files using format 1. The format version number can be made to default to 1
 /// instead of 4 by setting SQLITE_DEFAULT_FILE_FORMAT=1 at compile-time.
-#[derive(Debug, Default)]
+#[derive(Debug, Default, PartialEq, Eq)]
 pub enum SchemaFormat {
   Format1,
   Format2,
@@ -48,7 +48,10 @@ impl TryFrom<u32> for SchemaFormat {
       2 => Ok(Self::Format2),
       3 => Ok(Self::Format3),
       4 => Ok(Self::Format4),
-      _ => Err(SQLiteError::msg("Invalid payload for SchemaFormat")),
+      _ => Err(SQLiteError::Custom(stringify!(
+        "Invalid payload for {}",
+        Self::NAME
+      ))),
     }
   }
 }

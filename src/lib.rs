@@ -48,8 +48,8 @@
 #[cfg(feature = "std")]
 extern crate std;
 
-#[cfg(feature = "alloc")]
-extern crate alloc;
+// #[cfg(feature = "alloc")]
+// extern crate alloc;
 
 pub mod header;
 pub mod result;

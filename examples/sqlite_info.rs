@@ -13,7 +13,10 @@ struct App;
 
 impl App {
   fn run() -> AppResult<()> {
-    let mut f = File::open("flights.db")?;
+    const FILENAME: &str = "flights.db";
+
+    let mut f = File::open(FILENAME)?;
+
     let mut sqlite_header_buffer: [u8; 100] = [0; 100];
 
     let _ = f.read(&mut sqlite_header_buffer)?;
@@ -39,13 +42,15 @@ impl App {
       "{label: <w$}{value}\n",
       w = LABEL_WIDTH,
       label = "write format:",
-      value = **sqlite_header.file_format_version_numbers().write_version()
+      value =
+        u8::from(sqlite_header.file_format_version_numbers().write_version())
     ));
     output.push_str(&format!(
       "{label: <w$}{value}\n",
       w = LABEL_WIDTH,
       label = "read format:",
-      value = **sqlite_header.file_format_version_numbers().read_version()
+      value =
+        u8::from(sqlite_header.file_format_version_numbers().read_version())
     ));
     output.push_str(&format!(
       "{label: <w$}{value}\n",
