@@ -9,10 +9,7 @@ pub struct ReservedForExpansion([u8; 20]);
 
 impl Debug for ReservedForExpansion {
   fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-    let output = stringify!("{:02x?}", self.0);
-    f.debug_tuple("ReservedForExpansion")
-      .field(&output)
-      .finish()
+    f.debug_tuple(Self::NAME).finish()
   }
 }
 

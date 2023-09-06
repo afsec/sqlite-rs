@@ -17,8 +17,7 @@ pub struct MagicHeaderString([u8; 16]);
 
 impl Debug for MagicHeaderString {
   fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-    let output = stringify!("{:02x?}", self.0);
-    f.debug_tuple(Self::NAME).field(&output).finish()
+    f.debug_tuple(Self::NAME).finish()
   }
 }
 
