@@ -24,7 +24,7 @@ impl Deref for SchemaCookie {
   }
 }
 
-impl ParseBytes<&[u8]> for SchemaCookie {
+impl ParseBytes for SchemaCookie {
   const NAME: &'static str = "SchemaCookie";
   const LENGTH_BYTES: usize = 4;
 

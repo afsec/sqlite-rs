@@ -1,6 +1,5 @@
 use super::traits::ParseBytes;
 use crate::result::{SQLiteError, SQLiteResult};
-use alloc::format;
 use core::ops::Deref;
 
 /// # Page Size (2 Bytes)
@@ -27,7 +26,7 @@ impl Deref for PageSize {
   }
 }
 
-impl ParseBytes<&[u8]> for PageSize {
+impl ParseBytes for PageSize {
   const NAME: &'static str = "PageSize";
   const LENGTH_BYTES: usize = 2;
 
@@ -42,12 +41,16 @@ impl ParseBytes<&[u8]> for PageSize {
       Ok(Self(65_536))
     } else {
       if page_size < 512 {
-        return Err(SQLiteError::Custom(format!(
-          "Page size [{page_size}] can't be less than 512"
+        return Err(SQLiteError::Custom(stringify!(
+          "{} can't be less than 512",
+          Self::NAME
         )));
       }
       if page_size.is_power_of_two().not() {
-        return Err(SQLiteError::msg("Page size must be power of two"));
+        return Err(SQLiteError::Custom(stringify!(
+          "{} must be power of two",
+          Self::NAME
+        )));
       }
 
       Ok(Self(page_size.into()))

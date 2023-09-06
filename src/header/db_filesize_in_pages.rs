@@ -35,7 +35,7 @@ impl Deref for DatabaseFileSizeInPages {
   }
 }
 
-impl ParseBytes<&[u8]> for DatabaseFileSizeInPages {
+impl ParseBytes for DatabaseFileSizeInPages {
   const NAME: &'static str = "DatabaseFileSizeInPages";
   const LENGTH_BYTES: usize = 4;
 

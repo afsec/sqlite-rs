@@ -35,7 +35,10 @@ impl TryFrom<u32> for DatabaseTextEncoding {
       1 => Ok(Self::Utf8),
       2 => Ok(Self::Utf16Le),
       3 => Ok(Self::Utf16Be),
-      _ => Err(SQLiteError::msg("Invalid payload for DatabaseTextEncoding")),
+      _ => Err(SQLiteError::Custom(stringify!(
+        "Invalid payload for {}",
+        Self::NAME
+      ))),
     }
   }
 }
@@ -50,7 +53,7 @@ impl Display for DatabaseTextEncoding {
     write!(f, "{number} ({name})")
   }
 }
-impl ParseBytes<&[u8]> for DatabaseTextEncoding {
+impl ParseBytes for DatabaseTextEncoding {
   const NAME: &'static str = "DatabaseTextEncoding";
 
   const LENGTH_BYTES: usize = 4;

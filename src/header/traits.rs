@@ -1,18 +1,20 @@
 use crate::result::{SQLiteError, SQLiteResult};
-use alloc::format;
 
-pub(super) trait ParseBytes<T>
+pub(super) trait ParseBytes
 where
   Self: Sized,
 {
+  /// Workaround for unstable:
+  /// `std::any::type_name_of_val()`
   const NAME: &'static str;
+
   const LENGTH_BYTES: usize;
 
   fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self>;
 
   fn check_payload_size(bytes: &[u8]) -> SQLiteResult<()> {
     if bytes.len() != Self::LENGTH_BYTES {
-      Err(SQLiteError::Custom(format!(
+      Err(SQLiteError::Custom(stringify!(
         "Invalid size for {}",
         Self::NAME
       )))
@@ -26,10 +28,9 @@ where
   }
 }
 
-// TODO
-pub(super) trait ValidateParsed<T>
+pub(super) trait ValidateParsed
 where
-  Self: Sized + ParseBytes<T>,
+  Self: Sized + ParseBytes,
 {
   fn validate_parsed(&self) -> SQLiteResult<()>;
 }

@@ -20,7 +20,7 @@ mod user_version;
 mod version_valid_for;
 mod write_library_version;
 
-use self::traits::ParseBytes;
+use self::traits::{ParseBytes, ValidateParsed};
 pub use self::{
   application_id::ApplicationId,
   database_text_encoding::DatabaseTextEncoding,
@@ -46,7 +46,7 @@ pub use self::{
   version_valid_for::VersionValidFor,
   write_library_version::WriteLibraryVersion,
 };
-use crate::result::SQLiteError;
+use crate::result::{SQLiteError, SQLiteResult};
 
 /// # Database File Format
 ///
@@ -190,12 +190,13 @@ impl SqliteHeader {
     &self.write_library_version
   }
 }
-impl TryFrom<&[u8; 100]> for SqliteHeader {
-  type Error = SQLiteError;
 
-  fn try_from(bytes: &[u8; 100]) -> Result<Self, Self::Error> {
-    let bytes = bytes;
+impl ParseBytes for SqliteHeader {
+  const NAME: &'static str = "SqliteHeader";
 
+  const LENGTH_BYTES: usize = 100;
+
+  fn parsing_handler(bytes: &[u8]) -> crate::result::SQLiteResult<Self> {
     let magic_header_string = MagicHeaderString::parse_bytes(&bytes[0..=15])?;
     let page_size = PageSize::parse_bytes(&bytes[16..=17])?;
     let file_format_version_numbers =
@@ -265,5 +266,122 @@ impl TryFrom<&[u8; 100]> for SqliteHeader {
       version_valid_for,
       write_library_version,
     })
+  }
+}
+
+impl ValidateParsed for SqliteHeader {
+  fn validate_parsed(&self) -> SQLiteResult<()> {
+    {
+      //  The usable size is not allowed to be less than 480. In other words, if
+      // the page size is 512, then the reserved space size cannot exceed 32.
+      const MINIMUM_USABLE_SIZE: u32 = 480;
+      if (**self.page_size() - u32::from(**self.reserved_bytes_per_page()))
+        < MINIMUM_USABLE_SIZE
+      {
+        return Err(SQLiteError::HeaderValidationError(
+          "The usable size is not allowed to be less than 480.",
+        ));
+      }
+    }
+
+    {
+      //  The in-header database size is only considered to be valid if it is
+      // non-zero and if the 4-byte change counter at offset 24 exactly matches
+      // the 4-byte version-valid-for number at offset 92. The in-header database
+      // size is always valid when the database is only modified using recent
+      // versions of SQLite, versions 3.7.0 (2010-07-21) and later.
+      if **self.db_filesize_in_pages() < 1 {
+        return Err(SQLiteError::HeaderValidationError(
+          "The in-header database size is not valid",
+        ));
+      }
+      if **self.file_change_counter() != **self.version_valid_for() {
+        return Err(SQLiteError::HeaderValidationError(
+        "The change counter must exactly matches the version-valid-for number",
+      ));
+      }
+      //  If a legacy version of SQLite writes to the database, it will not know
+      // to update the in-header database size and so the in-header database
+      // size could be incorrect. But legacy versions of SQLite will also leave
+      // the version-valid-for number at offset 92 unchanged so it will not
+      // match the change-counter. Hence, invalid in-header database sizes can
+      // be detected (and ignored) by observing when the change-counter does not
+      // match the version-valid-for number.}
+    }
+    // TODO: Free page list
+
+    // TODO: Schema Cookie
+
+    {
+      //  New database files created by SQLite use format 4 by default. The
+      // legacy_file_format pragma can be used to cause SQLite to create new
+      // database files using format 1. The format version number can be made to
+      // default to 1 instead of 4 by setting SQLITE_DEFAULT_FILE_FORMAT=1 at
+      // compile-time.
+      if *self.schema_format() != SchemaFormat::Format4 {
+        return Err(SQLiteError::HeaderValidationError(
+          "Only Schema format 4 is supported",
+        ));
+      }
+    }
+
+    {
+      //  Unused pages in the database file are stored on a freelist. The 4-byte
+      // big-endian integer at offset 32 stores the page number of the first
+      // page of the freelist, or zero if the freelist is empty. The 4-byte
+      // big-endian integer at offset 36 stores the total number of pages on the
+      // freelist.
+      let freelist_pages = self.freelist_pages();
+      if (**freelist_pages.total() == 0) && (**freelist_pages.first() != 0) {
+        return Err(SQLiteError::HeaderValidationError(
+          "Free list settings may be corrupted",
+        ));
+      }
+    }
+    {
+      //  If the integer at offset 52 is non-zero then it is the page number of
+      // the largest root page in the database file, the database file will
+      // contain ptrmap pages, and the mode must be either auto_vacuum or
+      // incremental_vacuum. In this latter case, the integer at offset 64 is
+      // true for incremental_vacuum and false for auto_vacuum. If the integer
+      // at offset 52 is zero then the integer at offset 64 must also be zero.
+      let incremental_vacuum_mode =
+        u32::from(self.incremental_vacuum_settings.incremental_vacuum_mode());
+      let largest_root_btree_page =
+        **self.incremental_vacuum_settings.largest_root_btree_page();
+      if incremental_vacuum_mode == 0 && largest_root_btree_page != 0 {
+        return Err(SQLiteError::HeaderValidationError(
+          "Incremental vacuum settings is zero but corrupted",
+        ));
+      }
+    }
+    {
+      //  The 4-byte big-endian integer at offset 92 is the value of the change
+      // counter when the version number was stored. The integer at offset 92
+      // indicates which transaction the version number is valid for and is
+      // sometimes called the "version-valid-for number".
+      if **self.file_change_counter() < 1 {
+        return Err(SQLiteError::HeaderValidationError(
+          "File change counter maybe corrupted",
+        ));
+      }
+      if **self.file_change_counter() < **self.version_valid_for() {
+        return Err(SQLiteError::HeaderValidationError(
+          "The version-valid-for number or the change counter maybe corrupted",
+        ));
+      }
+    }
+
+    Ok(())
+  }
+}
+
+impl TryFrom<&[u8; 100]> for SqliteHeader {
+  type Error = SQLiteError;
+
+  fn try_from(bytes: &[u8; 100]) -> Result<Self, Self::Error> {
+    let sqlite_header = SqliteHeader::parse_bytes(&bytes[..])?;
+    sqlite_header.validate_parsed()?;
+    Ok(sqlite_header)
   }
 }

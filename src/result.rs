@@ -1,5 +1,3 @@
-#[cfg(feature = "alloc")]
-use alloc::string::String;
 use core::array::TryFromSliceError;
 use core::fmt::Display;
 #[cfg(feature = "std")]
@@ -11,18 +9,18 @@ pub type SQLiteResult<T> = Result<T, SQLiteError>;
 
 #[derive(Debug)]
 pub enum SQLiteError {
+  HeaderValidationError(&'static str),
   TryFromSliceError(TryFromSliceError),
   #[cfg(feature = "std")]
   StdioError(StdioError),
-  #[cfg(feature = "alloc")]
-  Custom(String),
+  Custom(&'static str),
 }
 
-impl SQLiteError {
-  pub fn msg(msg: &str) -> Self {
-    Self::Custom(msg.into())
-  }
-}
+// impl SQLiteError {
+//   pub fn msg(msg: &str) -> Self {
+//     Self::Custom(msg.into())
+//   }
+// }
 
 impl Display for SQLiteError {
   fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
@@ -37,12 +35,12 @@ impl From<TryFromSliceError> for SQLiteError {
   }
 }
 
-#[cfg(feature = "alloc")]
-impl From<String> for SQLiteError {
-  fn from(s: String) -> Self {
-    Self::Custom(s)
-  }
-}
+// #[cfg(feature = "alloc")]
+// impl From<String> for SQLiteError {
+//   fn from(s: String) -> Self {
+//     Self::Custom(s)
+//   }
+// }
 
 #[cfg(feature = "std")]
 impl StdError for SQLiteError {}

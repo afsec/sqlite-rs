@@ -17,7 +17,7 @@ impl Deref for WriteLibraryVersion {
   }
 }
 
-impl ParseBytes<&[u8]> for WriteLibraryVersion {
+impl ParseBytes for WriteLibraryVersion {
   const NAME: &'static str = "WriteLibraryVersion";
   const LENGTH_BYTES: usize = 4;
 

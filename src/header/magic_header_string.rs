@@ -1,6 +1,5 @@
 use super::traits::ParseBytes;
 use crate::result::{SQLiteError, SQLiteResult};
-use alloc::format;
 use core::fmt::Debug;
 
 const SQLITE3_FILE_FORMAT_MAGIC_STRING: [u8; 16] = [
@@ -18,19 +17,19 @@ pub struct MagicHeaderString([u8; 16]);
 
 impl Debug for MagicHeaderString {
   fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-    let output = format!("{:02x?}", self.0);
-    f.debug_tuple("MagicHeaderString").field(&output).finish()
+    let output = stringify!("{:02x?}", self.0);
+    f.debug_tuple(Self::NAME).field(&output).finish()
   }
 }
 
-impl ParseBytes<&[u8]> for MagicHeaderString {
+impl ParseBytes for MagicHeaderString {
   const NAME: &'static str = "MagicHeaderString";
   const LENGTH_BYTES: usize = 16;
 
   fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
     for (idx, byte) in SQLITE3_FILE_FORMAT_MAGIC_STRING.iter().enumerate() {
       if bytes.get(idx) != Some(byte) {
-        return Err(SQLiteError::Custom(format!(
+        return Err(SQLiteError::Custom(stringify!(
           "Invalid payload for {}",
           Self::NAME
         )));
