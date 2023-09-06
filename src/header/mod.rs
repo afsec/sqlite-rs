@@ -360,7 +360,6 @@ impl ValidateParsed for SqliteHeader {
       // counter when the version number was stored. The integer at offset 92
       // indicates which transaction the version number is valid for and is
       // sometimes called the "version-valid-for number".
-      std::dbg!(self);
       if **self.file_change_counter() < 1 {
         return Err(SQLiteError::HeaderValidationError(
           "File change counter maybe corrupted",

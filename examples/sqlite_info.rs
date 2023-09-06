@@ -13,20 +13,29 @@ struct App;
 
 impl App {
   fn run() -> AppResult<()> {
-    const FILENAME: &str = "flights.db";
+    let files = [
+      "./data/flights-initial.db",
+      "./data/flights-populated.db",
+      "./data/flights-deleted.db",
+    ];
+    files.iter().try_for_each(|file| -> AppResult<()> {
+      let sqlite_header = Self::read_bytes(&file)?;
 
-    let mut f = File::open(FILENAME)?;
-
-    let mut sqlite_header_buffer: [u8; 100] = [0; 100];
-
-    let _ = f.read(&mut sqlite_header_buffer)?;
-
-    let sqlite_header = SqliteHeader::try_from(&sqlite_header_buffer)?;
-
-    Self::print_sqlite_info(&sqlite_header)?;
+      println!("[{file}]:");
+      Self::print_sqlite_info(&sqlite_header)?;
+      Ok(())
+    })?;
 
     Ok(())
   }
+  fn read_bytes<T: AsRef<str>>(file_path: &T) -> AppResult<SqliteHeader> {
+    let mut f = File::open(file_path.as_ref())?;
+    let mut sqlite_header_buffer: [u8; 100] = [0; 100];
+    let _ = f.read(&mut sqlite_header_buffer)?;
+    let sqlite_header = SqliteHeader::try_from(&sqlite_header_buffer)?;
+    Ok(sqlite_header)
+  }
+
   fn print_sqlite_info(sqlite_header: &SqliteHeader) -> AppResult<()> {
     const LABEL_WIDTH: usize = 21;
 
@@ -152,30 +161,3 @@ impl App {
     Ok(())
   }
 }
-
-/*
-$ cat flights.info
-database page size:  4096
-write format:        1
-read format:         1
-reserved bytes:      0
-file change counter: 4
-database page count: 3
-freelist page count: 0
-schema cookie:       2
-schema format:       4
-default cache size:  0
-autovacuum top root: 0
-incremental vacuum:  0
-text encoding:       1 (utf8)
-user version:        0
-application id:      0
-software version:    3030000
-number of tables:    2
-number of indexes:   0
-number of triggers:  0
-number of views:     0
-schema size:         138
-data version         1
-
-*/
