@@ -21,10 +21,9 @@ impl ParseBytes for ReservedForExpansion {
   fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
     for byte in bytes.iter() {
       if *byte != b'\0' {
-        return Err(SQLiteError::Custom(stringify!(
-          "Invalid payload for {}",
-          Self::NAME
-        )));
+        return Err(SQLiteError::Custom(
+          "Invalid payload for ReservedForExpansion",
+        ));
       }
     }
     Ok(Default::default())

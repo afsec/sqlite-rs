@@ -21,6 +21,8 @@ mod version_valid_for;
 mod write_library_version;
 
 use self::traits::{ParseBytes, ValidateParsed};
+use crate::result::{SQLiteError, SQLiteResult};
+
 pub use self::{
   application_id::ApplicationId,
   database_text_encoding::DatabaseTextEncoding,
@@ -46,7 +48,6 @@ pub use self::{
   version_valid_for::VersionValidFor,
   write_library_version::WriteLibraryVersion,
 };
-use crate::result::{SQLiteError, SQLiteResult};
 
 /// # Database File Format
 ///
@@ -118,6 +119,7 @@ pub struct SqliteHeader {
 }
 
 impl SqliteHeader {
+  pub const LENGTH_BYTES: usize = 100;
   pub fn magic_header_string(&self) -> &MagicHeaderString {
     &self.magic_header_string
   }
@@ -194,7 +196,7 @@ impl SqliteHeader {
 impl ParseBytes for SqliteHeader {
   const NAME: &'static str = "SqliteHeader";
 
-  const LENGTH_BYTES: usize = 100;
+  const LENGTH_BYTES: usize = Self::LENGTH_BYTES;
 
   fn parsing_handler(bytes: &[u8]) -> crate::result::SQLiteResult<Self> {
     let magic_header_string = MagicHeaderString::parse_bytes(&bytes[0..=15])?;
@@ -376,12 +378,18 @@ impl ValidateParsed for SqliteHeader {
   }
 }
 
-impl TryFrom<&[u8; 100]> for SqliteHeader {
+impl TryFrom<&[u8]> for SqliteHeader {
   type Error = SQLiteError;
 
-  fn try_from(bytes: &[u8; 100]) -> Result<Self, Self::Error> {
-    let sqlite_header = SqliteHeader::parse_bytes(&bytes[..])?;
-    sqlite_header.validate_parsed()?;
-    Ok(sqlite_header)
+  fn try_from(bytes: &[u8]) -> Result<Self, Self::Error> {
+    if bytes.len() < Self::LENGTH_BYTES {
+      Err(SQLiteError::Custom(
+        "The data payload must have at least 100 Bytes to parse SqliteHeader",
+      ))
+    } else {
+      let parsed = Self::parse_bytes(&bytes[..])?;
+      parsed.validate_parsed()?;
+      Ok(parsed)
+    }
   }
 }

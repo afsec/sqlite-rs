@@ -32,7 +32,7 @@ impl App {
     let mut f = File::open(file_path.as_ref())?;
     let mut sqlite_header_buffer: [u8; 100] = [0; 100];
     let _ = f.read(&mut sqlite_header_buffer)?;
-    let sqlite_header = SqliteHeader::try_from(&sqlite_header_buffer)?;
+    let sqlite_header = SqliteHeader::try_from(&sqlite_header_buffer[..])?;
     Ok(sqlite_header)
   }
 

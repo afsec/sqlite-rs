@@ -58,17 +58,15 @@ impl ParseBytes for MaximumEmbeddedPayloadFraction {
   const LENGTH_BYTES: usize = 1;
 
   fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
-    let maximum = *bytes.first().ok_or(SQLiteError::Custom(stringify!(
-      "Impossible state on parsing {}",
-      Self::NAME
-    )))?;
+    let maximum = *bytes.first().ok_or(SQLiteError::Custom(
+      "Impossible state on parsing MaximumEmbeddedPayloadFraction",
+    ))?;
     if maximum == 64 {
       Ok(Self(maximum))
     } else {
-      Err(SQLiteError::Custom(stringify!(
-        "{} must be 64.",
-        Self::NAME
-      )))
+      Err(SQLiteError::Custom(
+        "MaximumEmbeddedPayloadFraction must be 64.",
+      ))
     }
   }
 }
@@ -82,17 +80,15 @@ impl ParseBytes for MinimumEmbeddedPayloadFraction {
   const LENGTH_BYTES: usize = 1;
 
   fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
-    let minimum = *bytes.first().ok_or(SQLiteError::Custom(stringify!(
-      "Impossible state on parsing {}",
-      Self::NAME
-    )))?;
+    let minimum = *bytes.first().ok_or(SQLiteError::Custom(
+      "Impossible state on parsing MinimumEmbeddedPayloadFraction",
+    ))?;
     if minimum == 32 {
       Ok(Self(minimum))
     } else {
-      Err(SQLiteError::Custom(stringify!(
-        "{} must be 32.",
-        Self::NAME
-      )))
+      Err(SQLiteError::Custom(
+        "MinimumEmbeddedPayloadFraction must be 32.",
+      ))
     }
   }
 }
@@ -106,17 +102,13 @@ impl ParseBytes for LeafPayloadFraction {
   const LENGTH_BYTES: usize = 1;
 
   fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
-    let leaf = *bytes.first().ok_or(SQLiteError::Custom(stringify!(
-      "Impossible state on parsing {}",
-      Self::NAME
-    )))?;
+    let leaf = *bytes.first().ok_or(SQLiteError::Custom(
+      "Impossible state on parsing LeafPayloadFraction",
+    ))?;
     if leaf == 32 {
       Ok(Self(leaf))
     } else {
-      Err(SQLiteError::Custom(stringify!(
-        "{} must be 32.",
-        Self::NAME
-      )))
+      Err(SQLiteError::Custom("LeafPayloadFraction must be 32."))
     }
   }
 }

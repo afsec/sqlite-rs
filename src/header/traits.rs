@@ -13,11 +13,10 @@ where
   fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self>;
 
   fn check_payload_size(bytes: &[u8]) -> SQLiteResult<()> {
-    if bytes.len() != Self::LENGTH_BYTES {
-      Err(SQLiteError::Custom(stringify!(
-        "Invalid size for {}",
-        Self::NAME
-      )))
+    if bytes.len() < Self::LENGTH_BYTES {
+      Err(SQLiteError::Custom(
+        "Invalid input size on ParseBytes trait",
+      ))
     } else {
       Ok(())
     }

@@ -48,10 +48,7 @@ impl TryFrom<u32> for SchemaFormat {
       2 => Ok(Self::Format2),
       3 => Ok(Self::Format3),
       4 => Ok(Self::Format4),
-      _ => Err(SQLiteError::Custom(stringify!(
-        "Invalid payload for {}",
-        Self::NAME
-      ))),
+      _ => Err(SQLiteError::Custom("Invalid payload for SchemaFormat")),
     }
   }
 }
