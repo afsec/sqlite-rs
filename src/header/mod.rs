@@ -324,7 +324,27 @@ impl ValidateParsed for SqliteHeader {
         ));
       }
     }
+
     {
+      //  Unused pages in the database file are stored on a freelist. The 4-byte
+      // big-endian integer at offset 32 stores the page number of the first
+      // page of the freelist, or zero if the freelist is empty. The 4-byte
+      // big-endian integer at offset 36 stores the total number of pages on the
+      // freelist.
+      let freelist_pages = self.freelist_pages();
+      if (**freelist_pages.total() == 0) && (**freelist_pages.first() != 0) {
+        return Err(SQLiteError::HeaderValidationError(
+          "Free list settings may be corrupted",
+        ));
+      }
+    }
+    {
+      //  If the integer at offset 52 is non-zero then it is the page number of
+      // the largest root page in the database file, the database file will
+      // contain ptrmap pages, and the mode must be either auto_vacuum or
+      // incremental_vacuum. In this latter case, the integer at offset 64 is
+      // true for incremental_vacuum and false for auto_vacuum. If the integer
+      // at offset 52 is zero then the integer at offset 64 must also be zero.
       let incremental_vacuum_mode =
         u32::from(self.incremental_vacuum_settings.incremental_vacuum_mode());
       let largest_root_btree_page =
@@ -332,6 +352,23 @@ impl ValidateParsed for SqliteHeader {
       if incremental_vacuum_mode == 0 && largest_root_btree_page != 0 {
         return Err(SQLiteError::HeaderValidationError(
           "Incremental vacuum settings is zero but corrupted",
+        ));
+      }
+    }
+    {
+      //  The 4-byte big-endian integer at offset 92 is the value of the change
+      // counter when the version number was stored. The integer at offset 92
+      // indicates which transaction the version number is valid for and is
+      // sometimes called the "version-valid-for number".
+      std::dbg!(self);
+      if **self.file_change_counter() < 1 {
+        return Err(SQLiteError::HeaderValidationError(
+          "File change counter maybe corrupted",
+        ));
+      }
+      if **self.file_change_counter() < **self.version_valid_for() {
+        return Err(SQLiteError::HeaderValidationError(
+          "The version-valid-for number or the change counter maybe corrupted",
         ));
       }
     }
