@@ -5,7 +5,7 @@ where
   Self: Sized,
 {
   /// Workaround for unstable:
-  /// `std::any::type_name_of_val()`
+  /// `std::any::type_name()`
   const NAME: &'static str;
 
   const LENGTH_BYTES: usize;
