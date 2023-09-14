@@ -17,8 +17,7 @@ pub struct MagicHeaderString([u8; 16]);
 
 impl Debug for MagicHeaderString {
   fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-    let output = stringify!("{:02x?}", self.0);
-    f.debug_tuple(Self::NAME).field(&output).finish()
+    f.debug_tuple(Self::NAME).finish()
   }
 }
 
@@ -29,10 +28,9 @@ impl ParseBytes for MagicHeaderString {
   fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
     for (idx, byte) in SQLITE3_FILE_FORMAT_MAGIC_STRING.iter().enumerate() {
       if bytes.get(idx) != Some(byte) {
-        return Err(SQLiteError::Custom(stringify!(
-          "Invalid payload for {}",
-          Self::NAME
-        )));
+        return Err(SQLiteError::Custom(
+          "Invalid payload for MagicHeaderString",
+        ));
       }
     }
 

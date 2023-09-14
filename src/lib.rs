@@ -45,11 +45,53 @@
 #![cfg_attr(docsrs, feature(doc_cfg))]
 #![cfg_attr(test, allow(clippy::float_cmp))]
 
+use result::SQLiteError;
+
+use crate::header::SqliteHeader;
+
 #[cfg(feature = "std")]
 extern crate std;
 
-// #[cfg(feature = "alloc")]
-// extern crate alloc;
+#[cfg(feature = "alloc")]
+extern crate alloc;
 
 pub mod header;
 pub mod result;
+
+#[cfg(test)]
+mod tests;
+
+#[derive(Debug)]
+pub struct SQLiteDatabase<'a> {
+  mode: Mode,
+  header: SqliteHeader,
+  data: &'a [u8],
+  pager: SqlitePager,
+}
+
+#[derive(Debug)]
+pub enum Mode {
+  InMemoryNoStd,
+  Std,
+}
+impl<'a> SQLiteDatabase<'a> {
+  const MINIMUM_USABLE_SIZE: usize = 480; // TODO: TBD
+  pub const MINIMUM_SIZE: usize =
+    SqliteHeader::LENGTH_BYTES + Self::MINIMUM_USABLE_SIZE;
+}
+
+impl<'a> TryFrom<&'a [u8]> for SQLiteDatabase<'a> {
+  type Error = SQLiteError;
+
+  fn try_from(data: &'a [u8]) -> Result<Self, Self::Error> {
+    Ok(Self {
+      mode: Mode::InMemoryNoStd,
+      header: SqliteHeader::try_from(data)?,
+      data,
+      pager: SqlitePager,
+    })
+  }
+}
+
+#[derive(Debug)]
+pub struct SqlitePager;

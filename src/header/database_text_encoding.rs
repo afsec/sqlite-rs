@@ -35,13 +35,13 @@ impl TryFrom<u32> for DatabaseTextEncoding {
       1 => Ok(Self::Utf8),
       2 => Ok(Self::Utf16Le),
       3 => Ok(Self::Utf16Be),
-      _ => Err(SQLiteError::Custom(stringify!(
-        "Invalid payload for {}",
-        Self::NAME
-      ))),
+      _ => Err(SQLiteError::Custom(
+        "Invalid payload for DatabaseTextEncoding",
+      )),
     }
   }
 }
+
 impl Display for DatabaseTextEncoding {
   fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
     let number = u32::from(self);

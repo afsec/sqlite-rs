@@ -70,17 +70,15 @@ impl ParseBytes for FileFormatWriteVersion {
   const LENGTH_BYTES: usize = 1;
 
   fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
-    let one_byte = *bytes.first().ok_or(SQLiteError::Custom(stringify!(
-      "Impossible state on parsing {}",
-      Self::NAME
-    )))?;
+    let one_byte = *bytes.first().ok_or(SQLiteError::Custom(
+      "Impossible state on parsing FileFormatWriteVersion",
+    ))?;
     match one_byte {
       1 => Ok(Self::Legacy),
       2 => Ok(Self::WAL),
-      _ => Err(SQLiteError::Custom(stringify!(
-        "Invalid payload for {}",
-        Self::NAME
-      ))),
+      _ => Err(SQLiteError::Custom(
+        "Invalid payload for FileFormatWriteVersion",
+      )),
     }
   }
 }
@@ -114,17 +112,15 @@ impl ParseBytes for FileFormatReadVersion {
   const LENGTH_BYTES: usize = 1;
 
   fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
-    let one_byte = *bytes.first().ok_or(SQLiteError::Custom(stringify!(
-      "Impossible state on parsing {}",
-      Self::NAME
-    )))?;
+    let one_byte = *bytes.first().ok_or(SQLiteError::Custom(
+      "Impossible state on parsing FileFormatReadVersion",
+    ))?;
     match one_byte {
       1 => Ok(Self::Legacy),
       2 => Ok(Self::WAL),
-      _ => Err(SQLiteError::Custom(stringify!(
-        "Invalid payload for {}",
-        Self::NAME
-      ))),
+      _ => Err(SQLiteError::Custom(
+        "Invalid payload for FileFormatReadVersion",
+      )),
     }
   }
 }

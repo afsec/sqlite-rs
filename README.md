@@ -1,5 +1,5 @@
 # sqlite-rs
-SQLite reader in pure rust
+SQLite library in pure Rust with `no_std` support and no dependencies (Under Development)
 
 ```sh
 nix-shell

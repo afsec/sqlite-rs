@@ -41,16 +41,10 @@ impl ParseBytes for PageSize {
       Ok(Self(65_536))
     } else {
       if page_size < 512 {
-        return Err(SQLiteError::Custom(stringify!(
-          "{} can't be less than 512",
-          Self::NAME
-        )));
+        return Err(SQLiteError::Custom("PageSize can't be less than 512"));
       }
       if page_size.is_power_of_two().not() {
-        return Err(SQLiteError::Custom(stringify!(
-          "{} must be power of two",
-          Self::NAME
-        )));
+        return Err(SQLiteError::Custom("PageSize must be power of two"));
       }
 
       Ok(Self(page_size.into()))

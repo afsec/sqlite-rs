@@ -37,7 +37,7 @@ impl ParseBytes for ReservedBytesPerPage {
 
   fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
     let reserved_bytes_per_page = *bytes.first().ok_or(SQLiteError::Custom(
-      stringify!("Impossible state on parsing {}", Self::NAME),
+      "Impossible state on parsing ReservedBytesPerPage",
     ))?;
 
     Ok(Self(reserved_bytes_per_page))

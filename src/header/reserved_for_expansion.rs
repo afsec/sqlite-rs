@@ -9,10 +9,7 @@ pub struct ReservedForExpansion([u8; 20]);
 
 impl Debug for ReservedForExpansion {
   fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-    let output = stringify!("{:02x?}", self.0);
-    f.debug_tuple("ReservedForExpansion")
-      .field(&output)
-      .finish()
+    f.debug_tuple(Self::NAME).finish()
   }
 }
 
@@ -24,10 +21,9 @@ impl ParseBytes for ReservedForExpansion {
   fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
     for byte in bytes.iter() {
       if *byte != b'\0' {
-        return Err(SQLiteError::Custom(stringify!(
-          "Invalid payload for {}",
-          Self::NAME
-        )));
+        return Err(SQLiteError::Custom(
+          "Invalid payload for ReservedForExpansion",
+        ));
       }
     }
     Ok(Default::default())
