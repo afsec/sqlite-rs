@@ -1,5 +1,8 @@
-use super::traits::ParseBytes;
-use crate::result::{SQLiteError, SQLiteResult};
+use super::traits::{Name, ParseBytes};
+use crate::{
+  field_parsing_error, impl_name,
+  result::{SQLiteError, SQLiteResult},
+};
 
 use core::ops::Deref;
 
@@ -31,14 +34,14 @@ impl Deref for ReservedBytesPerPage {
   }
 }
 
+impl_name! {ReservedBytesPerPage}
+
 impl ParseBytes for ReservedBytesPerPage {
-  const NAME: &'static str = "ReservedBytesPerPage";
   const LENGTH_BYTES: usize = 1;
 
   fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
-    let reserved_bytes_per_page = *bytes.first().ok_or(SQLiteError::Custom(
-      "Impossible state on parsing ReservedBytesPerPage",
-    ))?;
+    let reserved_bytes_per_page =
+      *bytes.first().ok_or(field_parsing_error! {Self::NAME})?;
 
     Ok(Self(reserved_bytes_per_page))
   }

@@ -1,5 +1,8 @@
-use super::traits::ParseBytes;
-use crate::result::{SQLiteError, SQLiteResult};
+use super::traits::{Name, ParseBytes};
+use crate::{
+  field_parsing_error, impl_name,
+  result::{SQLiteError, SQLiteResult},
+};
 use core::fmt::Display;
 
 /// # Text encoding(4 Bytes)
@@ -35,9 +38,7 @@ impl TryFrom<u32> for DatabaseTextEncoding {
       1 => Ok(Self::Utf8),
       2 => Ok(Self::Utf16Le),
       3 => Ok(Self::Utf16Be),
-      _ => Err(SQLiteError::Custom(
-        "Invalid payload for DatabaseTextEncoding",
-      )),
+      _ => Err(field_parsing_error! {Self::NAME}),
     }
   }
 }
@@ -53,9 +54,10 @@ impl Display for DatabaseTextEncoding {
     write!(f, "{number} ({name})")
   }
 }
-impl ParseBytes for DatabaseTextEncoding {
-  const NAME: &'static str = "DatabaseTextEncoding";
 
+impl_name! {DatabaseTextEncoding}
+
+impl ParseBytes for DatabaseTextEncoding {
   const LENGTH_BYTES: usize = 4;
 
   fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {

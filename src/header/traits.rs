@@ -1,22 +1,23 @@
-use crate::result::{SQLiteError, SQLiteResult};
+use crate::result::{InvalidPayloadSizeError, SQLiteError, SQLiteResult};
+
+pub trait Name {
+  const NAME: &'static str;
+}
 
 pub(super) trait ParseBytes
 where
-  Self: Sized,
+  Self: Sized + Name,
 {
-  /// Workaround for unstable:
-  /// `std::any::type_name()`
-  const NAME: &'static str;
-
   const LENGTH_BYTES: usize;
 
   fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self>;
 
   fn check_payload_size(bytes: &[u8]) -> SQLiteResult<()> {
     if bytes.len() < Self::LENGTH_BYTES {
-      Err(SQLiteError::Custom(
-        "Invalid input size on ParseBytes trait",
-      ))
+      Err(SQLiteError::InvalidPayloadSize(InvalidPayloadSizeError {
+        error: "Invalid input size",
+        ty: Self::NAME,
+      }))
     } else {
       Ok(())
     }

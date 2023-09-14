@@ -15,13 +15,16 @@ mod reserved_for_expansion;
 mod schema_cookie;
 mod schema_format;
 mod suggested_cache_size;
-mod traits;
+pub mod traits;
 mod user_version;
 mod version_valid_for;
 mod write_library_version;
 
 use self::traits::{ParseBytes, ValidateParsed};
-use crate::result::{SQLiteError, SQLiteResult};
+use crate::{
+  impl_name,
+  result::{SQLiteError, SQLiteResult},
+};
 
 pub use self::{
   application_id::ApplicationId,
@@ -193,9 +196,9 @@ impl SqliteHeader {
   }
 }
 
-impl ParseBytes for SqliteHeader {
-  const NAME: &'static str = "SqliteHeader";
+impl_name! {SqliteHeader}
 
+impl ParseBytes for SqliteHeader {
   const LENGTH_BYTES: usize = Self::LENGTH_BYTES;
 
   fn parsing_handler(bytes: &[u8]) -> crate::result::SQLiteResult<Self> {
@@ -382,14 +385,8 @@ impl TryFrom<&[u8]> for SqliteHeader {
   type Error = SQLiteError;
 
   fn try_from(bytes: &[u8]) -> Result<Self, Self::Error> {
-    if bytes.len() < Self::LENGTH_BYTES {
-      Err(SQLiteError::Custom(
-        "The data payload must have at least 100 Bytes to parse SqliteHeader",
-      ))
-    } else {
-      let parsed = Self::parse_bytes(&bytes[..])?;
-      parsed.validate_parsed()?;
-      Ok(parsed)
-    }
+    let parsed = Self::parse_bytes(bytes)?;
+    parsed.validate_parsed()?;
+    Ok(parsed)
   }
 }

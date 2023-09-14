@@ -1,5 +1,8 @@
-use super::traits::ParseBytes;
-use crate::result::{SQLiteError, SQLiteResult};
+use super::traits::{Name, ParseBytes};
+use crate::{
+  field_parsing_error, impl_name,
+  result::{SQLiteError, SQLiteResult},
+};
 
 use core::fmt::Debug;
 
@@ -13,17 +16,15 @@ impl Debug for ReservedForExpansion {
   }
 }
 
-impl ParseBytes for ReservedForExpansion {
-  const NAME: &'static str = "ReservedForExpansion";
+impl_name! {ReservedForExpansion}
 
+impl ParseBytes for ReservedForExpansion {
   const LENGTH_BYTES: usize = 20;
 
   fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
     for byte in bytes.iter() {
       if *byte != b'\0' {
-        return Err(SQLiteError::Custom(
-          "Invalid payload for ReservedForExpansion",
-        ));
+        return Err(field_parsing_error! {Self::NAME});
       }
     }
     Ok(Default::default())

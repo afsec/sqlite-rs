@@ -1,5 +1,5 @@
 use super::traits::ParseBytes;
-use crate::result::SQLiteResult;
+use crate::{impl_name, result::SQLiteResult};
 use core::ops::Deref;
 
 /// # Schema cookie (4 Bytes)
@@ -24,8 +24,9 @@ impl Deref for SchemaCookie {
   }
 }
 
+impl_name! {SchemaCookie}
+
 impl ParseBytes for SchemaCookie {
-  const NAME: &'static str = "SchemaCookie";
   const LENGTH_BYTES: usize = 4;
 
   fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {

@@ -57,6 +57,8 @@ extern crate alloc;
 
 pub mod header;
 pub mod result;
+#[macro_use]
+pub mod macros;
 
 #[cfg(test)]
 mod tests;
