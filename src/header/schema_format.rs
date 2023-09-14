@@ -1,5 +1,8 @@
-use super::traits::ParseBytes;
-use crate::result::{SQLiteError, SQLiteResult};
+use super::traits::{Name, ParseBytes};
+use crate::{
+  field_parsing_error, impl_name,
+  result::{SQLiteError, SQLiteResult},
+};
 
 /// # Schema format number (4 Bytes)
 ///
@@ -48,7 +51,7 @@ impl TryFrom<u32> for SchemaFormat {
       2 => Ok(Self::Format2),
       3 => Ok(Self::Format3),
       4 => Ok(Self::Format4),
-      _ => Err(SQLiteError::Custom("Invalid payload for SchemaFormat")),
+      _ => Err(field_parsing_error! {Self::NAME}),
     }
   }
 }
@@ -64,8 +67,9 @@ impl From<&SchemaFormat> for u32 {
   }
 }
 
+impl_name! {SchemaFormat}
+
 impl ParseBytes for SchemaFormat {
-  const NAME: &'static str = "SchemaFormat";
   const LENGTH_BYTES: usize = 4;
 
   fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {

@@ -14,6 +14,20 @@ pub enum SQLiteError {
   #[cfg(feature = "std")]
   StdioError(StdioError),
   Custom(&'static str),
+  ParsingField(FieldParsingError),
+  InvalidPayloadSize(InvalidPayloadSizeError),
+}
+
+#[derive(Debug)]
+pub struct FieldParsingError {
+  pub error: &'static str,
+  pub ty: &'static str,
+}
+
+#[derive(Debug)]
+pub struct InvalidPayloadSizeError {
+  pub error: &'static str,
+  pub ty: &'static str,
 }
 
 // impl SQLiteError {

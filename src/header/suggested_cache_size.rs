@@ -1,5 +1,5 @@
 use super::traits::ParseBytes;
-use crate::result::SQLiteResult;
+use crate::{impl_name, result::SQLiteResult};
 use core::ops::Deref;
 
 /// # Suggested cache size (4 Bytes)
@@ -20,8 +20,9 @@ impl Deref for SuggestedCacheSize {
   }
 }
 
+impl_name! {SuggestedCacheSize}
+
 impl ParseBytes for SuggestedCacheSize {
-  const NAME: &'static str = "SuggestedCacheSize";
   const LENGTH_BYTES: usize = 4;
 
   fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {

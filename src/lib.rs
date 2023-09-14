@@ -45,7 +45,7 @@
 #![cfg_attr(docsrs, feature(doc_cfg))]
 #![cfg_attr(test, allow(clippy::float_cmp))]
 
-use result::SQLiteError;
+use result::{SQLiteError, SQLiteResult};
 
 use crate::header::SqliteHeader;
 
@@ -57,15 +57,17 @@ extern crate alloc;
 
 pub mod header;
 pub mod result;
+#[macro_use]
+pub mod macros;
 
 #[cfg(test)]
 mod tests;
 
 #[derive(Debug)]
-pub struct SQLiteDatabase<'a> {
+pub struct SQLiteDatabase {
   mode: Mode,
   header: SqliteHeader,
-  data: &'a [u8],
+  // pages: &'a [u8],
   pager: SqlitePager,
 }
 
@@ -74,24 +76,48 @@ pub enum Mode {
   InMemoryNoStd,
   Std,
 }
-impl<'a> SQLiteDatabase<'a> {
+impl SQLiteDatabase {
   const MINIMUM_USABLE_SIZE: usize = 480; // TODO: TBD
   pub const MINIMUM_SIZE: usize =
     SqliteHeader::LENGTH_BYTES + Self::MINIMUM_USABLE_SIZE;
-}
 
-impl<'a> TryFrom<&'a [u8]> for SQLiteDatabase<'a> {
-  type Error = SQLiteError;
+  pub fn new_in_memory(bytes: &[u8]) -> SQLiteResult<()> {
+    let mode = Mode::InMemoryNoStd;
+    let header = SqliteHeader::try_from(bytes)?;
+    // let pages = &bytes[SqliteHeader::LENGTH_BYTES..];
+    let pager = SqlitePager;
 
-  fn try_from(data: &'a [u8]) -> Result<Self, Self::Error> {
-    Ok(Self {
-      mode: Mode::InMemoryNoStd,
-      header: SqliteHeader::try_from(data)?,
-      data,
-      pager: SqlitePager,
-    })
+    let database = SQLiteDatabase {
+      mode,
+      header,
+      // pages,
+      pager,
+    };
+
+    std::dbg!(database);
+
+    todo!();
+    Ok(())
+  }
+
+  #[cfg(not(feature = "std"))]
+  pub fn new() {
+    todo!()
   }
 }
+
+// impl<'a> TryFrom<&'a [u8]> for SQLiteDatabase<'a> {
+//   type Error = SQLiteError;
+
+//   fn try_from(data: &'a [u8]) -> Result<Self, Self::Error> {
+//     Ok(Self {
+//       mode: Mode::InMemoryNoStd,
+//       header: SqliteHeader::try_from(data)?,
+//       pages,
+//       pager: SqlitePager,
+//     })
+//   }
+// }
 
 #[derive(Debug)]
 pub struct SqlitePager;

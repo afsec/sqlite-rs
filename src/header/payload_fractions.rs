@@ -1,5 +1,8 @@
-use super::traits::ParseBytes;
-use crate::result::{SQLiteError, SQLiteResult};
+use super::traits::{Name, ParseBytes};
+use crate::{
+  field_parsing_error, impl_name,
+  result::{SQLiteError, SQLiteResult},
+};
 
 /// # Payload Fractions (3 Bytes)
 ///
@@ -33,8 +36,9 @@ impl PayloadFractions {
   }
 }
 
+impl_name! {PayloadFractions}
+
 impl ParseBytes for PayloadFractions {
-  const NAME: &'static str = "PayloadFractions";
   const LENGTH_BYTES: usize = 3;
 
   fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
@@ -53,14 +57,13 @@ impl ParseBytes for PayloadFractions {
 #[derive(Debug)]
 pub struct MaximumEmbeddedPayloadFraction(u8);
 
+impl_name! {MaximumEmbeddedPayloadFraction}
+
 impl ParseBytes for MaximumEmbeddedPayloadFraction {
-  const NAME: &'static str = "MaximumEmbeddedPayloadFraction";
   const LENGTH_BYTES: usize = 1;
 
   fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
-    let maximum = *bytes.first().ok_or(SQLiteError::Custom(
-      "Impossible state on parsing MaximumEmbeddedPayloadFraction",
-    ))?;
+    let maximum = *bytes.first().ok_or(field_parsing_error! {Self::NAME})?;
     if maximum == 64 {
       Ok(Self(maximum))
     } else {
@@ -75,14 +78,13 @@ impl ParseBytes for MaximumEmbeddedPayloadFraction {
 #[derive(Debug)]
 pub struct MinimumEmbeddedPayloadFraction(u8);
 
+impl_name! {MinimumEmbeddedPayloadFraction}
+
 impl ParseBytes for MinimumEmbeddedPayloadFraction {
-  const NAME: &'static str = "MinimumEmbeddedPayloadFraction";
   const LENGTH_BYTES: usize = 1;
 
   fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
-    let minimum = *bytes.first().ok_or(SQLiteError::Custom(
-      "Impossible state on parsing MinimumEmbeddedPayloadFraction",
-    ))?;
+    let minimum = *bytes.first().ok_or(field_parsing_error! {Self::NAME})?;
     if minimum == 32 {
       Ok(Self(minimum))
     } else {
@@ -97,14 +99,13 @@ impl ParseBytes for MinimumEmbeddedPayloadFraction {
 #[derive(Debug)]
 pub struct LeafPayloadFraction(u8);
 
+impl_name! {LeafPayloadFraction}
+
 impl ParseBytes for LeafPayloadFraction {
-  const NAME: &'static str = "LeafPayloadFraction";
   const LENGTH_BYTES: usize = 1;
 
   fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
-    let leaf = *bytes.first().ok_or(SQLiteError::Custom(
-      "Impossible state on parsing LeafPayloadFraction",
-    ))?;
+    let leaf = *bytes.first().ok_or(field_parsing_error! {Self::NAME})?;
     if leaf == 32 {
       Ok(Self(leaf))
     } else {

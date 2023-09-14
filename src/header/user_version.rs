@@ -1,5 +1,5 @@
 use super::traits::ParseBytes;
-use crate::result::SQLiteResult;
+use crate::{impl_name, result::SQLiteResult};
 use core::ops::Deref;
 
 /// # User version number (4 Bytes)
@@ -17,10 +17,8 @@ impl Deref for UserVersion {
     &self.0
   }
 }
-
+impl_name! {UserVersion}
 impl ParseBytes for UserVersion {
-  const NAME: &'static str = "UserVersion";
-
   const LENGTH_BYTES: usize = 4;
 
   fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {

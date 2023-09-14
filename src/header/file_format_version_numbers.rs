@@ -1,5 +1,8 @@
-use super::traits::ParseBytes;
-use crate::result::{SQLiteError, SQLiteResult};
+use super::traits::{Name, ParseBytes};
+use crate::{
+  field_parsing_error, impl_name,
+  result::{SQLiteError, SQLiteResult},
+};
 use core::fmt::Display;
 
 /// # File format version numbers (2 Bytes)
@@ -33,8 +36,8 @@ impl FileFormatVersionNumbers {
     &self.read_version
   }
 }
+impl_name! {FileFormatVersionNumbers}
 impl ParseBytes for FileFormatVersionNumbers {
-  const NAME: &'static str = "FileFormatVersionNumbers";
   const LENGTH_BYTES: usize = 2;
 
   fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
@@ -65,20 +68,17 @@ impl From<&FileFormatWriteVersion> for u8 {
   }
 }
 
+impl_name! {FileFormatWriteVersion}
+
 impl ParseBytes for FileFormatWriteVersion {
-  const NAME: &'static str = "FileFormatWriteVersion";
   const LENGTH_BYTES: usize = 1;
 
   fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
-    let one_byte = *bytes.first().ok_or(SQLiteError::Custom(
-      "Impossible state on parsing FileFormatWriteVersion",
-    ))?;
+    let one_byte = *bytes.first().ok_or(field_parsing_error! {Self::NAME})?;
     match one_byte {
       1 => Ok(Self::Legacy),
       2 => Ok(Self::WAL),
-      _ => Err(SQLiteError::Custom(
-        "Invalid payload for FileFormatWriteVersion",
-      )),
+      _ => Err(field_parsing_error! {Self::NAME}),
     }
   }
 }
@@ -107,20 +107,17 @@ impl From<&FileFormatReadVersion> for u8 {
   }
 }
 
+impl_name! {FileFormatReadVersion}
+
 impl ParseBytes for FileFormatReadVersion {
-  const NAME: &'static str = "FileFormatReadVersion";
   const LENGTH_BYTES: usize = 1;
 
   fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
-    let one_byte = *bytes.first().ok_or(SQLiteError::Custom(
-      "Impossible state on parsing FileFormatReadVersion",
-    ))?;
+    let one_byte = *bytes.first().ok_or(field_parsing_error! {Self::NAME})?;
     match one_byte {
       1 => Ok(Self::Legacy),
       2 => Ok(Self::WAL),
-      _ => Err(SQLiteError::Custom(
-        "Invalid payload for FileFormatReadVersion",
-      )),
+      _ => Err(field_parsing_error! {Self::NAME}),
     }
   }
 }

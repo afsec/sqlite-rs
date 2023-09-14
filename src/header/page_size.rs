@@ -1,5 +1,8 @@
 use super::traits::ParseBytes;
-use crate::result::{SQLiteError, SQLiteResult};
+use crate::{
+  impl_name,
+  result::{SQLiteError, SQLiteResult},
+};
 use core::ops::Deref;
 
 /// # Page Size (2 Bytes)
@@ -26,8 +29,9 @@ impl Deref for PageSize {
   }
 }
 
+impl_name! {PageSize}
+
 impl ParseBytes for PageSize {
-  const NAME: &'static str = "PageSize";
   const LENGTH_BYTES: usize = 2;
 
   fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {

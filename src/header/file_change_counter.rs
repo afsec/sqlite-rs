@@ -1,5 +1,5 @@
 use super::traits::ParseBytes;
-use crate::result::SQLiteResult;
+use crate::{impl_name, result::SQLiteResult};
 use core::ops::Deref;
 
 /// # File change counter (4 Bytes)
@@ -26,8 +26,9 @@ impl Deref for FileChangeCounter {
   }
 }
 
+impl_name! {FileChangeCounter}
+
 impl ParseBytes for FileChangeCounter {
-  const NAME: &'static str = "FileChangeCounter";
   const LENGTH_BYTES: usize = 4;
 
   fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {

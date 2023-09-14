@@ -1,5 +1,5 @@
 use super::traits::ParseBytes;
-use crate::result::SQLiteResult;
+use crate::{impl_name, result::SQLiteResult};
 use core::ops::Deref;
 
 /// # Free page list (8 Bytes) => First(4 Bytes) + TotalPages (4 Bytes)
@@ -21,9 +21,9 @@ impl FreeListPages {
     &self.total
   }
 }
+impl_name! {FreeListPages}
 
 impl ParseBytes for FreeListPages {
-  const NAME: &'static str = "FreeListPages";
   const LENGTH_BYTES: usize = 8;
 
   fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
@@ -48,8 +48,9 @@ impl Deref for FreeListPagesFirstTrunkPage {
   }
 }
 
+impl_name! {FreeListPagesFirstTrunkPage}
+
 impl ParseBytes for FreeListPagesFirstTrunkPage {
-  const NAME: &'static str = "FreeListPagesFirstTrunkPage";
   const LENGTH_BYTES: usize = 4;
 
   fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
@@ -72,8 +73,9 @@ impl Deref for FreeListPagesTotalPages {
   }
 }
 
+impl_name! {FreeListPagesTotalPages}
+
 impl ParseBytes for FreeListPagesTotalPages {
-  const NAME: &'static str = "FreeListPagesTotalPages";
   const LENGTH_BYTES: usize = 4;
 
   fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {

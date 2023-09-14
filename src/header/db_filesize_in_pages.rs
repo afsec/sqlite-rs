@@ -1,5 +1,5 @@
 use super::traits::ParseBytes;
-use crate::result::SQLiteResult;
+use crate::{impl_name, result::SQLiteResult};
 use core::ops::Deref;
 
 /// # In-header database size (4 Bytes)
@@ -34,9 +34,9 @@ impl Deref for DatabaseFileSizeInPages {
     &self.0
   }
 }
+impl_name! {DatabaseFileSizeInPages}
 
 impl ParseBytes for DatabaseFileSizeInPages {
-  const NAME: &'static str = "DatabaseFileSizeInPages";
   const LENGTH_BYTES: usize = 4;
 
   fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
