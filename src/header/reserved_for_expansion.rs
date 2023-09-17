@@ -1,9 +1,5 @@
-use super::traits::{Name, ParseBytes};
-use crate::{
-  field_parsing_error, impl_name,
-  result::{SQLiteError, SQLiteResult},
-};
-
+use crate::traits::{Name, ParseBytes};
+use crate::{field_parsing_error, impl_name, result::SQLiteResult};
 use core::fmt::Debug;
 
 /// Reserved for expansion. Must be zero. (20 Bytes)

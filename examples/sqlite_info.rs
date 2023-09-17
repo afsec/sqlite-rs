@@ -1,4 +1,4 @@
-use sqlite_rs::header::SqliteHeader;
+use sqlite_rs::SQLiteDatabase;
 use std::{fs::File, io::Read};
 
 type AppResult<T> = Result<T, AppError>;
@@ -17,27 +17,32 @@ impl App {
       "./data/flights-initial.db",
       "./data/flights-populated.db",
       "./data/flights-deleted.db",
+      "./data/mydatabase.db",
     ];
     files.iter().try_for_each(|file| -> AppResult<()> {
-      let sqlite_header = Self::read_bytes(&file)?;
+      let sqlite_database = Self::read_bytes(&file)?;
 
       println!("[{file}]:");
-      Self::print_sqlite_info(&sqlite_header)?;
+      Self::print_sqlite_info(&sqlite_database)?;
       Ok(())
     })?;
 
     Ok(())
   }
-  fn read_bytes<T: AsRef<str>>(file_path: &T) -> AppResult<SqliteHeader> {
+  fn read_bytes<T: AsRef<str>>(file_path: &T) -> AppResult<SQLiteDatabase> {
+    const MAX_LENGTH: usize = 1 * 1024 * 1024; // Read first 1 MBytes
     let mut f = File::open(file_path.as_ref())?;
-    let mut sqlite_header_buffer: [u8; 100] = [0; 100];
-    let _ = f.read(&mut sqlite_header_buffer)?;
-    let sqlite_header = SqliteHeader::try_from(&sqlite_header_buffer[..])?;
-    Ok(sqlite_header)
+    let mut buffer: [u8; MAX_LENGTH] = [0; MAX_LENGTH];
+    let _ = f.read(&mut buffer)?;
+    let database = SQLiteDatabase::new_in_memory(&buffer[..])?;
+    Ok(database)
   }
 
-  fn print_sqlite_info(sqlite_header: &SqliteHeader) -> AppResult<()> {
+  fn print_sqlite_info(sqlite_database: &SQLiteDatabase) -> AppResult<()> {
     const LABEL_WIDTH: usize = 21;
+
+    // TODO:
+    let sqlite_header = sqlite_database.header();
 
     let mut output = "".to_owned();
 

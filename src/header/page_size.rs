@@ -1,4 +1,4 @@
-use super::traits::ParseBytes;
+use crate::traits::ParseBytes;
 use crate::{
   impl_name,
   result::{SQLiteError, SQLiteResult},

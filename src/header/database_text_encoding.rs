@@ -1,11 +1,11 @@
-use super::traits::{Name, ParseBytes};
+use crate::traits::{Name, ParseBytes};
 use crate::{
   field_parsing_error, impl_name,
   result::{SQLiteError, SQLiteResult},
 };
 use core::fmt::Display;
 
-/// # Text encoding(4 Bytes)
+/// # Text encoding (4 Bytes)
 ///
 ///  The 4-byte big-endian integer at offset 56 determines the encoding used for
 /// all text strings stored in the database. A value of 1 means UTF-8. A value

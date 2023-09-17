@@ -1,8 +1,5 @@
-use super::traits::{Name, ParseBytes};
-use crate::{
-  field_parsing_error, impl_name,
-  result::{SQLiteError, SQLiteResult},
-};
+use crate::traits::{Name, ParseBytes};
+use crate::{field_parsing_error, impl_name, result::SQLiteResult};
 use core::fmt::Debug;
 const SQLITE3_FILE_FORMAT_MAGIC_STRING: [u8; 16] = [
   0x53, 0x51, 0x4c, 0x69, 0x74, 0x65, 0x20, 0x66, 0x6f, 0x72, 0x6d, 0x61, 0x74,

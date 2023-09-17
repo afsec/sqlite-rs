@@ -1,5 +1,5 @@
 #![no_std]
-#![forbid(unsafe_code)]
+#![forbid(unsafe_code, non_ascii_idents)]
 #![warn(
     clippy::all,
     clippy::dbg_macro,
@@ -45,9 +45,10 @@
 #![cfg_attr(docsrs, feature(doc_cfg))]
 #![cfg_attr(test, allow(clippy::float_cmp))]
 
-use result::{SQLiteError, SQLiteResult};
-
+use crate::btree::BtreePageHeader;
 use crate::header::SqliteHeader;
+use crate::result::SQLiteResult;
+use crate::traits::ParseBytes;
 
 #[cfg(feature = "std")]
 extern crate std;
@@ -55,8 +56,10 @@ extern crate std;
 #[cfg(feature = "alloc")]
 extern crate alloc;
 
+pub mod btree;
 pub mod header;
 pub mod result;
+pub mod traits;
 #[macro_use]
 pub mod macros;
 
@@ -68,7 +71,7 @@ pub struct SQLiteDatabase {
   mode: Mode,
   header: SqliteHeader,
   // pages: &'a [u8],
-  pager: SqlitePager,
+  btree_page_header: BtreePageHeader,
 }
 
 #[derive(Debug)]
@@ -81,43 +84,36 @@ impl SQLiteDatabase {
   pub const MINIMUM_SIZE: usize =
     SqliteHeader::LENGTH_BYTES + Self::MINIMUM_USABLE_SIZE;
 
-  pub fn new_in_memory(bytes: &[u8]) -> SQLiteResult<()> {
+  pub fn new_in_memory(bytes: &[u8]) -> SQLiteResult<Self> {
     let mode = Mode::InMemoryNoStd;
-    let header = SqliteHeader::try_from(bytes)?;
+    let header = SqliteHeader::try_from(&bytes[0..=99])?;
     // let pages = &bytes[SqliteHeader::LENGTH_BYTES..];
-    let pager = SqlitePager;
+    let btree_page_header = BtreePageHeader::parse_bytes(&bytes[100..])?;
 
     let database = SQLiteDatabase {
       mode,
       header,
+      btree_page_header,
       // pages,
-      pager,
     };
 
-    std::dbg!(database);
-
-    todo!();
-    Ok(())
+    Ok(database)
   }
 
   #[cfg(not(feature = "std"))]
   pub fn new() {
     todo!()
   }
+
+  pub fn mode(&self) -> &Mode {
+    &self.mode
+  }
+
+  pub fn header(&self) -> &SqliteHeader {
+    &self.header
+  }
+
+  pub fn btree_page_header(&self) -> &BtreePageHeader {
+    &self.btree_page_header
+  }
 }
-
-// impl<'a> TryFrom<&'a [u8]> for SQLiteDatabase<'a> {
-//   type Error = SQLiteError;
-
-//   fn try_from(data: &'a [u8]) -> Result<Self, Self::Error> {
-//     Ok(Self {
-//       mode: Mode::InMemoryNoStd,
-//       header: SqliteHeader::try_from(data)?,
-//       pages,
-//       pager: SqlitePager,
-//     })
-//   }
-// }
-
-#[derive(Debug)]
-pub struct SqlitePager;
