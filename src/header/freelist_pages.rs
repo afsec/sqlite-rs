@@ -4,7 +4,7 @@ use core::ops::Deref;
 
 /// # Free page list (8 Bytes) => First(4 Bytes) + TotalPages (4 Bytes)
 ///  Unused pages in the database file are stored on a freelist.
-#[derive(Debug)]
+#[derive(Debug, PartialEq,Eq)]
 pub struct FreeListPages {
   /// Page number of the first freelist trunk page. (4 Bytes)
   first: FreeListPagesFirstTrunkPage,
@@ -37,7 +37,7 @@ impl ParseBytes for FreeListPages {
 ///  FreeListPagesFirstTrunkPage: The 4-byte big-endian integer at offset 32
 /// stores the page number of the first page of the freelist, or zero if the
 /// freelist is empty.
-#[derive(Debug)]
+#[derive(Debug, PartialEq,Eq)]
 pub struct FreeListPagesFirstTrunkPage(u32);
 
 impl Deref for FreeListPagesFirstTrunkPage {
@@ -62,7 +62,7 @@ impl ParseBytes for FreeListPagesFirstTrunkPage {
 
 ///  FreeListPagesTotalPages: The 4-byte big-endian integer at offset 36
 /// stores the total number of pages on the freelist.
-#[derive(Debug)]
+#[derive(Debug, PartialEq,Eq)]
 pub struct FreeListPagesTotalPages(u32);
 
 impl Deref for FreeListPagesTotalPages {

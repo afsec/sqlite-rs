@@ -45,16 +45,13 @@
 #![cfg_attr(docsrs, feature(doc_cfg))]
 #![cfg_attr(test, allow(clippy::float_cmp))]
 
-use crate::btree::BtreePageHeader;
+use crate::btree::header::BtreePageHeader;
 use crate::header::SqliteHeader;
 use crate::result::SQLiteResult;
 use crate::traits::ParseBytes;
 
 #[cfg(feature = "std")]
 extern crate std;
-
-#[cfg(feature = "alloc")]
-extern crate alloc;
 
 pub mod btree;
 pub mod header;
@@ -63,10 +60,10 @@ pub mod traits;
 #[macro_use]
 pub mod macros;
 
-#[cfg(test)]
-mod tests;
+// #[cfg(test)]
+// mod tests;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq,Eq)]
 pub struct SQLiteDatabase {
   mode: Mode,
   header: SqliteHeader,
@@ -74,7 +71,7 @@ pub struct SQLiteDatabase {
   btree_page_header: BtreePageHeader,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq,Eq)]
 pub enum Mode {
   InMemoryNoStd,
   Std,

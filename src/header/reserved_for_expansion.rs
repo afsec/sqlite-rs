@@ -3,7 +3,7 @@ use crate::{field_parsing_error, impl_name, result::SQLiteResult};
 use core::fmt::Debug;
 
 /// Reserved for expansion. Must be zero. (20 Bytes)
-#[derive(Default)]
+#[derive(Default, PartialEq, Eq)]
 pub struct ReservedForExpansion([u8; 20]);
 
 impl Debug for ReservedForExpansion {

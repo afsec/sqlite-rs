@@ -12,8 +12,8 @@ keywords = ["sqlite", "database"]
 
 [features]
 default = ["std"]
-std = ["alloc"]
-alloc = []
+# default = []
+std = []
 
 
 [dependencies]

@@ -13,7 +13,7 @@ use core::ops::Deref;
 /// changed, the statement either automatically reprepares and reruns or it
 /// aborts with an [SQLITE_SCHEMA](https://www.sqlite.org/rescode.html#schema)
 /// error.
-#[derive(Debug)]
+#[derive(Debug, PartialEq,Eq)]
 pub struct SchemaCookie(u32);
 
 impl Deref for SchemaCookie {

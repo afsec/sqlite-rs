@@ -1,3 +1,5 @@
+use core::ops::Deref;
+
 use crate::traits::{Name, ParseBytes};
 use crate::{
   field_parsing_error, impl_name,
@@ -12,7 +14,7 @@ use crate::{
 /// format of the b-tree algorithm. However, that functionality is not
 /// supported and there are no current plans to add support in the future.
 /// Hence, these three bytes are fixed at the values specified.
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct PayloadFractions {
   /// Maximum embedded payload fraction. Must be 64.
   maximum: MaximumEmbeddedPayloadFraction,
@@ -54,8 +56,16 @@ impl ParseBytes for PayloadFractions {
 }
 
 /// Maximum embedded payload fraction. Must be 64.
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct MaximumEmbeddedPayloadFraction(u8);
+
+impl Deref for MaximumEmbeddedPayloadFraction {
+  type Target = u8;
+
+  fn deref(&self) -> &Self::Target {
+    &self.0
+  }
+}
 
 impl_name! {MaximumEmbeddedPayloadFraction}
 
@@ -75,8 +85,16 @@ impl ParseBytes for MaximumEmbeddedPayloadFraction {
 }
 
 /// Minimum embedded payload fraction. Must be 32.
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct MinimumEmbeddedPayloadFraction(u8);
+
+impl Deref for MinimumEmbeddedPayloadFraction {
+  type Target = u8;
+
+  fn deref(&self) -> &Self::Target {
+    &self.0
+  }
+}
 
 impl_name! {MinimumEmbeddedPayloadFraction}
 
@@ -96,8 +114,16 @@ impl ParseBytes for MinimumEmbeddedPayloadFraction {
 }
 
 /// Leaf payload fraction. Must be 32.
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct LeafPayloadFraction(u8);
+
+impl Deref for LeafPayloadFraction {
+  type Target = u8;
+
+  fn deref(&self) -> &Self::Target {
+    &self.0
+  }
+}
 
 impl_name! {LeafPayloadFraction}
 

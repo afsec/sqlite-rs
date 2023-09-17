@@ -12,7 +12,7 @@ use crate::{
 ///   - A value of `13` (0x0d) means the page is a leaf table b-tree page.
 ///
 /// Any other value for the b-tree page type is an error.
-#[derive(Debug)]
+#[derive(Debug, PartialEq,Eq)]
 pub enum BtreePageType {
   InteriorIndexPage,
   InteriorTablePage,

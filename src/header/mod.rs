@@ -79,7 +79,7 @@ pub use self::{
 /// | 72    | 20    | Reserved for expansion. Must be zero. |
 /// | 92    |  4    | The version-valid-for number. |
 /// | 96    |  4    | SQLITE_VERSION_NUMBER |
-#[derive(Debug)]
+#[derive(Debug, PartialEq,Eq)]
 pub struct SqliteHeader {
   /// The header string: "`SQLite format 3\000`".
   magic_header_string: MagicHeaderString,

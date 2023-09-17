@@ -9,7 +9,7 @@ use core::ops::Deref;
 /// SQLite is under no obligation to honor it. The absolute value of the integer
 /// is used as the suggested size. The suggested cache size can be set using the
 /// default_cache_size pragma.
-#[derive(Debug)]
+#[derive(Debug, PartialEq,Eq)]
 pub struct SuggestedCacheSize(u32);
 
 impl Deref for SuggestedCacheSize {

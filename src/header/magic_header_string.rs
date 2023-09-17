@@ -12,6 +12,7 @@ const SQLITE3_FILE_FORMAT_MAGIC_STRING: [u8; 16] = [
 /// 16 bytes (in hex): `53 51 4c 69 74 65 20 66 6f 72 6d 61 74 20 33 00`.
 /// This byte sequence corresponds to the UTF-8 string `SQLite format 3`
 /// including the nul terminator character at the end.
+#[derive(PartialEq, Eq)]
 pub struct MagicHeaderString([u8; 16]);
 
 impl_name! {MagicHeaderString}
