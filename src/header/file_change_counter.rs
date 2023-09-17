@@ -15,7 +15,7 @@ use core::ops::Deref;
 /// In WAL mode, changes to the database are detected using the wal-index and so
 /// the change counter is not needed. Hence, the change counter might not be
 /// incremented on each transaction in WAL mode.
-#[derive(Debug, PartialEq,Eq)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct FileChangeCounter(u32);
 
 impl Deref for FileChangeCounter {

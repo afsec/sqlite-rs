@@ -1,6 +1,6 @@
 use crate::{impl_name, result::SQLiteResult, traits::ParseBytes};
 
-#[derive(Debug, PartialEq,Eq)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct BtreePageNumberOfCells(u16);
 
 impl_name! {BtreePageNumberOfCells}

@@ -18,7 +18,7 @@ use core::ops::Deref;
 /// view the two-byte field as a little endian number and say that it
 /// represents the page size divided by 256. These two interpretations of the
 /// page-size field are equivalent.
-#[derive(Debug, PartialEq,Eq)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct PageSize(u32);
 
 impl Deref for PageSize {

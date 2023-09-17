@@ -7,7 +7,7 @@ use core::ops::Deref;
 ///  The 4-byte big-endian integer at offset 60 is the user version which is set
 /// and queried by the user_version pragma. The user version is not used by
 /// SQLite.
-#[derive(Debug, PartialEq,Eq)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct UserVersion(u32);
 
 impl Deref for UserVersion {

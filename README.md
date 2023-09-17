@@ -10,8 +10,9 @@ cargo run --release --target=$(arch -m)-unknown-linux-musl --example sqlite_info
 
 
 
-## Tests (no_std)
+## Run tests (no_std)
 
 ```sh
+nix-shell
 cargo test --no-default-features --tests -- --nocapture
 ```

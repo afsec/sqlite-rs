@@ -1,10 +1,9 @@
-use super::{PagerNumberOfPages, PagerPageSize, PagerStorageMode};
+use super::common::{PagerNumberOfPages, PagerPageSize, PagerStorageMode};
 use core::fmt::Debug;
 
-#[cfg(feature = "std")]
 use std::io::{Read, Write};
 
-#[derive(Debug, PartialEq,Eq)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct Pager<T>
 where
   T: StorageEngine + Debug,
@@ -14,8 +13,7 @@ where
   storage: PagerStorage<T>,
 }
 
-#[cfg(feature = "std")]
-#[derive(Debug, PartialEq,Eq)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct PagerStorage<T>
 where
   T: StorageEngine + Debug,
@@ -23,7 +21,8 @@ where
   mode: PagerStorageMode,
   engine: PagerStorageEngine<T>,
 }
-#[derive(Debug, PartialEq,Eq)]
+
+#[derive(Debug, PartialEq, Eq)]
 pub struct PagerStorageEngine<T>(T)
 where
   T: StorageEngine + Debug;

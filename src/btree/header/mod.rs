@@ -40,7 +40,7 @@ use self::{
 /// |  5    |  2    | The two-byte integer at offset 5 designates the start of the cell content area. A zero value for this integer is interpreted as 65536. |
 /// |  7    |  1    | The one-byte integer at offset 7 gives the number of fragmented free bytes within the cell content area. |
 /// |  8    |  4    | The four-byte page number at offset 8 is the right-most pointer. This value appears in the header of interior b-tree pages only and is omitted from all other pages. |
-#[derive(Debug, PartialEq,Eq)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct BtreePageHeader {
   page_type: BtreePageType,
   first_freeblock: BtreePageFirstFreeBlock,

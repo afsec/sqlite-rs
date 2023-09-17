@@ -16,7 +16,7 @@ use core::fmt::Display;
 /// version is greater than 2, then the database file must be treated as
 /// read-only. If a database file with a read version greater than 2 is
 /// encountered, then that database cannot be read or written.
-#[derive(Debug, PartialEq,Eq)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct FileFormatVersionNumbers {
   /// File format write version. 1 for legacy; 2 for WAL.
   write_version: FileFormatWriteVersion,
@@ -47,7 +47,7 @@ impl ParseBytes for FileFormatVersionNumbers {
   }
 }
 
-#[derive(Debug, PartialEq,Eq)]
+#[derive(Debug, PartialEq, Eq)]
 pub enum FileFormatWriteVersion {
   Legacy,
   /// Write-Ahead Log
@@ -86,7 +86,7 @@ impl Display for FileFormatWriteVersion {
   }
 }
 
-#[derive(Debug, PartialEq,Eq)]
+#[derive(Debug, PartialEq, Eq)]
 pub enum FileFormatReadVersion {
   Legacy,
   /// Write-Ahead Log

@@ -63,7 +63,7 @@ pub mod macros;
 // #[cfg(test)]
 // mod tests;
 
-#[derive(Debug, PartialEq,Eq)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct SQLiteDatabase {
   mode: Mode,
   header: SqliteHeader,
@@ -71,7 +71,7 @@ pub struct SQLiteDatabase {
   btree_page_header: BtreePageHeader,
 }
 
-#[derive(Debug, PartialEq,Eq)]
+#[derive(Debug, PartialEq, Eq)]
 pub enum Mode {
   InMemoryNoStd,
   Std,
@@ -84,7 +84,7 @@ impl SQLiteDatabase {
   pub fn new_in_memory(bytes: &[u8]) -> SQLiteResult<Self> {
     let mode = Mode::InMemoryNoStd;
     let header = SqliteHeader::try_from(&bytes[0..=99])?;
-    // let pages = &bytes[SqliteHeader::LENGTH_BYTES..];
+
     let btree_page_header = BtreePageHeader::parse_bytes(&bytes[100..])?;
 
     let database = SQLiteDatabase {

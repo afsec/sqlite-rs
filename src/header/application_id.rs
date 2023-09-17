@@ -12,7 +12,7 @@ use core::ops::Deref;
 /// determine the specific file type rather than just reporting
 /// "SQLite3 Database". A list of assigned application IDs can be seen by
 /// consulting the magic.txt file in the SQLite source repository.
-#[derive(Debug, PartialEq,Eq)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct ApplicationId(u32);
 
 impl Deref for ApplicationId {

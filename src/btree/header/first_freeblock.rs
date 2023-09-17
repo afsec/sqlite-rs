@@ -11,7 +11,7 @@ use crate::{impl_name, result::SQLiteResult, traits::ParseBytes};
 /// second field of the b-tree page header is the offset of the first freeblock,
 /// or zero if there are no freeblocks on the page. In a well-formed b-tree
 /// page, there will always be at least one cell before the first freeblock.
-#[derive(Debug, PartialEq,Eq)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct BtreePageFirstFreeBlock(u16);
 
 impl_name! {BtreePageFirstFreeBlock}

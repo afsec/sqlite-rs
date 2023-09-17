@@ -8,7 +8,7 @@ use core::ops::Deref;
 /// counter when the version number was stored. The integer at offset 92
 /// indicates which transaction the version number is valid for and is sometimes
 /// called the "version-valid-for number".
-#[derive(Debug, PartialEq,Eq)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct VersionValidFor(u32);
 
 impl Deref for VersionValidFor {
