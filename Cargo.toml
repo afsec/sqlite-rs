@@ -2,7 +2,7 @@
 edition = "2021"
 rust-version = "1.72"
 name = "sqlite-rs"
-version = "0.1.7"
+version = "0.1.8"
 description = "SQLite reader in pure Rust"
 authors = ["[Antonio Costa - afsec](https://github.com/afsec)"]
 repository = "https://github.com/afsec/sqlite-rs"
@@ -12,8 +12,8 @@ keywords = ["sqlite", "database"]
 
 [features]
 default = ["std"]
-std = ["alloc"]
-alloc = []
+# default = []
+std = []
 
 
 [dependencies]

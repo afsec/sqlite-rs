@@ -1,8 +1,8 @@
-use super::traits::ParseBytes;
+use crate::traits::ParseBytes;
 use crate::{impl_name, result::SQLiteResult};
 use core::ops::Deref;
 
-/// # Application ID (4)
+/// # Application ID (4 Bytes)
 ///
 ///  The 4-byte big-endian integer at offset 68 is an "Application ID" that can
 /// be set by the PRAGMA application_id command in order to identify the
@@ -12,7 +12,7 @@ use core::ops::Deref;
 /// determine the specific file type rather than just reporting
 /// "SQLite3 Database". A list of assigned application IDs can be seen by
 /// consulting the magic.txt file in the SQLite source repository.
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct ApplicationId(u32);
 
 impl Deref for ApplicationId {

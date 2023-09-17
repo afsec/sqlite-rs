@@ -1,4 +1,4 @@
-use super::traits::ParseBytes;
+use crate::traits::ParseBytes;
 use crate::{impl_name, result::SQLiteResult};
 use core::ops::Deref;
 
@@ -24,7 +24,7 @@ use core::ops::Deref;
 /// unchanged so it will not match the change-counter. Hence, invalid in-header
 /// database sizes can be detected (and ignored) by observing when the
 /// change-counter does not match the version-valid-for number.
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct DatabaseFileSizeInPages(u32);
 
 impl Deref for DatabaseFileSizeInPages {

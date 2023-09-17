@@ -1,8 +1,5 @@
-use super::traits::{Name, ParseBytes};
-use crate::{
-  field_parsing_error, impl_name,
-  result::{SQLiteError, SQLiteResult},
-};
+use crate::traits::{Name, ParseBytes};
+use crate::{field_parsing_error, impl_name, result::SQLiteResult};
 
 use core::ops::Deref;
 
@@ -23,7 +20,7 @@ use core::ops::Deref;
 ///
 /// However, *the usable size is not allowed to be less than `480`*. In other words, if the page size is 512, then the
 /// reserved space size cannot exceed 32.
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct ReservedBytesPerPage(u8);
 
 impl Deref for ReservedBytesPerPage {

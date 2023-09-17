@@ -1,4 +1,4 @@
-use super::traits::ParseBytes;
+use crate::traits::ParseBytes;
 use crate::{impl_name, result::SQLiteResult};
 use core::ops::Deref;
 
@@ -6,7 +6,7 @@ use core::ops::Deref;
 ///
 ///  The 4-byte big-endian integer at offset 96 stores the SQLITE_VERSION_NUMBER
 /// value for the SQLite library that most recently modified the database file.
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct WriteLibraryVersion(u32);
 
 impl Deref for WriteLibraryVersion {

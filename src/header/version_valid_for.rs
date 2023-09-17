@@ -1,4 +1,4 @@
-use super::traits::ParseBytes;
+use crate::traits::ParseBytes;
 use crate::{impl_name, result::SQLiteResult};
 use core::ops::Deref;
 
@@ -8,7 +8,7 @@ use core::ops::Deref;
 /// counter when the version number was stored. The integer at offset 92
 /// indicates which transaction the version number is valid for and is sometimes
 /// called the "version-valid-for number".
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct VersionValidFor(u32);
 
 impl Deref for VersionValidFor {

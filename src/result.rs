@@ -18,23 +18,17 @@ pub enum SQLiteError {
   InvalidPayloadSize(InvalidPayloadSizeError),
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct FieldParsingError {
   pub error: &'static str,
   pub ty: &'static str,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct InvalidPayloadSizeError {
   pub error: &'static str,
   pub ty: &'static str,
 }
-
-// impl SQLiteError {
-//   pub fn msg(msg: &str) -> Self {
-//     Self::Custom(msg.into())
-//   }
-// }
 
 impl Display for SQLiteError {
   fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
@@ -48,13 +42,6 @@ impl From<TryFromSliceError> for SQLiteError {
     Self::TryFromSliceError(error)
   }
 }
-
-// #[cfg(feature = "alloc")]
-// impl From<String> for SQLiteError {
-//   fn from(s: String) -> Self {
-//     Self::Custom(s)
-//   }
-// }
 
 #[cfg(feature = "std")]
 impl StdError for SQLiteError {}

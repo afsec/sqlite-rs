@@ -1,11 +1,11 @@
-use super::traits::{Name, ParseBytes};
+use crate::traits::{Name, ParseBytes};
 use crate::{
   field_parsing_error, impl_name,
   result::{SQLiteError, SQLiteResult},
 };
 use core::fmt::Display;
 
-/// # Text encoding(4 Bytes)
+/// # Text encoding (4 Bytes)
 ///
 ///  The 4-byte big-endian integer at offset 56 determines the encoding used for
 /// all text strings stored in the database. A value of 1 means UTF-8. A value
@@ -13,7 +13,7 @@ use core::fmt::Display;
 /// allowed. The sqlite3.h header file defines C-preprocessor macros
 /// SQLITE_UTF8 as 1, SQLITE_UTF16LE as 2, and SQLITE_UTF16BE as 3, to use in
 /// place of the numeric codes for the text encoding.
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq)]
 pub enum DatabaseTextEncoding {
   Utf8,
   Utf16Le,
