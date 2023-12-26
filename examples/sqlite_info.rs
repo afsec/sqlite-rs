@@ -1,17 +1,19 @@
-use sqlite_rs::SQLiteDatabase;
-use std::{fs::File, io::Read};
+// use sqlite_rs::SqliteConnection;
+// use std::{fs::File, io::Read};
+
+use sqlite_rs::SqliteConnection;
 
 type AppResult<T> = Result<T, AppError>;
 type AppError = Box<dyn std::error::Error>;
 
 fn main() -> AppResult<()> {
-  App::run()?;
+  SqliteInfo::run()?;
   Ok(())
 }
 
-struct App;
+struct SqliteInfo;
 
-impl App {
+impl SqliteInfo {
   fn run() -> AppResult<()> {
     let files = [
       "./data/flights-initial.db",
@@ -19,30 +21,23 @@ impl App {
       "./data/flights-deleted.db",
       "./data/mydatabase.db",
     ];
-    files.iter().try_for_each(|file| -> AppResult<()> {
-      let sqlite_database = Self::read_bytes(&file)?;
+    files.iter().try_for_each(|file_path| -> AppResult<()> {
+      let conn = SqliteConnection::open(format!("sqlite://{file_path}"))?;
+      // let sqlite_database = Self::read_bytes(&file)?;
 
-      println!("[{file}]:");
-      Self::print_sqlite_info(&sqlite_database)?;
+      println!("[{file_path}]:");
+      Self::print_sqlite_info(&conn)?;
       Ok(())
     })?;
 
     Ok(())
   }
-  fn read_bytes<T: AsRef<str>>(file_path: &T) -> AppResult<SQLiteDatabase> {
-    const MAX_LENGTH: usize = 1 * 1024 * 1024; // Read first 1 MBytes
-    let mut f = File::open(file_path.as_ref())?;
-    let mut buffer: [u8; MAX_LENGTH] = [0; MAX_LENGTH];
-    let _ = f.read(&mut buffer)?;
-    let database = SQLiteDatabase::new_in_memory(&buffer[..])?;
-    Ok(database)
-  }
 
-  fn print_sqlite_info(sqlite_database: &SQLiteDatabase) -> AppResult<()> {
+  fn print_sqlite_info(conn: &SqliteConnection) -> AppResult<()> {
     const LABEL_WIDTH: usize = 21;
 
     // TODO:
-    let sqlite_header = sqlite_database.header();
+    let sqlite_header = conn.runtime().header();
 
     let mut output = "".to_owned();
 
@@ -50,7 +45,7 @@ impl App {
       "{label: <w$}{value}\n",
       w = LABEL_WIDTH,
       label = "database page size:",
-      value = **sqlite_header.page_size()
+      value = u32::from(sqlite_header.page_size())
     ));
     output.push_str(&format!(
       "{label: <w$}{value}\n",

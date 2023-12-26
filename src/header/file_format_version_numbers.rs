@@ -1,22 +1,22 @@
 use crate::traits::{Name, ParseBytes};
-use crate::{field_parsing_error, impl_name, result::SQLiteResult};
+use crate::{field_parsing_error, impl_name, result::SqliteResult};
 use core::fmt::Display;
 
 /// # File format version numbers (2 Bytes)
 ///
 ///  The file format write version and file format read version at offsets 18
 /// and 19 are intended to allow for enhancements of the file format in future
-/// versions of SQLite. In current versions of SQLite, both of these values
+/// versions of Sqlite. In current versions of Sqlite, both of these values
 /// are:
 ///   - `1` for rollback journalling modes; and
 ///   - `2` for WAL journalling mode.
 ///
-///  If a version of SQLite coded to the current file format specification
+///  If a version of Sqlite coded to the current file format specification
 /// encounters a database file where the read version is 1 or 2 but the write
 /// version is greater than 2, then the database file must be treated as
 /// read-only. If a database file with a read version greater than 2 is
 /// encountered, then that database cannot be read or written.
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug)]
 pub struct FileFormatVersionNumbers {
   /// File format write version. 1 for legacy; 2 for WAL.
   write_version: FileFormatWriteVersion,
@@ -37,7 +37,7 @@ impl_name! {FileFormatVersionNumbers}
 impl ParseBytes for FileFormatVersionNumbers {
   const LENGTH_BYTES: usize = 2;
 
-  fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
+  fn parsing_handler(bytes: &[u8]) -> SqliteResult<Self> {
     let write_version = FileFormatWriteVersion::parsing_handler(&[bytes[0]])?;
     let read_version = FileFormatReadVersion::parsing_handler(&[bytes[1]])?;
     Ok(Self {
@@ -47,7 +47,7 @@ impl ParseBytes for FileFormatVersionNumbers {
   }
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug)]
 pub enum FileFormatWriteVersion {
   Legacy,
   /// Write-Ahead Log
@@ -70,12 +70,14 @@ impl_name! {FileFormatWriteVersion}
 impl ParseBytes for FileFormatWriteVersion {
   const LENGTH_BYTES: usize = 1;
 
-  fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
-    let one_byte = *bytes.first().ok_or(field_parsing_error! {Self::NAME})?;
+  fn parsing_handler(bytes: &[u8]) -> SqliteResult<Self> {
+    let one_byte = *bytes
+      .first()
+      .ok_or(field_parsing_error! {Self::NAME.into()})?;
     match one_byte {
       1 => Ok(Self::Legacy),
       2 => Ok(Self::WAL),
-      _ => Err(field_parsing_error! {Self::NAME}),
+      _ => Err(field_parsing_error! {Self::NAME.into()}),
     }
   }
 }
@@ -86,7 +88,7 @@ impl Display for FileFormatWriteVersion {
   }
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug)]
 pub enum FileFormatReadVersion {
   Legacy,
   /// Write-Ahead Log
@@ -109,12 +111,14 @@ impl_name! {FileFormatReadVersion}
 impl ParseBytes for FileFormatReadVersion {
   const LENGTH_BYTES: usize = 1;
 
-  fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
-    let one_byte = *bytes.first().ok_or(field_parsing_error! {Self::NAME})?;
+  fn parsing_handler(bytes: &[u8]) -> SqliteResult<Self> {
+    let one_byte = *bytes
+      .first()
+      .ok_or(field_parsing_error! {Self::NAME.into()})?;
     match one_byte {
       1 => Ok(Self::Legacy),
       2 => Ok(Self::WAL),
-      _ => Err(field_parsing_error! {Self::NAME}),
+      _ => Err(field_parsing_error! {Self::NAME.into()}),
     }
   }
 }

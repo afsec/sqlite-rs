@@ -1,18 +1,26 @@
 # sqlite-rs
-SQLite library in pure Rust with `no_std` support and no dependencies (Under Development)
+SQLite library in pure Rust and no dependencies (Under Development)
 
-
-## Example `sqlite_info`
+## Run tests
 ```sh
 nix-shell
-cargo run --release --target=$(arch -m)-unknown-linux-musl --example sqlite_info
+cargo test -- --nocapture --test-threads=1
 ```
 
-
-
-## Run tests (no_std)
-
+## Run example `sqlite_info`
 ```sh
 nix-shell
-cargo test --no-default-features --tests -- --nocapture
+cargo run --release --target=$(arch)-unknown-linux-musl --example sqlite_info
 ```
+
+## Live sessions
+
+- [x] *2024-01-05*: https://www.youtube.com/live/017MSZud26s?si=sfdyvMcL8JKtpNbL
+## Roadmap
+
+- [x] SQLite Header parsing
+- [ ] Pager
+- [ ] Read tables
+- [ ] Read table schema
+- [ ] Read table rows
+- [ ] TBD

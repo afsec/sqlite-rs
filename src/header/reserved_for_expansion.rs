@@ -1,9 +1,9 @@
 use crate::traits::{Name, ParseBytes};
-use crate::{field_parsing_error, impl_name, result::SQLiteResult};
+use crate::{field_parsing_error, impl_name, result::SqliteResult};
 use core::fmt::Debug;
 
 /// Reserved for expansion. Must be zero. (20 Bytes)
-#[derive(Default, PartialEq, Eq)]
+#[derive(Default)]
 pub struct ReservedForExpansion([u8; 20]);
 
 impl Debug for ReservedForExpansion {
@@ -17,10 +17,10 @@ impl_name! {ReservedForExpansion}
 impl ParseBytes for ReservedForExpansion {
   const LENGTH_BYTES: usize = 20;
 
-  fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
+  fn parsing_handler(bytes: &[u8]) -> SqliteResult<Self> {
     for byte in bytes.iter() {
       if *byte != b'\0' {
-        return Err(field_parsing_error! {Self::NAME});
+        return Err(field_parsing_error! {Self::NAME.into()});
       }
     }
     Ok(Default::default())

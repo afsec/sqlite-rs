@@ -1,7 +1,7 @@
 use crate::traits::{Name, ParseBytes};
 use crate::{
   field_parsing_error, impl_name,
-  result::{SQLiteError, SQLiteResult},
+  result::{SqliteError, SqliteResult},
 };
 use core::fmt::Display;
 
@@ -13,7 +13,7 @@ use core::fmt::Display;
 /// allowed. The sqlite3.h header file defines C-preprocessor macros
 /// SQLITE_UTF8 as 1, SQLITE_UTF16LE as 2, and SQLITE_UTF16BE as 3, to use in
 /// place of the numeric codes for the text encoding.
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug)]
 pub enum DatabaseTextEncoding {
   Utf8,
   Utf16Le,
@@ -31,14 +31,14 @@ impl From<&DatabaseTextEncoding> for u32 {
 }
 
 impl TryFrom<u32> for DatabaseTextEncoding {
-  type Error = SQLiteError;
+  type Error = SqliteError;
 
   fn try_from(value: u32) -> Result<Self, Self::Error> {
     match value {
       1 => Ok(Self::Utf8),
       2 => Ok(Self::Utf16Le),
       3 => Ok(Self::Utf16Be),
-      _ => Err(field_parsing_error! {Self::NAME}),
+      _ => Err(field_parsing_error! {Self::NAME.into()}),
     }
   }
 }
@@ -60,7 +60,7 @@ impl_name! {DatabaseTextEncoding}
 impl ParseBytes for DatabaseTextEncoding {
   const LENGTH_BYTES: usize = 4;
 
-  fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
+  fn parsing_handler(bytes: &[u8]) -> SqliteResult<Self> {
     let buf: [u8; Self::LENGTH_BYTES] = bytes.try_into()?;
 
     let value = u32::from_be_bytes(buf);
