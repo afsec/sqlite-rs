@@ -1,8 +1,8 @@
 {
 	"name": "Rust playground",
-	"image": "mcr.microsoft.com/devcontainers/rust:0-1-bullseye",
+	"image": "mcr.microsoft.com/devcontainers/rust:1-bookworm",
 	// "postCreateCommand": "sh .devcontainer/install_tooling.sh",
-	"postCreateCommand": "sudo apt-get update && sudo apt-get install -y build-essential musl-tools",
+	"postCreateCommand": "sudo apt-get update && sudo apt-get install -y build-essential musl-tools && rustup target add $(arch)-unknown-linux-musl",
 	"features": {
 		// "ghcr.io/devcontainers/features/docker-in-docker:2": {},
 		// "ghcr.io/devcontainers/features/github-cli:1": {},

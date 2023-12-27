@@ -12,6 +12,7 @@ if [ X"$1" = X"login" ];then
     fi 
 fi
 
+
 ## Install Conventional Commits - Cocogitto (`cog`)
 CURRENT_REPO="cocogitto/cocogitto"
 CURRENT_VERSION=$(gh --repo $CURRENT_REPO release view --json tagName --jq .tagName)
