@@ -18,8 +18,13 @@ CURRENT_REPO="cocogitto/cocogitto"
 CURRENT_VERSION=$(gh --repo $CURRENT_REPO release view --json tagName --jq .tagName)
 DOWNLOADED_FILE=$(gh --repo $CURRENT_REPO release view --json assets --jq '.assets[] | select(.name | contains("x86_64") and contains("linux") and contains("musl")) .name')
 gh --repo $CURRENT_REPO --pattern "$DOWNLOADED_FILE" release download $CURRENT_VERSION
-tar zxvf $DOWNLOADED_FILE cog
-rm $DOWNLOADED_FILE
+# FILE_TO_EXTRACT=$(tar -tvf cocogitto-6.0.1-x86_64-unknown-linux-musl.tar.gz | awk '/cog/{print $6}')
+FILE_TO_EXTRACT=$(tar -tvf $DOWNLOADED_FILE | awk '/cog/{print $6}')
+EXTRACTED_FOLDER=$(echo $FILE_TO_EXTRACT | cut -d '/' -f 1)
+tar -xvf $DOWNLOADED_FILE $FILE_TO_EXTRACT
+mv $FILE_TO_EXTRACT ./
+rm -rf $DOWNLOADED_FILE $EXTRACTED_FOLDER
+
 
 ## Install Just (`just`)
 CURRENT_REPO="casey/just"
