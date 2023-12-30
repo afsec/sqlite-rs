@@ -1,7 +1,16 @@
 {
-    "window.titleSeparator": "custom",
-    "editor.rulers": [80],
-    "workbench.colorCustomizations": {
-        "editorRuler.foreground": "#5f5f62"
-    }   
+	"explorer.compactFolders": false,
+	"editor.rulers": [
+		80
+	],
+	"window.zoomLevel": 1,
+	"workbench.colorTheme": "Default Dark+",
+	"workbench.preferredDarkColorTheme": "Monokai",
+	"workbench.colorCustomizations": {
+		"editorRuler.foreground": "#5f5f62"
+	},
+	"workbench.activityBar.location": "top",
+	"[json]": {
+		"editor.defaultFormatter": "vscode.json-language-features"
+	}
 }
