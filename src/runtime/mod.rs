@@ -1,7 +1,5 @@
 use crate::result::SqliteResult;
 
-pub mod pager;
-
 #[derive(Debug)]
 pub struct SqliteRuntime(());
 

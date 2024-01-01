@@ -1,12 +1,16 @@
 #![forbid(unsafe_code, non_ascii_idents)]
 
+use io::SqliteIo;
+
+use crate::io::SqliteIoMode;
+use crate::pager::SqlitePager;
 use crate::result::SqliteResult;
 use crate::runtime::SqliteRuntime;
-use crate::storage::SqliteStorage;
 
+pub mod io;
+pub mod pager;
 pub mod result;
 pub mod runtime;
-pub mod storage;
 pub mod traits;
 #[macro_use]
 pub mod macros;
@@ -14,28 +18,35 @@ pub mod macros;
 #[cfg(test)]
 mod tests;
 
-#[derive(Debug)]
-pub struct SqliteDatabase;
+// #[derive(Debug)]
+// pub struct SqliteDatabase;
 
-impl<'uri> SqliteDatabase {
-  pub fn open(conn_str: &'uri str) -> SqliteResult<SqliteConnection> {
-    SqliteConnection::open(conn_str)
-  }
-  pub fn close(self) -> SqliteResult<()> {
-    Ok(())
-  }
-}
+// impl<'uri> SqliteDatabase {
+//   pub fn open(conn_str: &'uri str) -> SqliteResult<SqliteConnection> {
+//     SqliteConnection::open(conn_str)
+//   }
+//   pub fn close(self) -> SqliteResult<()> {
+//     Ok(())
+//   }
+// }
 
 #[derive(Debug)]
-pub struct SqliteConnection {
+pub struct SqliteDatabase {
   runtime: SqliteRuntime,
-  storage: SqliteStorage,
+  pager: SqlitePager,
+  io: SqliteIoMode,
 }
-impl<'uri> SqliteConnection {
-  pub fn open(conn_str: &'uri str) -> SqliteResult<SqliteConnection> {
+impl SqliteDatabase {
+  pub fn open(conn_str: impl AsRef<str>) -> SqliteResult<SqliteConnection> {
+    let io = SqliteIo::open(conn_str);
     let runtime = SqliteRuntime::start()?;
-    let storage = SqliteStorage::open(conn_str)?;
-    let db = SqliteConnection { runtime, storage };
-    Ok(db)
+    // let storage = SqliteStorage::open(conn_str)?;
+    // let db = SqliteConnection { runtime, storage };
+    let conn = SqliteConnection;
+    Ok(conn)
   }
 }
+
+#[derive(Debug)]
+// pub struct SqliteConnection(SqliteDatabase);
+pub struct SqliteConnection;
