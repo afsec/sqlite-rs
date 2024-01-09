@@ -1,5 +1,5 @@
 use crate::traits::ParseBytes;
-use crate::{impl_name, result::SQLiteResult};
+use crate::{impl_name, result::SqliteResult};
 use core::ops::Deref;
 
 /// Incremental vacuum settings (8 Bytes)
@@ -14,7 +14,7 @@ use core::ops::Deref;
 /// the integer at offset 64 is true for incremental_vacuum and false for
 /// auto_vacuum. If the integer at offset 52 is zero then the integer at
 /// offset 64 must also be zero.
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug)]
 pub struct IncrementalVacuumSettings {
   pub largest_root_btree_page: LargestRootBtreePage,
   pub incremental_vacuum_mode: IncrementalVacuumMode,
@@ -38,7 +38,7 @@ impl IncrementalVacuumSettings {
 ///  #  Largest root b-tree page (4 Bytes)
 /// The page number of the largest root b-tree page when in auto-vacuum
 /// or incremental-vacuum modes, or zero otherwise.
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug)]
 pub struct LargestRootBtreePage(u32);
 
 impl Deref for LargestRootBtreePage {
@@ -54,7 +54,7 @@ impl_name! {LargestRootBtreePage}
 impl ParseBytes for LargestRootBtreePage {
   const LENGTH_BYTES: usize = 4;
 
-  fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
+  fn parsing_handler(bytes: &[u8]) -> SqliteResult<Self> {
     let buf: [u8; Self::LENGTH_BYTES] = bytes.try_into()?;
 
     let value = u32::from_be_bytes(buf);
@@ -65,7 +65,7 @@ impl ParseBytes for LargestRootBtreePage {
 
 /// # Incremental-vacuum mode (4 Bytes)
 /// True (non-zero) for incremental-vacuum mode. False (zero) otherwise.
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug)]
 pub enum IncrementalVacuumMode {
   True,
   False,
@@ -92,7 +92,7 @@ impl_name! {IncrementalVacuumMode}
 impl ParseBytes for IncrementalVacuumMode {
   const LENGTH_BYTES: usize = 4;
 
-  fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
+  fn parsing_handler(bytes: &[u8]) -> SqliteResult<Self> {
     let buf: [u8; Self::LENGTH_BYTES] = bytes.try_into()?;
 
     let number = u32::from_be_bytes(buf);

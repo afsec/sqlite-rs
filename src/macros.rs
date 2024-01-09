@@ -10,9 +10,9 @@ macro_rules! impl_name {
 #[macro_export]
 macro_rules! field_parsing_error {
   ($entity_name:expr) => {
-    $crate::result::SQLiteError::ParsingField(
+    $crate::result::SqliteError::ParsingField(
       $crate::result::FieldParsingError {
-        error: "Invalid payload",
+        error: "Invalid payload".into(),
         ty: $entity_name,
       },
     )

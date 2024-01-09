@@ -1,5 +1,5 @@
 use crate::traits::ParseBytes;
-use crate::{impl_name, result::SQLiteResult};
+use crate::{impl_name, result::SqliteResult};
 use core::ops::Deref;
 
 /// # Version-valid-for number (4 Bytes)
@@ -8,7 +8,7 @@ use core::ops::Deref;
 /// counter when the version number was stored. The integer at offset 92
 /// indicates which transaction the version number is valid for and is sometimes
 /// called the "version-valid-for number".
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug)]
 pub struct VersionValidFor(u32);
 
 impl Deref for VersionValidFor {
@@ -22,7 +22,7 @@ impl_name! {VersionValidFor}
 impl ParseBytes for VersionValidFor {
   const LENGTH_BYTES: usize = 4;
 
-  fn parsing_handler(bytes: &[u8]) -> SQLiteResult<Self> {
+  fn parsing_handler(bytes: &[u8]) -> SqliteResult<Self> {
     let buf: [u8; Self::LENGTH_BYTES] = bytes.try_into()?;
 
     let database_size = u32::from_be_bytes(buf);
