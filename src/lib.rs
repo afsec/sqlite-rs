@@ -1,5 +1,8 @@
 #![forbid(unsafe_code, non_ascii_idents)]
 
+//! # SQLite arquitecture
+//! *Reference:* https://www.sqlite.org/arch.html
+
 use crate::io::SqliteIo;
 use crate::pager::SqlitePager;
 use crate::result::SqliteResult;
@@ -20,7 +23,6 @@ mod tests;
 #[derive(Debug)]
 pub struct SqliteConnection {
   runtime: SqliteRuntime,
-  // TODO: Implement type state builder
 }
 impl SqliteConnection {
   pub fn open(conn_str: impl AsRef<str>) -> SqliteResult<Self> {
@@ -39,7 +41,11 @@ impl SqliteConnection {
     Ok(Self { runtime })
   }
 
-    pub fn runtime(&self) -> &SqliteRuntime {
-        &self.runtime
-    }
+  pub fn runtime(&self) -> &SqliteRuntime {
+    &self.runtime
+  }
+
+  pub fn runtime_mut(&mut self) -> &mut SqliteRuntime {
+    &mut self.runtime
+  }
 }
