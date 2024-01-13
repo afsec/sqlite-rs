@@ -10,8 +10,14 @@ license = "MIT"
 readme = "README.md"
 keywords = ["sqlite", "database"]
 
+[features]
+default = ["log"]
+log = []
+# log = ["dep:log"]
 
 [dependencies]
+# env_logger = "0.10.1"
+# log = { version = "0.4.20", optional = true }
 
 
 [profile.dev]

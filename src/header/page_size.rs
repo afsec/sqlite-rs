@@ -17,11 +17,13 @@ use crate::{
 /// view the two-byte field as a little endian number and say that it
 /// represents the page size divided by 256. These two interpretations of the
 /// page-size field are equivalent.
-#[derive(Debug, Clone)]
+#[derive(Debug, Default, PartialEq, Eq, Clone)]
 pub enum PageSize {
   L512,
   L1024,
   L2048,
+  /// Reference: https://www.sqlite.org/pragma.html#pragma_page_size
+  #[default]
   L4096,
   L8192,
   L16384,
@@ -29,23 +31,23 @@ pub enum PageSize {
   L65536,
 }
 
-// impl TryFrom<u32> for PageSize {
-//   type Error = SqliteError;
+impl PageSize {
+  pub const MAX: Self = Self::L65536;
 
-//   fn try_from(value: u32) -> Result<Self, Self::Error> {
-//     let outcome = Self(value);
-//     outcome.validate_parsed()?;
-//     Ok(outcome)
-//   }
-// }
+  pub const fn as_usize(&self) -> usize {
+    match self {
+      PageSize::L512 => 512,
+      PageSize::L1024 => 1024,
+      PageSize::L2048 => 2048,
+      PageSize::L4096 => 4096,
+      PageSize::L8192 => 8192,
+      PageSize::L16384 => 16384,
+      PageSize::L32768 => 32768,
+      PageSize::L65536 => 65536,
+    }
+  }
+}
 
-// impl Deref for PageSize {
-//   type Target = u32;
-
-//   fn deref(&self) -> &Self::Target {
-//     &self.0
-//   }
-// }
 impl From<&PageSize> for u32 {
   fn from(value: &PageSize) -> Self {
     match *value {
