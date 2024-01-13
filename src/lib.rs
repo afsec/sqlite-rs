@@ -10,6 +10,10 @@ use crate::runtime::SqliteRuntime;
 
 pub mod header;
 pub mod io;
+#[cfg(feature = "log")]
+pub(crate) mod log;
+#[macro_use]
+pub(crate) mod log_macros;
 pub mod pager;
 pub mod result;
 pub mod runtime;

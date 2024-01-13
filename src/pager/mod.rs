@@ -52,7 +52,7 @@ impl SqlitePager {
       .get();
     let page_size = self.page_size().clone();
     let offset_from_start = (page_number - 1) * u32::from(&page_size);
-    dbg!(&offset_from_start);
+    // dbg!(&offset_from_start);
     self.io.seek(offset_from_start.into())?;
 
     match page_size {

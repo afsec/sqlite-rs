@@ -4,7 +4,7 @@
 		80
 	],
 	"window.zoomLevel": 1,
-	"workbench.colorTheme": "Default Dark+",
+	"workbench.colorTheme": "Default Dark Modern",
 	"workbench.preferredDarkColorTheme": "Monokai",
 	"workbench.colorCustomizations": {
 		"editorRuler.foreground": "#5f5f62"
