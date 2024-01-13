@@ -2,7 +2,7 @@
 edition = "2021"
 rust-version = "1.74.1"
 name = "sqlite-rs"
-version = "0.2.0"
+version = "0.2.1"
 description = "SQLite reader in pure Rust"
 authors = ["[Antonio Costa - afsec](https://github.com/afsec)"]
 repository = "https://github.com/afsec/sqlite-rs"
@@ -10,14 +10,13 @@ license = "MIT"
 readme = "README.md"
 keywords = ["sqlite", "database"]
 
+
 [features]
 default = ["log"]
 log = []
-# log = ["dep:log"]
+
 
 [dependencies]
-# env_logger = "0.10.1"
-# log = { version = "0.4.20", optional = true }
 
 
 [profile.dev]
