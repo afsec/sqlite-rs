@@ -1,6 +1,12 @@
 # sqlite-rs
 SQLite library in pure Rust and no dependencies (Under Development)
 
+
+## Run sqlite-rs tool
+```sh
+nix-shell
+cargo run
+```
 ## Run tests
 ```sh
 nix-shell
@@ -19,6 +25,8 @@ cargo run --release --target=$(arch)-unknown-linux-musl --example sqlite_info
 ## Roadmap
 
 - [x] SQLite Header parsing
+- [x] Log using RUST_LOG env var
+- [ ] sqlite-rs cli tool
 - [ ] Pager
 - [ ] Read tables
 - [ ] Read table schema

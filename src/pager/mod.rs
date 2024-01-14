@@ -43,7 +43,7 @@ impl SqlitePager {
     })
   }
   pub fn first(&mut self) -> SqliteResult<Page> {
-    Ok(self.read(1)?)
+    self.read(1)
   }
 
   pub fn read(&mut self, page_number: u32) -> SqliteResult<Page> {
