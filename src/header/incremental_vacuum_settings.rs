@@ -14,7 +14,7 @@ use core::ops::Deref;
 /// the integer at offset 64 is true for incremental_vacuum and false for
 /// auto_vacuum. If the integer at offset 52 is zero then the integer at
 /// offset 64 must also be zero.
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct IncrementalVacuumSettings {
   pub largest_root_btree_page: LargestRootBtreePage,
   pub incremental_vacuum_mode: IncrementalVacuumMode,
@@ -40,7 +40,11 @@ impl IncrementalVacuumSettings {
 /// or incremental-vacuum modes, or zero otherwise.
 #[derive(Debug)]
 pub struct LargestRootBtreePage(u32);
-
+impl Default for LargestRootBtreePage {
+  fn default() -> Self {
+    Self(0)
+  }
+}
 impl Deref for LargestRootBtreePage {
   type Target = u32;
 
@@ -65,10 +69,11 @@ impl ParseBytes for LargestRootBtreePage {
 
 /// # Incremental-vacuum mode (4 Bytes)
 /// True (non-zero) for incremental-vacuum mode. False (zero) otherwise.
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub enum IncrementalVacuumMode {
-  True,
+  #[default]
   False,
+  True,
 }
 impl From<&IncrementalVacuumMode> for bool {
   fn from(value: &IncrementalVacuumMode) -> Self {

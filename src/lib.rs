@@ -7,6 +7,7 @@ use crate::io::SqliteIo;
 use crate::pager::SqlitePager;
 use crate::result::SqliteResult;
 use crate::runtime::SqliteRuntime;
+use std::sync::OnceLock;
 
 pub mod header;
 pub mod io;
@@ -28,19 +29,32 @@ mod tests;
 pub struct SqliteConnection {
   runtime: SqliteRuntime,
 }
+static VERSION_NUMBER: OnceLock<u32> = OnceLock::new();
+
 impl SqliteConnection {
   pub fn open(conn_str: impl AsRef<str>) -> SqliteResult<Self> {
     crate::log::EnvLogger::init();
-    dbg!(&crate::log::LOGGER);
+
+    VERSION_NUMBER.get_or_init(|| {
+      let mut s = env!("CARGO_PKG_VERSION").split('.');
+      let release = s.next().map(|x| x.parse().ok()).flatten().unwrap_or(0u32);
+      let major = s.next().map(|x| x.parse().ok()).flatten().unwrap_or(0u32);
+      let minor = s.next().map(|x| x.parse().ok()).flatten().unwrap_or(0u32);
+
+      let outcome_number = (10_000 * release) + (100 * major) + (1 * minor);
+
+      outcome_number
+    });
+
     trace!("Openning SQliteIo [{}]...", conn_str.as_ref());
     let io = SqliteIo::open(conn_str)?;
     trace!("SQliteIo started: [{io:?}].");
     trace!("Connecting SqlitePager...");
     let pager = SqlitePager::connect(io)?;
     trace!("SQliteIo started: [{pager:?}].");
-    trace!("Starting SqlitePager...");
+    trace!("Starting SqliteRuntime...");
     let runtime = SqliteRuntime::start(pager)?;
-    trace!("SqlitePager started: [{runtime:?}].");
+    trace!("SqliteRuntime started: [{runtime:?}].");
 
     Ok(Self { runtime })
   }

@@ -1,10 +1,13 @@
+use crate::sqlite_cli::result::SqliteCliResult;
+use sqlite_rs::SqliteConnection;
+
 pub(super) struct ReplDbInfo;
 
 impl ReplDbInfo {
-  fn run(cli: &Cli) {
-    todo!();
+  pub(super) fn run(conn: &mut SqliteConnection) -> SqliteCliResult<()> {
+    Self::print_sqlite_info(conn)
   }
-  fn print_sqlite_info(conn: &SqliteConnection) -> AppResult<()> {
+  fn print_sqlite_info(conn: &SqliteConnection) -> SqliteCliResult<()> {
     const LABEL_WIDTH: usize = 21;
 
     // TODO:

@@ -9,6 +9,11 @@ use core::ops::Deref;
 /// Sqlite.
 #[derive(Debug)]
 pub struct UserVersion(u32);
+impl Default for UserVersion {
+  fn default() -> Self {
+    Self(Default::default())
+  }
+}
 
 impl Deref for UserVersion {
   type Target = u32;

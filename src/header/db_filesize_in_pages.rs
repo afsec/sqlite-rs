@@ -1,6 +1,9 @@
-use crate::traits::ParseBytes;
+use crate::field_parsing_error;
+use crate::result::{FieldParsingError, SqliteError};
+use crate::traits::{Name, ParseBytes};
 use crate::{impl_name, result::SqliteResult};
 use core::ops::Deref;
+use std::num::NonZeroU32;
 
 /// # In-header database size (4 Bytes)
 ///
@@ -27,6 +30,11 @@ use core::ops::Deref;
 #[derive(Debug)]
 pub struct DatabaseFileSizeInPages(u32);
 
+impl Default for DatabaseFileSizeInPages {
+  fn default() -> Self {
+    Self(1)
+  }
+}
 impl Deref for DatabaseFileSizeInPages {
   type Target = u32;
 
@@ -42,8 +50,10 @@ impl ParseBytes for DatabaseFileSizeInPages {
   fn parsing_handler(bytes: &[u8]) -> SqliteResult<Self> {
     let buf: [u8; Self::LENGTH_BYTES] = bytes.try_into()?;
 
-    let database_size = u32::from_be_bytes(buf);
+    let database_size = NonZeroU32::new(u32::from_be_bytes(buf)).ok_or(
+      SqliteError::Custom(format!("DatabaseFileSizeInPages can't be `0`")),
+    )?;
 
-    Ok(Self(database_size))
+    Ok(Self(database_size.get()))
   }
 }

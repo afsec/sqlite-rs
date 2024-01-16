@@ -1,15 +1,14 @@
+mod dbinfo;
 mod help;
 mod open;
 mod sql;
 
-use sqlite_rs::{io::SqliteIoMode, SqliteConnection};
-
-use self::{help::ReplHelp, open::ReplOpen};
-
+use self::{dbinfo::ReplDbInfo, help::ReplHelp, open::ReplOpen};
 use super::{
   cli::Cli,
   result::{SqliteCliError, SqliteCliResult},
 };
+use sqlite_rs::{io::SqliteIoMode, SqliteConnection};
 
 #[derive(Debug)]
 pub(crate) struct SqliteCliRepl {
@@ -71,7 +70,9 @@ impl SqliteCliRepl {
 
     match command {
       ".help" => ReplHelp::run(maybe_arg1)?,
+      ".dbinfo" => ReplDbInfo::run(&mut self.conn)?,
       ".open" => ReplOpen::run(maybe_arg1)?,
+
       s => println!("[{s}] it not implemented"),
     };
     Ok(())

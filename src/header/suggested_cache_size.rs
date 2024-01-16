@@ -11,7 +11,11 @@ use core::ops::Deref;
 /// default_cache_size pragma.
 #[derive(Debug)]
 pub struct SuggestedCacheSize(u32);
-
+impl Default for SuggestedCacheSize {
+  fn default() -> Self {
+    Self(0)
+  }
+}
 impl Deref for SuggestedCacheSize {
   type Target = u32;
 

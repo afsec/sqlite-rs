@@ -18,6 +18,12 @@ use core::ops::Deref;
 #[derive(Debug)]
 pub struct FileChangeCounter(u32);
 
+impl Default for FileChangeCounter {
+  fn default() -> Self {
+    Self(0)
+  }
+}
+
 impl Deref for FileChangeCounter {
   type Target = u32;
 
