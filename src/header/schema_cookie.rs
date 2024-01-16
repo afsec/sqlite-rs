@@ -15,7 +15,11 @@ use core::ops::Deref;
 /// error.
 #[derive(Debug)]
 pub struct SchemaCookie(u32);
-
+impl Default for SchemaCookie {
+  fn default() -> Self {
+    Self(0)
+  }
+}
 impl Deref for SchemaCookie {
   type Target = u32;
 

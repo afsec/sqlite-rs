@@ -13,8 +13,9 @@ use core::fmt::Display;
 /// allowed. The sqlite3.h header file defines C-preprocessor macros
 /// SQLITE_UTF8 as 1, SQLITE_UTF16LE as 2, and SQLITE_UTF16BE as 3, to use in
 /// place of the numeric codes for the text encoding.
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub enum DatabaseTextEncoding {
+  #[default]
   Utf8,
   Utf16Le,
   Utf16Be,

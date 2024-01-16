@@ -6,7 +6,13 @@ macro_rules! error {
             if let Some(log_level) = $crate::log::LOGGER.get() {
                 let this = $crate::log::LogLevel::Error;
                 if log_level >= &this {
-                    println!("{}: {}",this, format_args!($($input)+))
+                    let mod_path = module_path!();
+                    let epoch_time = std::time::SystemTime::now()
+                    .duration_since(std::time::SystemTime::UNIX_EPOCH)
+                    .ok()
+                    .unwrap()
+                    .as_secs_f64();
+                    println!("{epoch_time:.7} {this} {mod_path}: {}", format_args!($($input)+));
                 }
             }
         }
@@ -21,7 +27,13 @@ macro_rules! warn {
             if let Some(log_level) = $crate::log::LOGGER.get() {
                 let this = $crate::log::LogLevel::Warn;
                 if log_level >= &this {
-                    println!("{}: {}",this, format_args!($($input)+))
+                    let mod_path = module_path!();
+                    let epoch_time = std::time::SystemTime::now()
+                    .duration_since(std::time::SystemTime::UNIX_EPOCH)
+                    .ok()
+                    .unwrap()
+                    .as_secs_f64();
+                    println!("{epoch_time:.7} {this} {mod_path}: {}", format_args!($($input)+));
                 }
             }
         }
@@ -33,11 +45,16 @@ macro_rules! info {
     ($($input:tt)+) => {
         #[cfg(feature = "log")]
         {
-
             if let Some(log_level) = $crate::log::LOGGER.get() {
                 let this = $crate::log::LogLevel::Info;
                 if log_level >= &this {
-                    println!("{}: {}",this, format_args!($($input)+))
+                    let mod_path = module_path!();
+                    let epoch_time = std::time::SystemTime::now()
+                    .duration_since(std::time::SystemTime::UNIX_EPOCH)
+                    .ok()
+                    .unwrap()
+                    .as_secs_f64();
+                    println!("{epoch_time:.7} {this} {mod_path}: {}", format_args!($($input)+));
                 }
             }
         }
@@ -51,9 +68,14 @@ macro_rules! debug {
         {
             if let Some(log_level) = $crate::log::LOGGER.get() {
                 let this = $crate::log::LogLevel::Debug;
-                dbg!(&log_level,&this);
                 if log_level >= &this {
-                    println!("{}: {}",this, format_args!($($input)+))
+                    let mod_path = module_path!();
+                    let epoch_time = std::time::SystemTime::now()
+                    .duration_since(std::time::SystemTime::UNIX_EPOCH)
+                    .ok()
+                    .unwrap()
+                    .as_secs_f64();
+                    println!("{epoch_time:.7} {this} {mod_path}: {}", format_args!($($input)+));
                 }
             }
         }
@@ -68,7 +90,13 @@ macro_rules! trace {
             if let Some(log_level) = $crate::log::LOGGER.get() {
                 let this = $crate::log::LogLevel::Trace;
                 if log_level >= &this {
-                    println!("{}: {}",this, format_args!($($input)+))
+                    let mod_path = module_path!();
+                    let epoch_time = std::time::SystemTime::now()
+                    .duration_since(std::time::SystemTime::UNIX_EPOCH)
+                    .ok()
+                    .unwrap()
+                    .as_secs_f64();
+                    println!("{epoch_time:.7} {this} {mod_path}: {}", format_args!($($input)+));
                 }
             }
         }

@@ -33,20 +33,31 @@ impl SqlitePager {
       + ReservedBytesPerPage::LENGTH_BYTES;
     let mut buf = [0u8; BYTES_TO_READ];
 
-    io.read(&mut buf)?;
-
-    Ok(Self {
-      io,
-      page_size: PageSize::parse_bytes(&buf[16..=17])?,
-      reserved_bytes_per_page: ReservedBytesPerPage::parse_bytes(&[buf[20]])?,
-      // cur_page_pos: 1,
-    })
+    let bytes_read = io.read(&mut buf)?;
+    trace!("[{bytes_read}] Bytes read from [{}]", io.mode());
+    let pager = if bytes_read > 0 {
+      Self {
+        io,
+        page_size: PageSize::parse_bytes(&buf[16..=17])?,
+        reserved_bytes_per_page: ReservedBytesPerPage::parse_bytes(&[buf[20]])?,
+      }
+    } else {
+      Self {
+        io,
+        page_size: PageSize::default(),
+        reserved_bytes_per_page: ReservedBytesPerPage::default(),
+      }
+    };
+    Ok(pager)
   }
   pub fn first(&mut self) -> SqliteResult<Page> {
     self.read(1)
   }
 
   pub fn read(&mut self, page_number: u32) -> SqliteResult<Page> {
+    if self.io.is_empty()? {
+      return Err(SqliteError::EmptyDb);
+    }
     let page_number = NonZeroU32::new(page_number)
       .ok_or(SqliteError::Custom("page number can't be zero `0`.".into()))?
       .get();
@@ -156,5 +167,9 @@ impl SqlitePager {
 
   pub fn io(&self) -> &SqliteIo {
     &self.io
+  }
+
+  pub fn io_mut(&mut self) -> &mut SqliteIo {
+    &mut self.io
   }
 }

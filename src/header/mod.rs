@@ -79,7 +79,7 @@ pub use self::{
 /// | 72    | 20    | Reserved for expansion. Must be zero. |
 /// | 92    |  4    | The version-valid-for number. |
 /// | 96    |  4    | SQLITE_VERSION_NUMBER |
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct SqliteHeader {
   /// The header string: "`Sqlite format 3\000`".
   magic_header_string: MagicHeaderString,
@@ -120,7 +120,27 @@ pub struct SqliteHeader {
   /// Write library version number
   write_library_version: WriteLibraryVersion,
 }
+/*
 
+[./data/mydatabase.db]:
+database page size:  4096
+write format:        1
+read format:         1
+reserved bytes:      0
+file change counter: 5
+database page count: 6
+freelist page count: 0
+schema cookie:       3
+schema format:       4
+default cache size:  0
+autovacuum top root: 0
+incremental vacuum:  0
+text encoding:       1 (utf8)
+user version:        0
+application id:      0
+software version:    3041002
+
+*/
 impl SqliteHeader {
   pub const LENGTH_BYTES: usize = 100;
   pub fn magic_header_string(&self) -> &MagicHeaderString {

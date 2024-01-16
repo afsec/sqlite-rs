@@ -1,7 +1,7 @@
 use crate::header::SAMPLE_HEADER;
 use crate::result::{SqliteError, SqliteResult};
 use crate::traits::SqliteRawIo;
-use std::fmt::Debug;
+use std::fmt::{Debug, Display};
 use std::fs::File;
 use std::io::Seek;
 use std::io::SeekFrom;
@@ -43,7 +43,11 @@ pub enum SqliteIoMode {
   InMemory,
   File,
 }
-
+impl Display for SqliteIoMode {
+  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    write!(f, "{self:?}")
+  }
+}
 impl FromStr for SqliteIoMode {
   type Err = SqliteError;
 
@@ -72,6 +76,14 @@ impl SqliteIo {
         let raw_io: Box<dyn SqliteRawIo> = file as Box<dyn SqliteRawIo>;
         Ok(Self { mode, raw_io })
       }
+    }
+  }
+
+  pub fn is_empty(&mut self) -> SqliteResult<bool> {
+    if self.raw_io.read(&mut [0u8; 1])? == 0 {
+      Ok(true)
+    } else {
+      Ok(false)
     }
   }
 

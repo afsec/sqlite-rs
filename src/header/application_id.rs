@@ -14,7 +14,11 @@ use core::ops::Deref;
 /// consulting the magic.txt file in the Sqlite source repository.
 #[derive(Debug)]
 pub struct ApplicationId(u32);
-
+impl Default for ApplicationId {
+  fn default() -> Self {
+    Self(0)
+  }
+}
 impl Deref for ApplicationId {
   type Target = u32;
 

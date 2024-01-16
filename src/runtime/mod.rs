@@ -22,7 +22,12 @@ pub struct SqliteRuntime {
 
 impl SqliteRuntime {
   pub fn start(mut pager: SqlitePager) -> SqliteResult<Self> {
-    let header = SqliteHeader::parse_bytes(pager.first()?.raw_data())?;
+    let header = if pager.io_mut().is_empty()? {
+      SqliteHeader::default()
+    } else {
+      SqliteHeader::parse_bytes(pager.first()?.raw_data())?
+    };
+
     let btree = Default::default();
     Ok(Self {
       pager,

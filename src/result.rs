@@ -7,6 +7,7 @@ pub type SqliteResult<T> = Result<T, SqliteError>;
 
 #[derive(Debug)]
 pub enum SqliteError {
+  EmptyDb,
   HeaderValidationError(String),
   TryFromSliceError(TryFromSliceError),
   StdioError(StdioError),
