@@ -37,13 +37,11 @@ impl SqliteConnection {
 
     VERSION_NUMBER.get_or_init(|| {
       let mut s = env!("CARGO_PKG_VERSION").split('.');
-      let release = s.next().map(|x| x.parse().ok()).flatten().unwrap_or(0u32);
-      let major = s.next().map(|x| x.parse().ok()).flatten().unwrap_or(0u32);
-      let minor = s.next().map(|x| x.parse().ok()).flatten().unwrap_or(0u32);
+      let release = s.next().and_then(|x| x.parse().ok()).unwrap_or(0u32);
+      let major = s.next().and_then(|x| x.parse().ok()).unwrap_or(0u32);
+      let minor = s.next().and_then(|x| x.parse().ok()).unwrap_or(0u32);
 
-      let outcome_number = (10_000 * release) + (100 * major) + (1 * minor);
-
-      outcome_number
+      (10_000 * release) + (100 * major) + minor
     });
 
     trace!("Openning SQliteIo [{}]...", conn_str.as_ref());

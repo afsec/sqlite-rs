@@ -1,6 +1,5 @@
-use crate::field_parsing_error;
-use crate::result::{FieldParsingError, SqliteError};
-use crate::traits::{Name, ParseBytes};
+use crate::result::SqliteError;
+use crate::traits::ParseBytes;
 use crate::{impl_name, result::SqliteResult};
 use core::ops::Deref;
 use std::num::NonZeroU32;
@@ -51,7 +50,7 @@ impl ParseBytes for DatabaseFileSizeInPages {
     let buf: [u8; Self::LENGTH_BYTES] = bytes.try_into()?;
 
     let database_size = NonZeroU32::new(u32::from_be_bytes(buf)).ok_or(
-      SqliteError::Custom(format!("DatabaseFileSizeInPages can't be `0`")),
+      SqliteError::Custom("DatabaseFileSizeInPages can't be `0`".into()),
     )?;
 
     Ok(Self(database_size.get()))

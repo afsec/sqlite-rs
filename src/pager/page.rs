@@ -48,8 +48,6 @@
 //!
 //! *Reference:* https://www.sqlite.org/fileformat2.html#pages
 
-use std::ops::Deref;
-
 use crate::header::PageSize;
 
 #[derive(Debug)]

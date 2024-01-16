@@ -1,3 +1,4 @@
+use std::convert::Infallible;
 use std::io::Error as StdIoError;
 use std::{fmt::Display, net::AddrParseError, num::ParseIntError};
 
@@ -7,6 +8,7 @@ pub(crate) type SqliteCliResult<T> = Result<T, SqliteCliError>;
 
 #[derive(Debug)]
 pub(crate) enum SqliteCliError {
+  Infallible(Infallible),
   SqliteRsLib(SqliteError),
   Custom(String),
   StdIo(StdIoError),
@@ -20,7 +22,11 @@ impl Display for SqliteCliError {
     write!(f, "{:?}", self)
   }
 }
-
+impl From<Infallible> for SqliteCliError {
+  fn from(value: Infallible) -> Self {
+    Self::Infallible(value)
+  }
+}
 impl From<SqliteError> for SqliteCliError {
   fn from(value: SqliteError) -> Self {
     Self::SqliteRsLib(value)

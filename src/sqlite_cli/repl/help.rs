@@ -1,4 +1,6 @@
+use super::{dbinfo::ReplDbInfo, open::ReplOpen, traits::PrintHelp};
 use crate::sqlite_cli::result::SqliteCliResult;
+
 pub(super) struct ReplHelp;
 
 impl ReplHelp {
@@ -16,10 +18,14 @@ impl ReplHelp {
       ".open ?OPTIONS? ?FILE?   Close existing database and reopen FILE",
       ".quit                    Exit this program",
     ];
-    commands.iter().for_each(|s| println!("{s}"));
+    commands.iter().for_each(|line| println!("{line}"));
   }
   fn help(command: String) -> SqliteCliResult<()> {
-    todo!();
+    match command.as_str().trim_start_matches('.') {
+      "dbinfo" => ReplDbInfo::help()?,
+      "open" => ReplOpen::help()?,
+      _ => todo!(),
+    }
     Ok(())
   }
 }

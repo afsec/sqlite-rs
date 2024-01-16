@@ -37,13 +37,8 @@ impl ParseBytes for FreeListPages {
 ///  FreeListPagesFirstTrunkPage: The 4-byte big-endian integer at offset 32
 /// stores the page number of the first page of the freelist, or zero if the
 /// freelist is empty.
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct FreeListPagesFirstTrunkPage(u32);
-impl Default for FreeListPagesFirstTrunkPage {
-  fn default() -> Self {
-    Self(0)
-  }
-}
 impl Deref for FreeListPagesFirstTrunkPage {
   type Target = u32;
 
@@ -66,13 +61,8 @@ impl ParseBytes for FreeListPagesFirstTrunkPage {
 
 ///  FreeListPagesTotalPages: The 4-byte big-endian integer at offset 36
 /// stores the total number of pages on the freelist.
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct FreeListPagesTotalPages(u32);
-impl Default for FreeListPagesTotalPages {
-  fn default() -> Self {
-    Self(0)
-  }
-}
 impl Deref for FreeListPagesTotalPages {
   type Target = u32;
 

@@ -138,7 +138,10 @@ impl FromStr for SqliteUri {
           .map_err(|_| {
             SqliteError::Custom("Error on parsing file path".into())
           })?;
-
+        // TODO: Implement modes
+        // if file_path.exists().not() {
+        //   return Err(Sqlite);
+        // }
         Ok(Self {
           uri: uri_str.into(),
           path,

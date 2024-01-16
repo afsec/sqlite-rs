@@ -1,7 +1,6 @@
 use crate::traits::{Name, ParseBytes};
 use crate::{field_parsing_error, impl_name, result::SqliteResult};
 use core::fmt::Display;
-use std::default;
 
 /// # File format version numbers (2 Bytes)
 ///
