@@ -27,12 +27,6 @@ impl SQliteCli {
   }
 
   pub(crate) fn run(self) -> SqliteCliResult<()> {
-    // let conn = SqliteConnection::open(format!("sqlite://{file_path}"))?;
-    // let sqlite_database = Self::read_bytes(&file)?;
-
-    // println!("[{file_path}]:");
-    // Self::dbinfo(&conn)?;
-    // dbg!(self.cli());
     SqliteCliRepl::start(self.cli)?;
     Ok(())
   }

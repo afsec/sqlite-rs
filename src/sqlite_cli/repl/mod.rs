@@ -2,7 +2,7 @@ mod help;
 mod open;
 mod sql;
 
-use sqlite_rs::SqliteConnection;
+use sqlite_rs::{io::SqliteIoMode, SqliteConnection};
 
 use self::{help::ReplHelp, open::ReplOpen};
 
@@ -11,10 +11,10 @@ use super::{
   result::{SqliteCliError, SqliteCliResult},
 };
 
-#[derive(Debug, Default)]
+#[derive(Debug)]
 pub(crate) struct SqliteCliRepl {
   cli: Cli,
-  conn: Option<SqliteConnection>,
+  conn: SqliteConnection,
 }
 
 impl SqliteCliRepl {
@@ -22,12 +22,19 @@ impl SqliteCliRepl {
     use std::io;
     use std::io::Write;
     println!(r#"Enter ".help" for usage hints."#);
-    // println!("Connected to a transient in-memory database.");
-    // println!(r#"Use ".open FILENAME" to reopen on a persistent database."#);
-    let mut repl = Self {
-      cli,
-      ..Default::default()
+    let conn = match cli.database_file() {
+      Some(file_path) => {
+        SqliteConnection::open(format!("sqlite://{}", file_path.as_str()))?
+      }
+      None => SqliteConnection::open(":memory:")?,
     };
+
+    if *conn.runtime().pager().io().mode() == SqliteIoMode::InMemory {
+      println!("Connected to a transient in-memory database.");
+      println!(r#"Use ".open FILENAME" to reopen on a persistent database."#);
+    }
+
+    let mut repl = Self { cli, conn };
     let mut is_repl_running = true;
 
     while is_repl_running {

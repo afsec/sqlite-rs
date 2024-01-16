@@ -38,7 +38,7 @@ impl Default for SqliteIo {
   }
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq)]
 pub enum SqliteIoMode {
   InMemory,
   File,
@@ -92,6 +92,10 @@ impl SqliteIo {
 
   pub fn close() -> SqliteResult<()> {
     todo!("Close not yet implemented");
+  }
+
+  pub fn mode(&self) -> &SqliteIoMode {
+    &self.mode
   }
 }
 

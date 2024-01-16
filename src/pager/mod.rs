@@ -153,4 +153,8 @@ impl SqlitePager {
   pub fn reserved_bytes_per_page(&self) -> &ReservedBytesPerPage {
     &self.reserved_bytes_per_page
   }
+
+  pub fn io(&self) -> &SqliteIo {
+    &self.io
+  }
 }

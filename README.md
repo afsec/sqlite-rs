@@ -1,22 +1,27 @@
 # sqlite-rs
 SQLite library in pure Rust and no dependencies (Under Development)
 
+## Getting Started via sqlite-rs CLI
 
-## Run sqlite-rs tool
 ```sh
-nix-shell
-cargo run
+cargo install sqlite-rs
+sqlite-rs
 ```
+
+## Run test sqlite-rs tool
+```sh
+git clone https://github.com/afsec/sqlite-rs
+RUST_LOG="trace" cargo run -- --database-file=./data/flights-initial.db
+```
+
 ## Run tests
 ```sh
-nix-shell
-cargo test -- --nocapture --test-threads=1
+RUST_LOG="trace" cargo test -- --nocapture --test-threads=1
 ```
 
 ## Run example `sqlite_info`
 ```sh
-nix-shell
-cargo run --release --target=$(arch)-unknown-linux-musl --example sqlite_info
+RUST_LOG="trace" cargo run --release --target=$(arch)-unknown-linux-musl --example sqlite_info
 ```
 
 ## Live sessions
@@ -26,7 +31,7 @@ cargo run --release --target=$(arch)-unknown-linux-musl --example sqlite_info
 
 - [x] SQLite Header parsing
 - [x] Log using RUST_LOG env var
-- [ ] sqlite-rs cli tool
+- [x] sqlite-rs cli tool
 - [ ] Pager
 - [ ] Read tables
 - [ ] Read table schema

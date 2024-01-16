@@ -30,17 +30,34 @@ pub struct SqliteConnection {
 }
 impl SqliteConnection {
   pub fn open(conn_str: impl AsRef<str>) -> SqliteResult<Self> {
+    crate::log::EnvLogger::init();
+    dbg!(&crate::log::LOGGER);
+    trace!("Openning SQliteIo [{}]...", conn_str.as_ref());
     let io = SqliteIo::open(conn_str)?;
+    trace!("SQliteIo started: [{io:?}].");
+    trace!("Connecting SqlitePager...");
     let pager = SqlitePager::connect(io)?;
+    trace!("SQliteIo started: [{pager:?}].");
+    trace!("Starting SqlitePager...");
     let runtime = SqliteRuntime::start(pager)?;
+    trace!("SqlitePager started: [{runtime:?}].");
 
     Ok(Self { runtime })
   }
   #[cfg(all(debug_assertions, test))]
   pub fn open_sample() -> SqliteResult<Self> {
+    let conn_str = ":memory:";
+    crate::log::EnvLogger::init();
+    trace!("Openning SQliteIo [{}]...", conn_str);
+    // TODO: Remove Default
     let io = SqliteIo::default();
+    trace!("SQliteIo started: [{io:?}].");
+    trace!("Connecting SqlitePager...");
     let pager = SqlitePager::connect(io)?;
+    trace!("SQliteIo started: [{pager:?}].");
+    trace!("Starting SqlitePager...");
     let runtime = SqliteRuntime::start(pager)?;
+    trace!("SqlitePager started: [{runtime:?}].");
 
     Ok(Self { runtime })
   }

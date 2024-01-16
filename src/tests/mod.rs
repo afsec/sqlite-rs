@@ -3,7 +3,6 @@ use crate::{debug, trace, SqliteConnection};
 #[test]
 fn ok_on_new_inmemory_database() {
   #[cfg(feature = "log")]
-  crate::log::EnvLogger::init();
   let res = SqliteConnection::open_sample();
   debug!("{res:?}");
   assert!(res.is_ok());
