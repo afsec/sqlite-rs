@@ -54,8 +54,8 @@ impl TryFrom<Args> for Cli {
 
     let mut cli_args = CliArgs::new();
 
-    for s in args.skip(1) {
-      let mut arg = s.split('=');
+    for arg_to_parse in args.skip(1) {
+      let mut arg = arg_to_parse.split('=');
       let k = arg.next();
       let v = arg.next();
 
@@ -66,7 +66,15 @@ impl TryFrom<Args> for Cli {
         (Some("--help"), _) => {
           cli_args.add((CliHelp::arg_name(), Default::default()))
         }
-        _ => (),
+        _ => {
+          println!(
+            "{}: Error: unknown option: {}",
+            env!("CARGO_PKG_NAME"),
+            arg_to_parse
+          );
+          println!("Use --help for a list of options.");
+          return Err(SqliteCliError::InvalidCLiArgs(arg_to_parse));
+        }
       }
     }
     Ok(cli_args.into())
