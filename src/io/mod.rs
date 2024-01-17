@@ -119,7 +119,7 @@ impl FromStr for SqliteUri {
     let maybe_path = iter_uri.next();
     match (maybe_schema, maybe_path) {
       (Some(_), Some(path_str)) => {
-        let mut iter_path = path_str.split("?");
+        let mut iter_path = path_str.split('?');
         let file_path = iter_path
           .next()
           .ok_or(SqliteError::Custom("Filepath not defined".into()))
@@ -151,8 +151,6 @@ impl FromStr for SqliteUri {
         // if file_path.exists()  .not() {
         //   return Err(Sqlite);
         // }
-
-        
 
         Ok(Self {
           uri: uri_str.into(),
@@ -201,7 +199,7 @@ impl FromStr for SqliteUriFileMode {
 fn create_file(path: &PathBuf) -> SqliteResult<()> {
   let maybe_parent_dir = path.parent();
   maybe_parent_dir
-    .map(|parent_dir| std::fs::create_dir_all(parent_dir))
+    .map(std::fs::create_dir_all)
     .transpose()?;
   File::create(path)?;
   Ok(())

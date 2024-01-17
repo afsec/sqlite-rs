@@ -84,10 +84,10 @@ impl TryFrom<Args> for Cli {
 //                                Mode is optional (`?mode=...`)
 //                                              |
 //                                          /-------\
-//  --database-file="./some-database.sqlite3?mode=rwc"
-//  ^^             ^^                                ^
-//  ||             ||                                |
-//  ++-------------++--------------------------------+-- Required characters
+//  --database-file=./some-database.sqlite3?mode=rwc
+//  ^^             ^
+//  ||             |
+//  ++-------------+----- Required characters
 
 #[derive(Debug)]
 pub(crate) struct CliArgs(HashMap<String, String>);
