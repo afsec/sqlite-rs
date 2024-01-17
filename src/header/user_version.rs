@@ -7,14 +7,8 @@ use core::ops::Deref;
 ///  The 4-byte big-endian integer at offset 60 is the user version which is set
 /// and queried by the user_version pragma. The user version is not used by
 /// Sqlite.
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct UserVersion(u32);
-impl Default for UserVersion {
-  fn default() -> Self {
-    Self(Default::default())
-  }
-}
-
 impl Deref for UserVersion {
   type Target = u32;
 

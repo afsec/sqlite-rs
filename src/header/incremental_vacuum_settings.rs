@@ -38,13 +38,9 @@ impl IncrementalVacuumSettings {
 ///  #  Largest root b-tree page (4 Bytes)
 /// The page number of the largest root b-tree page when in auto-vacuum
 /// or incremental-vacuum modes, or zero otherwise.
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct LargestRootBtreePage(u32);
-impl Default for LargestRootBtreePage {
-  fn default() -> Self {
-    Self(0)
-  }
-}
+
 impl Deref for LargestRootBtreePage {
   type Target = u32;
 

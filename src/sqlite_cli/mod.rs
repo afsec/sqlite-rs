@@ -27,8 +27,7 @@ impl SQliteCli {
   }
 
   pub(crate) fn run(self) -> SqliteCliResult<()> {
-    SqliteCliRepl::start(self.cli)?;
-    Ok(())
+    SqliteCliRepl::start(self.cli)
   }
 
   pub(crate) fn cli(&self) -> &Cli {

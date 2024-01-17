@@ -1,3 +1,4 @@
+use super::traits::PrintHelp;
 use crate::sqlite_cli::result::SqliteCliResult;
 use sqlite_rs::SqliteConnection;
 
@@ -132,6 +133,15 @@ impl ReplDbInfo {
     ));
 
     println!("{output}");
+    Ok(())
+  }
+}
+impl PrintHelp for ReplDbInfo {
+  fn help() -> SqliteCliResult<()> {
+    let help =
+      [".dbinfo ?DB?             Show status information about the database"];
+
+    help.iter().for_each(|line| println!("{line}"));
     Ok(())
   }
 }

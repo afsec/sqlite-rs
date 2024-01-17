@@ -2,14 +2,11 @@ mod btree;
 mod internal_tables;
 mod schema;
 
-use std::ops::Deref;
-
+use self::btree::SqliteBtree;
 use crate::{
   header::SqliteHeader, pager::SqlitePager, result::SqliteResult,
   traits::ParseBytes,
 };
-
-use self::btree::SqliteBtree;
 
 pub use self::schema::SqliteSchema;
 

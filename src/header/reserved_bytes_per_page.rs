@@ -20,18 +20,12 @@ use core::ops::Deref;
 ///
 /// However, *the usable size is not allowed to be less than `480`*. In other words, if the page size is 512, then the
 /// reserved space size cannot exceed 32.
-#[derive(Debug, PartialEq, Eq)]
-pub struct ReservedBytesPerPage(u8);
-
+///
 /// "This value is usually 0."
 ///
 /// Reference: https://www.sqlite.org/fileformat2.html#resbyte
-impl Default for ReservedBytesPerPage {
-  fn default() -> Self {
-    Self(0)
-  }
-}
-
+#[derive(Debug, Default, PartialEq, Eq)]
+pub struct ReservedBytesPerPage(u8);
 impl Deref for ReservedBytesPerPage {
   type Target = u8;
 
