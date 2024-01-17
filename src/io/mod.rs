@@ -142,8 +142,8 @@ impl FromStr for SqliteUri {
           file_path
         } else {
           file_path.canonicalize().map_err(|err| {
-            error!("Internal error: [{err}].");
-            error!("Error on parsing file path: [{}].", uri_str);
+            error!("Error on open file [{uri_str}]: [{err}].");
+            error!("Hint: You can change mode to `?mode=rwc` or check you file path.");
             SqliteError::Custom("Error on parsing file path".into())
           })?
         };
@@ -152,7 +152,7 @@ impl FromStr for SqliteUri {
         //   return Err(Sqlite);
         // }
 
-        trace!("{}", path.display());
+        
 
         Ok(Self {
           uri: uri_str.into(),
@@ -190,9 +190,9 @@ impl FromStr for SqliteUriFileMode {
   fn from_str(s: &str) -> Result<Self, Self::Err> {
     trace!("impl FromStr for SqliteUriFileMode {s}");
     match s {
-      "modero" => Ok(Self::ReadOnly),
-      "moderw" => Ok(Self::ReadWrite),
-      "moderwc" => Ok(Self::ReadWriteCreate),
+      "mode=ro" => Ok(Self::ReadOnly),
+      "mode=rw" => Ok(Self::ReadWrite),
+      "mode=rwc" => Ok(Self::ReadWriteCreate),
       _ => Err(SqliteError::InvalidFileUriMode),
     }
   }
