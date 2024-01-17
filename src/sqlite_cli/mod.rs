@@ -19,7 +19,9 @@ impl SQliteCli {
     );
     eprintln!("Options:");
     eprintln!("    --help                        Display this message");
-    eprintln!("    --database-file=<FILENAME>    Database filename to open");
+    eprintln!(
+      r#"    --database-file="<FILENAME>""    Database filename to open"#
+    );
   }
   pub(crate) fn parse() -> SqliteCliResult<Self> {
     let cli = Cli::try_from(std::env::args())?;
