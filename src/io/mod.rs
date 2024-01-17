@@ -1,6 +1,6 @@
-use crate::header::SAMPLE_HEADER;
 use crate::result::{SqliteError, SqliteResult};
 use crate::traits::SqliteRawIo;
+use crate::{error, trace};
 use std::fmt::{Debug, Display};
 use std::fs::File;
 use std::io::Seek;
@@ -22,19 +22,6 @@ impl Debug for SqliteIo {
     f.debug_struct("SqliteIo")
       .field("mode", &self.mode)
       .finish()
-  }
-}
-
-// TODO: Sample HEADER (remove)
-impl Default for SqliteIo {
-  fn default() -> Self {
-    let cursor: Box<Cursor<Vec<u8>>> =
-      Box::new(Cursor::new(SAMPLE_HEADER.to_vec()));
-    let raw_io = cursor as Box<dyn SqliteRawIo>;
-    Self {
-      mode: SqliteIoMode::InMemory,
-      raw_io,
-    }
   }
 }
 
@@ -115,6 +102,7 @@ impl SqliteIo {
 pub struct SqliteUri {
   uri: String,
   path: PathBuf,
+  mode: SqliteUriFileMode,
 }
 
 impl SqliteUri {
@@ -126,30 +114,95 @@ impl FromStr for SqliteUri {
   type Err = SqliteError;
 
   fn from_str(uri_str: &str) -> Result<Self, Self::Err> {
-    // TODO: generate tests for: sqlite:///home/user/db.sqlite3
     let mut iter_uri = uri_str.split("://");
     let maybe_schema = iter_uri.next();
     let maybe_path = iter_uri.next();
     match (maybe_schema, maybe_path) {
       (Some(_), Some(path_str)) => {
-        let path = PathBuf::from_str(path_str)
-          .unwrap()
-          .canonicalize()
-          .map_err(|_| {
-            SqliteError::Custom("Error on parsing file path".into())
+        let mut iter_path = path_str.split("?");
+        let file_path = iter_path
+          .next()
+          .ok_or(SqliteError::Custom("Filepath not defined".into()))
+          .map_err(|err| {
+            error!("{err}");
+            err
           })?;
+        let mode = iter_path
+          .next()
+          .and_then(|s| {
+            trace!("Trying to parse mode [{s}]");
+            s.parse::<SqliteUriFileMode>().ok()
+          })
+          .unwrap_or_default();
+        trace!("{mode:?}");
+        let file_path = PathBuf::from_str(file_path).unwrap();
+        trace!("{file_path:?}");
+        let path = if mode == SqliteUriFileMode::ReadWriteCreate {
+          create_file(&file_path)?;
+          file_path
+        } else {
+          file_path.canonicalize().map_err(|err| {
+            error!("Internal error: [{err}].");
+            error!("Error on parsing file path: [{}].", uri_str);
+            SqliteError::Custom("Error on parsing file path".into())
+          })?
+        };
         // TODO: Implement modes
-        // if file_path.exists().not() {
+        // if file_path.exists()  .not() {
         //   return Err(Sqlite);
         // }
+
+        trace!("{}", path.display());
+
         Ok(Self {
           uri: uri_str.into(),
           path,
+          mode,
         })
       }
-      _ => Err(SqliteError::Custom(
-        "Error on parsing sqlite connection uri".into(),
-      )),
+      _ => {
+        error!("Error on parsing sqlite connection uri[{}]", uri_str);
+        Err(SqliteError::Custom(
+          "Error on parsing sqlite connection uri".into(),
+        ))
+      }
     }
   }
+}
+
+///  The mode query parameter determines if the new database is opened
+/// read-only, read-write, read-write and created if it does not exist, or that
+/// the database is a pure in-memory database that never interacts with disk,
+/// respectively.
+///
+/// *Reference:* https://www.sqlite.org/uri.html#urimode
+#[derive(Debug, Default, PartialEq, Eq)]
+pub enum SqliteUriFileMode {
+  ReadOnly,
+  #[default]
+  ReadWrite,
+  ReadWriteCreate,
+}
+
+impl FromStr for SqliteUriFileMode {
+  type Err = SqliteError;
+
+  fn from_str(s: &str) -> Result<Self, Self::Err> {
+    trace!("impl FromStr for SqliteUriFileMode {s}");
+    match s {
+      "modero" => Ok(Self::ReadOnly),
+      "moderw" => Ok(Self::ReadWrite),
+      "moderwc" => Ok(Self::ReadWriteCreate),
+      _ => Err(SqliteError::InvalidFileUriMode),
+    }
+  }
+}
+
+fn create_file(path: &PathBuf) -> SqliteResult<()> {
+  let maybe_parent_dir = path.parent();
+  maybe_parent_dir
+    .map(|parent_dir| std::fs::create_dir_all(parent_dir))
+    .transpose()?;
+  File::create(path)?;
+  Ok(())
 }

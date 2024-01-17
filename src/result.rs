@@ -8,6 +8,7 @@ pub type SqliteResult<T> = Result<T, SqliteError>;
 #[derive(Debug)]
 pub enum SqliteError {
   EmptyDb,
+  InvalidFileUriMode,
   HeaderValidationError(String),
   TryFromSliceError(TryFromSliceError),
   StdioError(StdioError),
