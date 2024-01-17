@@ -57,8 +57,7 @@ impl TryFrom<Args> for Cli {
     for arg_to_parse in args.skip(1) {
       let mut arg = arg_to_parse.split('=');
       let k = arg.next();
-      let v = arg.collect::<String>();
-      eprintln!("Arg k: [{k:?}], v[{v:?}]");
+      let v = arg.collect::<Vec<_>>().join("=");
       match (k, v) {
         (Some("--database-file"), value) => {
           cli_args.add((CliDatabaseFile::arg_name(), value))
