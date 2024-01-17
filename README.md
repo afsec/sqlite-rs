@@ -6,14 +6,35 @@ SQLite library in pure Rust and no dependencies (Under Development)
 ## Installation
 ```sh
 cargo install sqlite-rs
-sqlite-rs
 ```
 
 
 ## Running from terminal
+### In memory
 ```sh
 sqlite-rs
 ```
+
+### File (Read Only mode)
+```sh
+sqlite-rs --database-file=mydb.db?mode=ro
+```
+
+### File (Read Write mode) - default
+```sh
+sqlite-rs --database-file=mydb.db?mode=rw
+```
+
+#### Or 
+```sh
+sqlite-rs --database-file=mydb.db
+```
+
+### File (Read Write and Create mode)
+```sh
+sqlite-rs --database-file=mydb.db?mode=rwc
+```
+
 
 ```log
 sqlite-rs v0.3.3 - 1705457528
