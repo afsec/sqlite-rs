@@ -1,8 +1,7 @@
+use sqlite_rs::result::SqliteError;
 use std::convert::Infallible;
 use std::io::Error as StdIoError;
 use std::{fmt::Display, net::AddrParseError, num::ParseIntError};
-
-use sqlite_rs::result::SqliteError;
 
 pub(crate) type SqliteCliResult<T> = Result<T, SqliteCliError>;
 
