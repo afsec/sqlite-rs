@@ -1,20 +1,19 @@
-mod btree;
 mod internal_tables;
+mod operations;
 mod schema;
 
-use self::btree::SqliteBtree;
 use crate::{
   header::SqliteHeader, pager::SqlitePager, result::SqliteResult,
   traits::ParseBytes,
 };
 
+use self::operations::show_tables::ShowTables;
 pub use self::schema::SqliteSchema;
 
 #[derive(Debug)]
 pub struct SqliteRuntime {
   pager: SqlitePager,
   header: SqliteHeader,
-  btree: SqliteBtree,
 }
 
 impl SqliteRuntime {
@@ -22,23 +21,22 @@ impl SqliteRuntime {
     let header = if pager.io_mut().is_empty()? {
       SqliteHeader::default()
     } else {
-      SqliteHeader::parse_bytes(pager.first()?.raw_data())?
+      let first_page = pager.first()?;
+      let (file_header, _) =
+        first_page.raw_data().split_at(SqliteHeader::LENGTH_BYTES);
+      SqliteHeader::parse_bytes(file_header)?
     };
 
-    let btree = Default::default();
-    Ok(Self {
-      pager,
-      header,
-      btree,
-    })
+    Ok(Self { pager, header })
   }
 
   pub fn header(&self) -> &SqliteHeader {
     &self.header
   }
 
-  pub fn tables(&self) -> SqliteResult<Vec<SqliteSchema>> {
-    todo!("Show tables not implemented")
+  // pub fn tables(&mut self) -> SqliteResult<Vec<SqliteSchema>> {
+  pub fn tables(&mut self) -> SqliteResult<Vec<String>> {
+    ShowTables::run(&mut self.pager)
   }
 
   pub fn pager(&self) -> &SqlitePager {

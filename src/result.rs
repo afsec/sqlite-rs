@@ -15,6 +15,19 @@ pub enum SqliteError {
   Custom(String),
   ParsingField(FieldParsingError),
   InvalidPayloadSize(InvalidPayloadSizeError),
+  Btree(BtreeError),
+}
+
+#[derive(Debug)]
+pub enum BtreeError {
+  Parsing(BtreeErrorParsing),
+}
+
+#[derive(Debug)]
+pub enum BtreeErrorParsing {
+  HeaderInvalidPayloadSize,
+  HeaderInvalidPayloadForPageType,
+  Custom(String),
 }
 
 #[derive(Debug)]

@@ -15,14 +15,15 @@ pub mod io;
 pub(crate) mod log;
 #[macro_use]
 pub(crate) mod log_macros;
+#[macro_use]
+pub mod macros;
 pub mod pager;
 pub mod result;
 pub mod runtime;
+pub mod sql;
 pub mod traits;
-#[macro_use]
-pub mod macros;
 
-#[cfg(test)]
+#[cfg(all(test, feature = "log"))]
 mod tests;
 
 #[derive(Debug)]
@@ -45,13 +46,13 @@ impl SqliteConnection {
     });
 
     trace!("Openning SQliteIo [{}]...", conn_str.as_ref());
-    let io = SqliteIo::open(conn_str)?;
+    let io = resolve_error!(SqliteIo::open(conn_str));
     trace!("SQliteIo started: [{io:?}].");
     trace!("Connecting SqlitePager...");
-    let pager = SqlitePager::connect(io)?;
+    let pager = resolve_error!(SqlitePager::connect(io));
     trace!("SQliteIo started: [{pager:?}].");
     trace!("Starting SqliteRuntime...");
-    let runtime = SqliteRuntime::start(pager)?;
+    let runtime = resolve_error!(SqliteRuntime::start(pager));
     trace!("SqliteRuntime started: [{runtime:?}].");
 
     Ok(Self { runtime })

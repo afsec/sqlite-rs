@@ -1,6 +1,9 @@
 # sqlite-rs
 SQLite library in pure Rust and no dependencies (Under Development)
 
+## Screenshot
+![screenshot](/docs/img/sqlite-rs.png "sqlite-rs cli tool")
+
 ## Getting Started via sqlite-rs CLI
 
 ## Installation
@@ -122,7 +125,7 @@ software version:    303
 
 ```
 
-## Run test sqlite-rs tool
+## Run sqlite-rs tool
 ```sh
 git clone https://github.com/afsec/sqlite-rs
 RUST_LOG="trace" cargo run -- --database-file=./data/flights-initial.db

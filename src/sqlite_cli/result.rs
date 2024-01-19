@@ -6,8 +6,15 @@ use std::{fmt::Display, net::AddrParseError, num::ParseIntError};
 pub(crate) type SqliteCliResult<T> = Result<T, SqliteCliError>;
 
 #[derive(Debug)]
+pub(crate) enum SqliteReplError {
+  NoKeyword,
+  NotImplemented(String),
+}
+
+#[derive(Debug)]
 pub(crate) enum SqliteCliError {
   Infallible(Infallible),
+  Repl(SqliteReplError),
   SqliteRsLib(SqliteError),
   Custom(String),
   StdIo(StdIoError),

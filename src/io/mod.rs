@@ -198,9 +198,7 @@ impl FromStr for SqliteUriFileMode {
 
 fn create_file(path: &PathBuf) -> SqliteResult<()> {
   let maybe_parent_dir = path.parent();
-  maybe_parent_dir
-    .map(std::fs::create_dir_all)
-    .transpose()?;
+  maybe_parent_dir.map(std::fs::create_dir_all).transpose()?;
   File::create(path)?;
   Ok(())
 }

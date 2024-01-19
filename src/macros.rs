@@ -18,3 +18,16 @@ macro_rules! field_parsing_error {
     )
   };
 }
+
+#[macro_export]
+macro_rules! resolve_error {
+  ($res:expr) => {
+    match $res {
+      Ok(data) => data,
+      Err(err) => {
+        error!("Error: {err}");
+        return Err(err);
+      }
+    }
+  };
+}

@@ -1,7 +1,7 @@
+pub mod btree;
 pub mod page;
 
-use std::num::NonZeroU32;
-
+use self::page::Page;
 use crate::{
   header::{
     FileFormatReadVersion, FileFormatWriteVersion, MagicHeaderString, PageSize,
@@ -11,8 +11,7 @@ use crate::{
   result::{SqliteError, SqliteResult},
   traits::ParseBytes,
 };
-
-use self::page::Page;
+use std::num::NonZeroU32;
 
 #[derive(Debug)]
 pub struct SqlitePager {
@@ -71,86 +70,93 @@ impl SqlitePager {
         const BUF_SIZE: usize = 512;
         let mut buf: [u8; BUF_SIZE] = [0; BUF_SIZE];
         // TODO: Write tests
-        self.io.read(&mut buf)?;
-
+        let bytes_read = self.io.read(&mut buf)?;
+        trace!("[{bytes_read}] Bytes read from [{}]", self.io.mode());
         Ok(Page {
-          length: page_size,
+          size: page_size,
           raw_data: buf.to_vec(),
         })
       }
       PageSize::L1024 => {
         const BUF_SIZE: usize = 1024;
         let mut buf: [u8; BUF_SIZE] = [0; BUF_SIZE];
-        self.io.read(&mut buf)?;
+        let bytes_read = self.io.read(&mut buf)?;
+        trace!("[{bytes_read}] Bytes read from [{}]", self.io.mode());
 
         Ok(Page {
-          length: page_size,
+          size: page_size,
           raw_data: buf.to_vec(),
         })
       }
       PageSize::L2048 => {
         const BUF_SIZE: usize = 2048;
         let mut buf: [u8; BUF_SIZE] = [0; BUF_SIZE];
-        self.io.read(&mut buf)?;
+        let bytes_read = self.io.read(&mut buf)?;
+        trace!("[{bytes_read}] Bytes read from [{}]", self.io.mode());
 
         Ok(Page {
-          length: page_size,
+          size: page_size,
           raw_data: buf.to_vec(),
         })
       }
       PageSize::L4096 => {
         const BUF_SIZE: usize = 4096;
         let mut buf: [u8; BUF_SIZE] = [0; BUF_SIZE];
-        self.io.read(&mut buf)?;
+        let bytes_read = self.io.read(&mut buf)?;
+        trace!("[{bytes_read}] Bytes read from [{}]", self.io.mode());
 
         Ok(Page {
-          length: page_size,
+          size: page_size,
           raw_data: buf.to_vec(),
         })
       }
       PageSize::L8192 => {
         const BUF_SIZE: usize = 8192;
         let mut buf: [u8; BUF_SIZE] = [0; BUF_SIZE];
-        self.io.read(&mut buf)?;
+        let bytes_read = self.io.read(&mut buf)?;
+        trace!("[{bytes_read}] Bytes read from [{}]", self.io.mode());
 
         Ok(Page {
-          length: page_size,
+          size: page_size,
           raw_data: buf.to_vec(),
         })
       }
       PageSize::L16384 => {
         const BUF_SIZE: usize = 16384;
         let mut buf: [u8; BUF_SIZE] = [0; BUF_SIZE];
-        self.io.read(&mut buf)?;
+        let bytes_read = self.io.read(&mut buf)?;
+        trace!("[{bytes_read}] Bytes read from [{}]", self.io.mode());
 
         Ok(Page {
-          length: page_size,
+          size: page_size,
           raw_data: buf.to_vec(),
         })
       }
       PageSize::L32768 => {
         const BUF_SIZE: usize = 32768;
         let mut buf: [u8; BUF_SIZE] = [0; BUF_SIZE];
-        self.io.read(&mut buf)?;
+        let bytes_read = self.io.read(&mut buf)?;
+        trace!("[{bytes_read}] Bytes read from [{}]", self.io.mode());
         let mut final_buffer = [0u8; Page::MAX_LENGTH];
         for (idx, byte) in buf.iter().enumerate() {
           final_buffer[idx] = *byte;
         }
         Ok(Page {
-          length: page_size,
+          size: page_size,
           raw_data: buf.to_vec(),
         })
       }
       PageSize::L65536 => {
         const BUF_SIZE: usize = 65536;
         let mut buf: [u8; BUF_SIZE] = [0; BUF_SIZE];
-        self.io.read(&mut buf)?;
+        let bytes_read = self.io.read(&mut buf)?;
+        trace!("[{bytes_read}] Bytes read from [{}]", self.io.mode());
         let mut final_buffer = [0u8; Page::MAX_LENGTH];
         for (idx, byte) in buf.iter().enumerate() {
           final_buffer[idx] = *byte;
         }
         Ok(Page {
-          length: page_size,
+          size: page_size,
           raw_data: buf.to_vec(),
         })
       }

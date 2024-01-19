@@ -46,24 +46,48 @@
 //! restored on a rollback and so they are not written to the journal prior to
 //! modification, in order to reduce disk I/O.
 //!
-//! *Reference:* https://www.sqlite.org/fileformat2.html#pages
+//! **Reference:** https://www.sqlite.org/fileformat2.html#pages
 
 use crate::header::PageSize;
 
+use super::btree::page::BtreePage;
+
+#[derive(Debug)]
+pub(crate) enum PageKind {
+  LockByte,
+  Freelist(FreelistPage),
+  Btree(BtreePage),
+  PayloadOverflow,
+  PointerMap,
+}
+
 #[derive(Debug)]
 pub struct Page {
-  pub length: PageSize,
+  pub size: PageSize,
+  // TODO
+  // pub kind: PageKind,
   pub raw_data: Vec<u8>,
 }
 
 impl Page {
   pub const MAX_LENGTH: usize = PageSize::MAX.as_usize();
 
-  pub fn length(&self) -> &PageSize {
-    &self.length
+  pub fn take(self) -> (PageSize, Vec<u8>) {
+    let Self { size, raw_data } = self;
+    (size, raw_data)
   }
 
-  pub fn raw_data(&self) -> &Vec<u8> {
-    &self.raw_data
+  pub fn size(&self) -> &PageSize {
+    &self.size
   }
+
+  pub fn raw_data(&self) -> &[u8] {
+    self.raw_data.as_ref()
+  }
+}
+
+#[derive(Debug)]
+pub enum FreelistPage {
+  Trunk,
+  Leaf,
 }
