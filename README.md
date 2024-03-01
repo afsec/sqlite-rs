@@ -149,6 +149,7 @@ RUST_LOG="trace" cargo run --release --target=$(arch)-unknown-linux-musl --examp
 - [x] SQLite Header parsing
 - [x] Log using RUST_LOG env var
 - [x] sqlite-rs cli tool
+- [ ] Github Actions (Windows, Linux, and MacOS)
 - [ ] Pager
 - [ ] Read tables
 - [ ] Read table schema

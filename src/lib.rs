@@ -1,5 +1,3 @@
-#![forbid(unsafe_code, non_ascii_idents)]
-
 //! # SQLite arquitecture
 //! *Reference:* https://www.sqlite.org/arch.html
 
